@@ -1,16 +1,14 @@
 #include "allegro.h"
-#include "stdlib.h"
-#include "time.h"
 #include "types.h"
 
 int main()
 {
-    Posicion posicion_mouse;  /* Para capturar la posicion del raton, lo cual servira para el menu */
-    Natural iteracion = 0;
-    ALLEGRO_EVENT evento;
     Recursos recursos = {NULL};  /* Se inicializan los recursos del juego */
+    ALLEGRO_EVENT evento; /* Ṕara agregar los eventos que vayan ocurriendo a la cola de eventos */
+    Menu menu = {NULL}; /* Para manejar los menús */
+    Posicion posicion_mouse;  /* Para capturar la posicion del raton, lo cual servira para los menús */
     Etapa etapa_juego = MENU_PRINCIPAL;  /* Para capturar el estado actual del juego */
-
+    
     if (!inicializacion_allegro())
     {
         return 1;
@@ -35,35 +33,67 @@ int main()
         {
             break;  /* Se sale del loop si la ventana se cierra (el juego termina) */
         }
-        
+
         if (etapa_juego == MENU_PRINCIPAL)
         {
-            if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
+            if (!menu.inicializado)
             {
-                recursos.menu.opcion_en_hover = obtener_opcion_en_hover(recursos.menu);
-
-                if (recursos.menu.opcion_en_hover >= 0 && recursos.menu.opcion_en_hover < NRO_OPCIONES_MENU)
+                if (!inicializar_menu_principal(&menu))
                 {
-                    redirigir_menu(&recursos.menu, recursos.menu.opcion_en_hover, &etapa_juego);
+                    finalizacion_allegro(&recursos);
+                    return 3;
                 }
             }
 
-            else if (evento.type == ALLEGRO_EVENT_TIMER)
+            else
             {
-                al_clear_to_color(NEGRO);
-                mostrar_menu(recursos.menu);
-                iteracion++;
+                if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
+                {
+                    menu.opcion_en_hover = obtener_opcion_en_hover(menu);
+            
+                    if (menu.opcion_en_hover >= 0 && menu.opcion_en_hover < menu.nro_opciones)
+                    {
+                        redirigir_menu(&menu, menu.opcion_en_hover, &etapa_juego);
+                    }
+                }
+
+                else if (evento.type == ALLEGRO_EVENT_TIMER)
+                {
+                    al_clear_to_color(NEGRO);
+                    mostrar_menu(menu);
+                }
             }
         }
 
         else if (etapa_juego == MENU_NIVELES)
         {
+            if (!menu.inicializado)
+            {
+                if (!inicializar_menu_niveles(&menu))
+                {
+                    finalizacion_allegro(&recursos);
+                    return 4;
+                }
+            }
 
-        }
+            else
+            {
+                if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
+                {
+                    menu.opcion_en_hover = obtener_opcion_en_hover(menu);
+            
+                    if (menu.opcion_en_hover >= 0 && menu.opcion_en_hover < menu.nro_opciones)
+                    {
+                        redirigir_menu(&menu, menu.opcion_en_hover, &etapa_juego);
+                    }
+                }
 
-        else if (etapa_juego == INSTRUCCIONES)
-        {
-
+                else if (evento.type == ALLEGRO_EVENT_TIMER)
+                {
+                    al_clear_to_color(NEGRO);
+                    mostrar_menu(menu);
+                }
+            }
         }
     }
 

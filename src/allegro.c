@@ -126,30 +126,12 @@ bool creacion_recursos_allegro(Recursos* R)
 
     al_register_event_source(R->cola_eventos, al_get_mouse_event_source());
 
-    if (!inicializar_menu(&R->menu))  
-    {
-        /* Aqui, en caso de haber algun problema, se imprime dentro de la misma funcion */
-        return false;
-    }
-
     return true;
 }
 
 
 Procedure finalizacion_allegro(Recursos* R)
 {
-    if (R->menu.fuente != NULL)
-    {
-        al_destroy_font(R->menu.fuente);
-        R->menu.fuente = NULL;
-    }
-
-    if (R->menu.fondo != NULL)
-    {
-        al_destroy_bitmap(R->menu.fondo);
-        R->menu.fondo = NULL;
-    }
-
     if (R->cola_eventos != NULL)
     {
         al_destroy_event_queue(R->cola_eventos);

@@ -2,6 +2,8 @@
 #define MENU_H 
 
 #include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 #include "structs.h"
 #include "enums.h" 
 #include "types.h"
@@ -10,8 +12,10 @@
 
 Posicion obtener_posicion_mouse(void); 
 Natural obtener_opcion_en_hover(Menu); 
-bool inicializar_menu(Menu*); 
+bool inicializar_menu_principal(Menu*);
+bool inicializar_menu_niveles(Menu*); 
 Procedure mostrar_menu(Menu);
 Procedure redirigir_menu(Menu*, Natural, Etapa*);
+Procedure finalizar_menu(Menu*);
 
 #endif  // MENU_H

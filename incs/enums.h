@@ -15,8 +15,8 @@ enum etapa
     MENU_PRINCIPAL,
     MENU_NIVELES,
     INSTRUCCIONES,
+    RANKING,
     JUEGO_PRINCIPAL,
-    RANKING
 };
 
 #endif  // ENUMS_H

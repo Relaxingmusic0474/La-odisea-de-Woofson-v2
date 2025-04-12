@@ -26,15 +26,18 @@ struct personaje
 struct boton 
 { 
     Posicion coordenada_inicial; 
-    Posicion coordenada_final; 
+    Posicion coordenada_final;
+    char texto[15]; 
 }; 
 
 struct menu 
 { 
     ALLEGRO_BITMAP* fondo; 
     ALLEGRO_FONT* fuente; 
-    Boton opciones[NRO_OPCIONES_MENU];
+    Boton* opciones;
+    Natural nro_opciones;
     Natural opcion_en_hover;
+    bool inicializado;
 }; 
 
 struct eventos
@@ -51,7 +54,6 @@ struct recursos
     ALLEGRO_EVENT_QUEUE* cola_eventos;
     ALLEGRO_TIMER* temporizador;
     Eventos eventos;
-    Menu menu;
     /* 
     ALLEGRO_FONT* fuentes[6];  // Seran 2 posibles fuentes con 3 tamaños predeterminados cada una -> Se implementara la idea mas adelante
     Lista bitmaps;  // Bitmaps en una lista enlazada (para dinamismo) -> Se implementara la idea mas adelante

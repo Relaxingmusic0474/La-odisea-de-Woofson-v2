@@ -7,7 +7,7 @@
 #define FPS 60
 #define SCREEN_WIDTH 1080
 #define SCREEN_HEIGHT 600
-#define NRO_OPCIONES_MENU 2
+#define NRO_NIVELES 5
 
 // Macros para cargar fuentes de distinto tamaño
 #define NORMAL 14
