@@ -160,6 +160,13 @@ Procedure mostrar_menu(Menu menu)
     // Aqui se muestra el fondo del menu
     al_draw_scaled_bitmap(menu.fondo, 0, 0, al_get_bitmap_width(menu.fondo), al_get_bitmap_height(menu.fondo), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 
+    if (menu.nro_opciones == NRO_NIVELES+1)
+    {
+        al_draw_filled_rectangle(SCREEN_WIDTH*0.10, SCREEN_HEIGHT*0.30, SCREEN_WIDTH*0.90, SCREEN_HEIGHT*0.70, GRIS);
+        al_draw_filled_rectangle(SCREEN_WIDTH*0.30, SCREEN_HEIGHT*0.22, SCREEN_WIDTH*0.70, SCREEN_HEIGHT*0.38, AZUL);
+        al_draw_text(menu.fuente, BLANCO, SCREEN_WIDTH*0.50, SCREEN_HEIGHT*0.30, ALLEGRO_ALIGN_CENTRE, "SELECCIONE UN NIVEL:");
+    }
+
     for (i=0; i<menu.nro_opciones; i++)
     {
         al_draw_rectangle(menu.opciones[i].coordenada_inicial.x, menu.opciones[i].coordenada_inicial.y, 

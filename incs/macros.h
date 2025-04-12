@@ -11,7 +11,7 @@
 
 // Macros para cargar fuentes de distinto tamaño
 #define NORMAL 14
-#define GRANDE 22
+#define GRANDE 24
 #define GIGANTE 36
 
 // Macros para los colores
