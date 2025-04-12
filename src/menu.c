@@ -62,6 +62,8 @@ bool inicializar_menu(Menu* menu)
     menu->opciones[1].coordenada_final.x = SCREEN_WIDTH*0.80;
     menu->opciones[1].coordenada_final.y = SCREEN_HEIGHT*0.90;
 
+    menu->opcion_en_hover = NRO_OPCIONES_MENU;  /* Se inicializa en la opcion N para evitar problemas, ya que las opciones van desde la 0 a la N-1 */
+
     return true;
 };
 
@@ -69,9 +71,10 @@ bool inicializar_menu(Menu* menu)
 Procedure mostrar_menu(Menu menu)
 {
     Posicion posicion_texto_opcion;
-    Natural opcion_en_hover = obtener_opcion_en_hover(menu);  /* Se obtiene la opcion por la que pasa el cursor (sin seleccionarla aun) */
     Natural i;
 
+    menu.opcion_en_hover = obtener_opcion_en_hover(menu);  /* Se obtiene la opcion por la que pasa el cursor (sin seleccionarla aun) */
+    
     // Aqui se muestra el fondo del menu
     al_draw_scaled_bitmap(menu.fondo, 0, 0, al_get_bitmap_width(menu.fondo), al_get_bitmap_height(menu.fondo), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 
@@ -79,16 +82,42 @@ Procedure mostrar_menu(Menu menu)
     {
         al_draw_rectangle(menu.opciones[i].coordenada_inicial.x, menu.opciones[i].coordenada_inicial.y, 
                           menu.opciones[i].coordenada_final.x, menu.opciones[i].coordenada_final.y, 
-                          opcion_en_hover == i ? AZUL : NEGRO, 3.0);
+                          menu.opcion_en_hover == i ? AZUL : NEGRO, 3.0);
 
         posicion_texto_opcion.x = (menu.opciones[i].coordenada_inicial.x + menu.opciones[i].coordenada_final.x) / 2;
         posicion_texto_opcion.y = (menu.opciones[i].coordenada_inicial.y + menu.opciones[i].coordenada_final.y) / 2;
 
-        al_draw_text(menu.fuente, opcion_en_hover == i ? AZUL : NEGRO, posicion_texto_opcion.x, 
+        al_draw_text(menu.fuente, menu.opcion_en_hover == i ? AZUL : NEGRO, posicion_texto_opcion.x, 
                      posicion_texto_opcion.y, ALLEGRO_ALIGN_CENTRE, i==0 ? "JUGAR" : "INSTRUCCIONES");
     }
 
     al_flip_display();  // Se muestra el menu
+
+    return;
+}
+
+
+Procedure redirigir_menu(Menu* menu, Natural opcion_clickeada, Etapa* etapa_actual)
+{
+    if (menu->fondo != NULL)
+    {
+        al_destroy_bitmap(menu->fondo);
+        menu->fondo = NULL;
+    }
+
+    if (opcion_clickeada == 0)
+    {
+        al_clear_to_color(ROJO);
+        *etapa_actual = MENU_NIVELES;
+    }
+
+    else
+    {
+        al_clear_to_color(VERDE);
+        *etapa_actual = INSTRUCCIONES;
+    }
+
+    al_flip_display();
 
     return;
 }

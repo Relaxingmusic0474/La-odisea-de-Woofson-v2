@@ -116,9 +116,19 @@ bool creacion_recursos_allegro(Recursos* R)
 
     al_register_event_source(R->cola_eventos, R->eventos.teclado);
 
+    R->eventos.raton = al_get_mouse_event_source();
+
+    if (!R->eventos.raton)
+    {
+        printf("No se pudieron obtener los eventos del mouse.\n");
+        return false;
+    }
+
+    al_register_event_source(R->cola_eventos, al_get_mouse_event_source());
+
     if (!inicializar_menu(&R->menu))  
     {
-        /* Aqui el problema se imprime dentro de la misma funcion en caso de haber */
+        /* Aqui, en caso de haber algun problema, se imprime dentro de la misma funcion */
         return false;
     }
 

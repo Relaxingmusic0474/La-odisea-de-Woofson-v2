@@ -7,6 +7,7 @@
 #define FPS 60
 #define SCREEN_WIDTH 1080
 #define SCREEN_HEIGHT 600
+#define NRO_OPCIONES_MENU 2
 
 // Macros para cargar fuentes de distinto tamaño
 #define NORMAL 14
@@ -19,6 +20,15 @@
 #define AZUL al_map_rgb(0, 0, 255)
 #define BLANCO al_map_rgb(255, 255, 255)
 #define NEGRO al_map_rgb(0, 0, 0)
+
+// Macros para los comandos
+#define COMANDO_COMPILACION_PROGRAMA_PRUEBA "gcc prueba_allegro.c allegro.o load.o menu.o -lallegro -lallegro_primitives -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec -lallegro_image -lallegro_color -o prueba_allegro"
+#define COMANDO_EJECUCION_PROGRAMA_PRUEBA "./prueba_allegro"
+#define COMANDO_COMPILACION_JUEGO "gcc woofson.c allegro.o load.o menu.o -lallegro -lallegro_primitives -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec -lallegro_image -lallegro_color -o woofson"
+#define COMANDO_EJECUCION_JUEGO "./woofson"
+
+// Macros para estados
+#define EXITOSA 0
 
 // Macros de estilo personal de programacion (para hacerlo mas legible para mi)
 #define LOOP while (1)

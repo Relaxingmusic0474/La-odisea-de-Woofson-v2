@@ -2,6 +2,8 @@
 #define STRUCTS_H
 
 #include "allegro_libraries.h"
+#include "macros.h"
+#include "types.h"
 
 typedef struct posicion Posicion;
 typedef struct personaje Personaje;
@@ -31,7 +33,8 @@ struct menu
 { 
     ALLEGRO_BITMAP* fondo; 
     ALLEGRO_FONT* fuente; 
-    Boton opciones[2]; 
+    Boton opciones[NRO_OPCIONES_MENU];
+    Natural opcion_en_hover;
 }; 
 
 struct eventos
@@ -39,6 +42,7 @@ struct eventos
     ALLEGRO_EVENT_SOURCE* ventana;
     ALLEGRO_EVENT_SOURCE* temporizador;
     ALLEGRO_EVENT_SOURCE* teclado;
+    ALLEGRO_EVENT_SOURCE* raton;
 };
 
 struct recursos

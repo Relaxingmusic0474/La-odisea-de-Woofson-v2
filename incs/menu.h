@@ -11,6 +11,7 @@
 Posicion obtener_posicion_mouse(void); 
 Natural obtener_opcion_en_hover(Menu); 
 bool inicializar_menu(Menu*); 
-Procedure mostrar_menu(Menu); 
+Procedure mostrar_menu(Menu);
+Procedure redirigir_menu(Menu*, Natural, Etapa*);
 
-#endif
+#endif  // MENU_H
