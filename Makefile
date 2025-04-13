@@ -3,6 +3,7 @@ EXEC=woofson
 GRUPO=PabloGomez
 NTAR=JuegoEnC
 
+# Directorios
 SRC_DIR=src
 OBJ_DIR=obj
 INC_DIR=incs
