@@ -16,7 +16,7 @@ INCLUDE=-I./$(INC_DIR)
 CFLAGS=-Wall -Wextra -Wpedantic -O3 -g -MMD -MP $(INCLUDE)
 LDFLAGS=-Wall -lm -g -lallegro -lallegro_primitives -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec -lallegro_image -lallegro_color
 
-# Automatically include dependency files
+# Automáticamente se incluyen las dependencias
 -include $(OBJ_FILES:.o=.d)
 
 .PHONY: all clean folders resources bundle debug release help run
