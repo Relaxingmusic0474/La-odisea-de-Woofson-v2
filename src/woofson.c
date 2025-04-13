@@ -6,7 +6,6 @@ int main()
     Recursos recursos = {NULL};  /* Se inicializan los recursos del juego */
     ALLEGRO_EVENT evento; /* Ṕara agregar los eventos que vayan ocurriendo a la cola de eventos */
     Menu menu = {NULL}; /* Para manejar los menús */
-    Posicion posicion_mouse;  /* Para capturar la posicion del raton, lo cual servira para los menús */
     Etapa etapa_juego = MENU_PRINCIPAL;  /* Para capturar el estado actual del juego */
     
     if (!inicializacion_allegro())

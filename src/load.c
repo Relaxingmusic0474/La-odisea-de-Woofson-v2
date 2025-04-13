@@ -7,11 +7,11 @@ ALLEGRO_FONT* cargar_fuente(Fuente tipo_fuente, Natural tamanho)  /* Carga la fu
     switch (tipo_fuente)
     {
         case COMFORTAA_LIGHT:
-            fuente = al_load_font("Comfortaa-Light.ttf", tamanho, 0);
+            fuente = al_load_font("assets/fonts/Comfortaa-Light.ttf", tamanho, 0);
             break;
 
         case TIMES_NEW_ROMAN:
-            fuente = al_load_font("times.ttf", tamanho, 0);
+            fuente = al_load_font("assets/fonts/times.ttf", tamanho, 0);
             break;
 
         default:

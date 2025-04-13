@@ -11,7 +11,7 @@ Posicion obtener_posicion_mouse()
     posicion_mouse.y = estado_mouse.y;
 
     return posicion_mouse;
-};
+}
 
 
 Natural obtener_opcion_en_hover(Menu menu)
@@ -29,7 +29,7 @@ Natural obtener_opcion_en_hover(Menu menu)
     }
 
     return -1;  /* Si no hay ninguna opcion sobrevolada entonces devuelve -1 */
-};
+}
 
 
 bool inicializar_menu_principal(Menu* menu)
@@ -60,7 +60,7 @@ bool inicializar_menu_principal(Menu* menu)
         strcpy(menu->opciones[i].texto, textos_opciones_menu[i]);
     }
         
-    menu->fondo = al_load_bitmap("menu.jpg");
+    menu->fondo = al_load_bitmap("assets/images/menu.jpg");
 
     if (!menu->fondo)
     {
@@ -83,7 +83,7 @@ bool inicializar_menu_principal(Menu* menu)
     printf("El menu principal ya esta inicializado.\n");
 
     return true;
-};
+}
 
 
 bool inicializar_menu_niveles(Menu* menu)
@@ -124,7 +124,7 @@ bool inicializar_menu_niveles(Menu* menu)
     menu->opciones[i].coordenada_final.x = SCREEN_WIDTH*0.20;
     menu->opciones[i].coordenada_final.y = SCREEN_HEIGHT*0.90; 
 
-    menu->fondo = al_load_bitmap("menu_niveles.png");
+    menu->fondo = al_load_bitmap("assets/images/menu_niveles.png");
 
     if (!menu->fondo)
     {
@@ -147,7 +147,7 @@ bool inicializar_menu_niveles(Menu* menu)
     printf("El menu de niveles ya esta inicializado.\n");
 
     return true;
-};
+}
 
 
 Procedure mostrar_menu(Menu menu)

@@ -20,6 +20,7 @@
 #define AZUL al_map_rgb(0, 0, 255)
 #define BLANCO al_map_rgb(255, 255, 255)
 #define NEGRO al_map_rgb(0, 0, 0)
+#define GRIS al_map_rgb(205, 205, 205)
 
 // Macros para los comandos
 #define COMANDO_COMPILACION_PROGRAMA_PRUEBA "gcc prueba_allegro.c allegro.o load.o menu.o -lallegro -lallegro_primitives -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec -lallegro_image -lallegro_color -o prueba_allegro"

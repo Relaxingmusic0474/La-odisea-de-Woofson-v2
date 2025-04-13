@@ -19,46 +19,50 @@ LDFLAGS=-Wall -lm -g -lallegro -lallegro_primitives -lallegro_font -lallegro_ttf
 # Automatically include dependency files
 -include $(OBJ_FILES:.o=.d)
 
-.PHONY: all clean folders bundle debug release help run
+.PHONY: all clean folders resources bundle debug release help run
 
-all: folders $(BUILD_DIR)/$(EXEC)
+all: folders resources $(BUILD_DIR)/$(EXEC)
 
 $(BUILD_DIR)/$(EXEC): $(OBJ_FILES)
-    $(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-    $(CC) $(CFLAGS) -c -o $@ $^
+	$(CC) $(CFLAGS) -c -o $@ $^
 
 clean:
-    rm -f $(OBJ_FILES) $(OBJ_FILES:.o=.d)
-    rm -f $(BUILD_DIR)/$(EXEC)
-    rm -rf $(BUILD_DIR) $(OBJ_DIR)
+	rm -f $(OBJ_FILES) $(OBJ_FILES:.o=.d)
+	rm -f $(BUILD_DIR)/$(EXEC)
+	rm -rf $(BUILD_DIR) $(OBJ_DIR)
 
 folders:
-    mkdir -p $(SRC_DIR) $(OBJ_DIR) $(INC_DIR) $(BUILD_DIR)
+	mkdir -p $(SRC_DIR) $(OBJ_DIR) $(INC_DIR) $(BUILD_DIR)
+
+resources:
+	cp -r assets $(BUILD_DIR)
 
 bundle:
-    tar czf $(GRUPO)-$(NTAR).tgz --transform 's,^,$(GRUPO)-$(NTAR)/,' Makefile $(SRC_DIR) $(INC_DIR) docs
+	tar czf $(GRUPO)-$(NTAR).tgz --transform 's,^,$(GRUPO)-$(NTAR)/,' Makefile $(SRC_DIR) $(INC_DIR) docs
 
 debug: CFLAGS += -g -O0
 debug: LDFLAGS += -g
 debug: all
-    gdb $(BUILD_DIR)/$(EXEC)
+	gdb $(BUILD_DIR)/$(EXEC)
 
 release: CFLAGS += -O3
 release: LDFLAGS +=
 release: all
 
 run: all
-    ./$(BUILD_DIR)/$(EXEC)
+	./$(BUILD_DIR)/$(EXEC)
 
 help:
-    @echo "Available targets:"
-    @echo "  all      - Build the project"
-    @echo "  clean    - Remove build artifacts"
-    @echo "  folders  - Create necessary folders"
-    @echo "  bundle   - Package the project"
-    @echo "  debug    - Build and debug the project"
-    @echo "  release  - Build the project for release"
-    @echo "  run      - Build and run the project"
-    @echo "  help     - Show this help message"
+	@echo "Available targets:"
+	@echo "  all      - Build the project"
+	@echo "  clean    - Remove build artifacts"
+	@echo "  folders  - Create necessary folders"
+	@echo "  resources - Copy resources to the build directory"
+	@echo "  bundle   - Package the project"
+	@echo "  debug    - Build and debug the project"
+	@echo "  release  - Build the project for release"
+	@echo "  run      - Build and run the project"
+	@echo "  help     - Show this help message"
