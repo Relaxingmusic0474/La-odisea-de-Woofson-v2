@@ -222,11 +222,44 @@ Procedure redirigir_menu(Menu* menu, Natural opcion_clickeada, Etapa* etapa_actu
             inicializar_menu_principal(menu);
             mostrar_menu(*menu);
         }
-    }
 
+        else
+        {
+            switch (opcion_clickeada)
+            {
+                case 0:
+                    *etapa_actual = NIVEL1;
+                    al_clear_to_color(ROJO);
+                    break;
+
+                case 1:
+                    *etapa_actual = NIVEL2;
+                    al_clear_to_color(VERDE);
+                    break;
+
+                case 2:
+                    *etapa_actual = NIVEL3;
+                    al_clear_to_color(AZUL);
+                    break;
+
+                case 3:
+                    *etapa_actual = NIVEL4;
+                    al_clear_to_color(BLANCO);
+                    break;
+
+                case 4:
+                    *etapa_actual = NIVEL5;
+                    al_clear_to_color(GRIS);
+                    break;
+            }
+            
+            al_flip_display();
+        }
+    }
 
     return;
 }
+
 
 Procedure finalizar_menu(Menu* menu)
 {

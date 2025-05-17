@@ -1,5 +1,5 @@
 # Variables
-CC = gcc
+CC = gcc #    
 CFLAGS = -Wall -Wextra -Wpedantic -O3 -g -MMD -MP -I./incs
 LDFLAGS = -lm -lallegro -lallegro_primitives -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec -lallegro_image -lallegro_color
 SRC_DIR = src
@@ -31,7 +31,7 @@ clean:
 	rm -rf $(OBJ_DIR) $(BUILD_DIR)
 
 # Comando para ejecutar y luego limpiar de inmediato (ejecuta el programa y luego lo limpia)
-execute:
+play:
 	$(MAKE) all
 	- $(MAKE) run 
 	$(MAKE) clean

@@ -56,6 +56,12 @@ bool inicializacion_allegro()
         return false;
     }
 
+    if (!al_reserve_samples(NRO_MUESTRAS_AUDIO_RESERVADAS))  /* Reservamos 10 muestras de audio para evitar problemas de memoria */
+    {
+        printf("Error al reservar las muestras de audio.\n");
+        return false;
+    }  
+
     return true;
 }
 
@@ -69,6 +75,9 @@ bool creacion_recursos_allegro(Recursos* R)
         printf("Error al crear la ventana.\n");
         return false;
     }
+
+    al_set_window_title(R->ventana, NOMBRE_JUEGO);
+    //al_set_window_position(R->ventana, 0, 0);
 
     R->cola_eventos = al_create_event_queue();
 
@@ -85,6 +94,8 @@ bool creacion_recursos_allegro(Recursos* R)
         printf("Error al crear el temporizador.\n");
         return false;
     }
+
+    al_start_timer(R->temporizador);
 
     R->eventos.ventana = al_get_display_event_source(R->ventana);
 

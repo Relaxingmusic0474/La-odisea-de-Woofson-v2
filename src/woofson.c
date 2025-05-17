@@ -1,5 +1,6 @@
 #include "allegro.h"
 #include "types.h"
+#include "load.h"
 
 int main()
 {
@@ -7,8 +8,10 @@ int main()
     ALLEGRO_EVENT evento; /* Ṕara agregar los eventos que vayan ocurriendo a la cola de eventos */
     Menu menu = {NULL}; /* Para manejar los menús */
     Etapa etapa_juego = MENU_PRINCIPAL;  /* Para capturar el estado actual del juego */
+    Musica* musica = {NULL}; /* Para manejar la música del juego */
+    Personaje personaje = {NULL}; /* Para manejar el personaje del juego */
     
-    if (!inicializacion_allegro())
+    if (!inicializacion_allegro()) /* Se inicializan todos los módulos de la librería Allegro5 */
     {
         return 1;
     }
@@ -19,10 +22,15 @@ int main()
         return 2;
     }
 
-    al_set_window_title(recursos.ventana, "La odisea de Woofson");  /* Se personaliza el nombre de la ventana creada para
-                                                                       que tenga como nombre el titulo del juego */
+    musica = cargar_musica(MUSICA_MENU);  /* Se carga la música del menú */
 
-    al_start_timer(recursos.temporizador);  /* Se inicia el temporizador */
+    if (!musica)
+    {
+        finalizacion_allegro(&recursos);
+        return 3;
+    }
+
+    al_play_sample(musica->musica, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, &musica->ID);  /* Se inicia la música del menú */
 
     LOOP
     {
@@ -35,18 +43,18 @@ int main()
 
         if (etapa_juego == MENU_PRINCIPAL)
         {
-            if (!menu.inicializado)
+            if (!menu.inicializado) /* Se hace esta comprobación para que no se inicialice varias veces */
             {
                 if (!inicializar_menu_principal(&menu))
                 {
                     finalizacion_allegro(&recursos);
-                    return 3;
+                    return 4;
                 }
             }
 
             else
             {
-                if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
+                if (evento.type == CLICK)
                 {
                     menu.opcion_en_hover = obtener_opcion_en_hover(menu);
             
@@ -71,7 +79,7 @@ int main()
                 if (!inicializar_menu_niveles(&menu))
                 {
                     finalizacion_allegro(&recursos);
-                    return 4;
+                    return 5;
                 }
             }
 
@@ -94,8 +102,15 @@ int main()
                 }
             }
         }
+
+        else if (etapa_juego == NIVEL1)
+        {
+            al_stop_sample(&musica->ID);
+        }
     }
 
+    al_destroy_sample(musica->musica);
+    free(musica);
     finalizacion_allegro(&recursos);
 
     return 0;

@@ -4,11 +4,13 @@
 #include "allegro_libraries.h"
 #include "macros.h"
 #include "types.h"
+#include "enums.h"
 
 typedef struct posicion Posicion;
 typedef struct personaje Personaje;
 typedef struct boton Boton; 
 typedef struct menu Menu; 
+typedef struct musica Musica;
 typedef struct eventos Eventos;
 typedef struct recursos Recursos;
 
@@ -20,6 +22,7 @@ struct posicion
 
 struct personaje
 {
+    Imagen imagen;
     Posicion posicion;
 };
 
@@ -32,13 +35,21 @@ struct boton
 
 struct menu 
 { 
-    ALLEGRO_BITMAP* fondo; 
+    Imagen fondo; 
     ALLEGRO_FONT* fuente; 
     Boton* opciones;
     Natural nro_opciones;
     Natural opcion_en_hover;
     bool inicializado;
 }; 
+
+struct musica
+{
+    Audio musica;
+    ALLEGRO_SAMPLE_ID ID;
+    TipoAudio tipo;
+    // ALLEGRO_VOICE* voz;
+};
 
 struct eventos
 {
@@ -50,7 +61,7 @@ struct eventos
 
 struct recursos
 {
-    ALLEGRO_DISPLAY* ventana;
+    Ventana ventana;
     ALLEGRO_EVENT_QUEUE* cola_eventos;
     ALLEGRO_TIMER* temporizador;
     Eventos eventos;
