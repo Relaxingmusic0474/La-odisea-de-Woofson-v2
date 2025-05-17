@@ -24,6 +24,13 @@ struct personaje
 {
     Imagen imagen;
     Posicion posicion;
+    float velocidad;
+    float ancho;
+    float alto;
+    char tipo;  // Si es malo o bueno
+    bool inicializado;
+    int bandera_dibujo;  // Si se dibuja normal o en espejo
+    // bool en_movimiento;
 };
 
 struct boton 

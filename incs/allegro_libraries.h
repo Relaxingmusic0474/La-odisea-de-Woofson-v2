@@ -18,5 +18,6 @@
 typedef ALLEGRO_BITMAP* Imagen;
 typedef ALLEGRO_SAMPLE* Audio;
 typedef ALLEGRO_DISPLAY* Ventana;
+typedef int Tecla;
 
 #endif  // ALLEGRO_LIBRARIES_H

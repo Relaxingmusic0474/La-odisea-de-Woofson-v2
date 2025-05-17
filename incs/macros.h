@@ -11,6 +11,12 @@
 #define NRO_NIVELES 5
 #define NRO_MUESTRAS_AUDIO_RESERVADAS 10
 
+// Macros para las velocidades de los personajes
+#define VELOCIDAD_PERSONAJE 4
+#define VELOCIDAD_DRAGONES 2
+#define VELOCIDAD_HUMANOIDES 3
+#define VELOCIDAD_JEFE 7
+
 // Macros para cargar fuentes de distinto tamaño
 #define NORMAL 14
 #define GRANDE 24
