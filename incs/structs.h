@@ -8,6 +8,7 @@
 
 typedef struct posicion Posicion;
 typedef struct personaje Personaje;
+typedef struct colision Colision;
 typedef struct boton Boton; 
 typedef struct menu Menu; 
 typedef struct musica Musica;
@@ -34,6 +35,12 @@ struct personaje
     bool en_salto;
     double tiempo_salto;  // Tiempo que lleva en el salto
     // bool en_movimiento;
+};
+
+struct colision
+{
+    bool existe_colision;
+    TipoColision tipo;
 };
 
 struct boton 

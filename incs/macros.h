@@ -9,7 +9,7 @@
 #define g 550 // Gravedad en px/s^2
 #define ANCHO_VENTANA 1080
 #define ALTO_VENTANA 600
-#define ALTURA_PISO 474
+#define ALTURA_PISO 440
 #define NRO_NIVELES 5
 #define NRO_MUESTRAS_AUDIO_RESERVADAS 10
 

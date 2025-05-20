@@ -60,19 +60,109 @@ void mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX])
         // personaje->en_salto = true;
     }
 
-    if (teclas[ALLEGRO_KEY_DOWN])
+    if (teclas[ALLEGRO_KEY_DOWN] && !hay_colision_inferior(*personaje))
     {
         personaje->posicion.y += personaje->velocidad;
     }
 
-    if (teclas[ALLEGRO_KEY_LEFT])
+    if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(*personaje))
     {
         personaje->posicion.x -= personaje->velocidad;
     }
 
-    if (teclas[ALLEGRO_KEY_RIGHT])
+    if (teclas[ALLEGRO_KEY_RIGHT] && !hay_colision_derecha(*personaje))
     {
         personaje->posicion.x += personaje->velocidad;
+    }
+    
+    if (hay_colision_con_bordes(*personaje))
+    {
+        efectuar_colision_con_bordes(personaje);
+    }
+
+    return;
+}
+
+bool hay_colision_con_bordes(Personaje personaje)
+{
+    if (hay_colision_izquierda(personaje) || hay_colision_derecha(personaje) ||
+        hay_colision_superior(personaje) || hay_colision_inferior(personaje))        
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool hay_colision_izquierda(Personaje personaje)
+{
+    if (personaje.posicion.x <= 0)
+    {
+        return true;
+    }
+
+    else
+    {
+        return false;
+    }
+}
+
+bool hay_colision_derecha(Personaje personaje)
+{
+    if (personaje.posicion.x + personaje.ancho >= ANCHO_VENTANA)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool hay_colision_superior(Personaje personaje)
+{
+    if (personaje.posicion.x <= 0)
+    {
+        return true;
+    }
+
+    else
+    {
+        return false;
+    }
+}
+
+bool hay_colision_inferior(Personaje personaje)
+{
+    if (personaje.posicion.y >= ALTURA_PISO)
+    {
+        return true;
+    }
+
+    else
+    {
+        return false;
+    }
+}
+
+void efectuar_colision_con_bordes(Personaje* personaje)
+{
+    if (hay_colision_izquierda(*personaje))
+    {
+        personaje->posicion.x == 0;
+    }
+
+    else if (hay_colision_derecha(*personaje))
+    {
+        personaje->posicion.x == ANCHO_VENTANA;
+    }
+
+    else if (hay_colision_superior(*personaje))
+    {
+        personaje->posicion.y == 0;
+    }
+
+    else
+    {
+        personaje->posicion.y == ALTURA_PISO;
     }
 
     return;
@@ -84,12 +174,12 @@ void continuar_salto(Personaje* personaje, double t)
     // a = dv/dt; v = dy/dt; y = y0 + v0*t + 1/2*a*t^2
     // Pero a = -g, así que y = y0 + v0*t - 1/2*g*t^2
     // En las ventanas de Allegro, el eje y crece hacia abajo, por lo que en realidad y = y0 - v0*t + g/2*t^2
-    // En este caso, y0 = ALTURA_PISO, v0 = impulso, g = 400 px/s^2 (gravedad para el juego)
+    // En este caso, y0 = posicion.y, v0 = impulso, g = 400 px/s^2 (gravedad para el juego)
 
     personaje->posicion.y = ALTURA_PISO - personaje->impulso * t + g * t * t / 2;
 
     // Si el personaje llega al piso, se detiene el salto
-    if (personaje->posicion.y >= ALTURA_PISO)
+    if (personaje->posicion.y >= ALTURA_PISO /* || hay_colision_con_bloque() || hay_colision_con_objeto() */)
     {
         personaje->posicion.y = ALTURA_PISO;
         personaje->en_salto = false;

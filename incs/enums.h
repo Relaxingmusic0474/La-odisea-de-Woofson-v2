@@ -24,7 +24,7 @@ enum etapa
 
 typedef enum etapa Etapa;
 
-enum TipoAudio
+enum tipoAudio
 {
     MUSICA_MENU,
     MUSICA_NIVEL_1,
@@ -34,6 +34,17 @@ enum TipoAudio
     MUSICA_NIVEL_5, 
 };
 
-typedef enum TipoAudio TipoAudio;
+typedef enum tipoAudio TipoAudio;
+
+enum tipoColision
+{
+    INEXISTENTE,
+    IZQUIERDA,
+    DERECHA,
+    SUPERIOR,
+    INFERIOR,
+};
+
+typedef enum tipoColision TipoColision;
 
 #endif  // ENUMS_H
