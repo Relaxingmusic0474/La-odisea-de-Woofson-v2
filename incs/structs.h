@@ -37,12 +37,6 @@ struct personaje
     // bool en_movimiento;
 };
 
-struct colision
-{
-    bool existe_colision;
-    TipoColision tipo;
-};
-
 struct boton 
 { 
     Posicion coordenada_inicial; 

@@ -36,15 +36,4 @@ enum tipoAudio
 
 typedef enum tipoAudio TipoAudio;
 
-enum tipoColision
-{
-    INEXISTENTE,
-    IZQUIERDA,
-    DERECHA,
-    SUPERIOR,
-    INFERIOR,
-};
-
-typedef enum tipoColision TipoColision;
-
 #endif  // ENUMS_H
