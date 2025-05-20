@@ -16,7 +16,6 @@ int main()
     Natural ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;
     Natural iteracion = 0;
     Natural rojo, verde, azul;
-    double t;
 
     srand(time(NULL));  /* Se inicializa la semilla para los números aleatorios */
     

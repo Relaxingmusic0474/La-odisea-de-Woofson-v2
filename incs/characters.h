@@ -10,7 +10,8 @@ bool hay_colision_izquierda(Personaje);
 bool hay_colision_derecha(Personaje);
 bool hay_colision_superior(Personaje);
 bool hay_colision_inferior(Personaje);
-void efectuar_colision_bordes(Personaje*);
+void efectuar_colision_con_bordes(Personaje*);
+void continuar_salto(Personaje*, double);
 bool es_tecla_lateral(Tecla);
 
 #endif  // CHARACTERS_H
