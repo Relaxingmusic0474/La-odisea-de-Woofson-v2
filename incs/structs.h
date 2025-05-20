@@ -25,11 +25,14 @@ struct personaje
     Imagen imagen;
     Posicion posicion;
     float velocidad;
+    float impulso;  // Este es el impulso que se le da al personaje al saltar
     float ancho;
     float alto;
     char tipo;  // Si es malo o bueno
     bool inicializado;
     int bandera_dibujo;  // Si se dibuja normal o en espejo
+    bool en_salto;
+    double tiempo_salto;  // Tiempo que lleva en el salto
     // bool en_movimiento;
 };
 

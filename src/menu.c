@@ -51,11 +51,11 @@ bool inicializar_menu_principal(Menu* menu)
 
     for (i=0; i<menu->nro_opciones; i++)
     {
-        menu->opciones[i].coordenada_inicial.x = SCREEN_WIDTH*0.55;
-        menu->opciones[i].coordenada_inicial.y = SCREEN_HEIGHT*(0.50+0.15*i);
+        menu->opciones[i].coordenada_inicial.x = ANCHO_VENTANA*0.55;
+        menu->opciones[i].coordenada_inicial.y = ALTO_VENTANA*(0.50+0.15*i);
 
-        menu->opciones[i].coordenada_final.x = SCREEN_WIDTH*0.80;
-        menu->opciones[i].coordenada_final.y = SCREEN_HEIGHT*(0.62+0.15*i);
+        menu->opciones[i].coordenada_final.x = ANCHO_VENTANA*0.80;
+        menu->opciones[i].coordenada_final.y = ALTO_VENTANA*(0.62+0.15*i);
 
         strcpy(menu->opciones[i].texto, textos_opciones_menu[i]);
     }
@@ -110,19 +110,19 @@ bool inicializar_menu_niveles(Menu* menu)
 
     for (i=0; i<NRO_NIVELES; i++) /* Asignación de coordenadas para los botones de los niveles */
     {
-        menu->opciones[i].coordenada_inicial.x = SCREEN_WIDTH*(0.15 + 0.15*i);
-        menu->opciones[i].coordenada_inicial.y = SCREEN_HEIGHT*0.44;
+        menu->opciones[i].coordenada_inicial.x = ANCHO_VENTANA*(0.15 + 0.15*i);
+        menu->opciones[i].coordenada_inicial.y = ALTO_VENTANA*0.44;
 
-        menu->opciones[i].coordenada_final.x = SCREEN_WIDTH*(0.25 + 0.15*i);
-        menu->opciones[i].coordenada_final.y = SCREEN_HEIGHT*0.56;
+        menu->opciones[i].coordenada_final.x = ANCHO_VENTANA*(0.25 + 0.15*i);
+        menu->opciones[i].coordenada_final.y = ALTO_VENTANA*0.56;
     }
 
     /* Coordenadas para el botón "Volver atrás" */
-    menu->opciones[i].coordenada_inicial.x = SCREEN_WIDTH*0.05;
-    menu->opciones[i].coordenada_inicial.y = SCREEN_HEIGHT*0.80;
+    menu->opciones[i].coordenada_inicial.x = ANCHO_VENTANA*0.05;
+    menu->opciones[i].coordenada_inicial.y = ALTO_VENTANA*0.80;
 
-    menu->opciones[i].coordenada_final.x = SCREEN_WIDTH*0.20;
-    menu->opciones[i].coordenada_final.y = SCREEN_HEIGHT*0.90; 
+    menu->opciones[i].coordenada_final.x = ANCHO_VENTANA*0.20;
+    menu->opciones[i].coordenada_final.y = ALTO_VENTANA*0.90; 
 
     menu->fondo = al_load_bitmap("assets/images/menu_niveles.png");
 
@@ -158,13 +158,13 @@ Procedure mostrar_menu(Menu menu)
     menu.opcion_en_hover = obtener_opcion_en_hover(menu);  /* Se obtiene la opcion por la que pasa el cursor (sin seleccionarla aun) */
     
     // Aqui se muestra el fondo del menu
-    al_draw_scaled_bitmap(menu.fondo, 0, 0, al_get_bitmap_width(menu.fondo), al_get_bitmap_height(menu.fondo), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    al_draw_scaled_bitmap(menu.fondo, 0, 0, al_get_bitmap_width(menu.fondo), al_get_bitmap_height(menu.fondo), 0, 0, ANCHO_VENTANA, ALTO_VENTANA, 0);
 
     if (menu.nro_opciones == NRO_NIVELES+1)
     {
-        al_draw_filled_rectangle(SCREEN_WIDTH*0.10, SCREEN_HEIGHT*0.30, SCREEN_WIDTH*0.90, SCREEN_HEIGHT*0.70, GRIS);
-        al_draw_filled_rectangle(SCREEN_WIDTH*0.30, SCREEN_HEIGHT*0.22, SCREEN_WIDTH*0.70, SCREEN_HEIGHT*0.38, AZUL);
-        al_draw_text(menu.fuente, BLANCO, SCREEN_WIDTH*0.50, SCREEN_HEIGHT*0.30, ALLEGRO_ALIGN_CENTRE, "SELECCIONE UN NIVEL:");
+        al_draw_filled_rectangle(ANCHO_VENTANA*0.10, ALTO_VENTANA*0.30, ANCHO_VENTANA*0.90, ALTO_VENTANA*0.70, GRIS);
+        al_draw_filled_rectangle(ANCHO_VENTANA*0.30, ALTO_VENTANA*0.22, ANCHO_VENTANA*0.70, ALTO_VENTANA*0.38, AZUL);
+        al_draw_text(menu.fuente, BLANCO, ANCHO_VENTANA*0.50, ALTO_VENTANA*0.30, ALLEGRO_ALIGN_CENTRE, "SELECCIONE UN NIVEL:");
     }
 
     for (i=0; i<menu.nro_opciones; i++)

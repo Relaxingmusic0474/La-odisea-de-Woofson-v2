@@ -68,7 +68,7 @@ bool inicializacion_allegro()
 
 bool creacion_recursos_allegro(Recursos* R)
 {
-    R->ventana = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
+    R->ventana = al_create_display(ANCHO_VENTANA, ALTO_VENTANA);
 
     if (!R->ventana)
     {

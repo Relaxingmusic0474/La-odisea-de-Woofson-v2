@@ -16,6 +16,7 @@ int main()
     Natural ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;
     Natural iteracion = 0;
     Natural rojo, verde, azul;
+    double t;
 
     srand(time(NULL));  /* Se inicializa la semilla para los números aleatorios */
     
@@ -147,8 +148,18 @@ int main()
 
                 case ALLEGRO_EVENT_TIMER:
 
-                    mover_personaje(&dragon, teclas);
+                    if (dragon.en_salto)
+                    {
+                        dragon.tiempo_salto += 1.0 / FPS;
+                        continuar_salto(&dragon, dragon.tiempo_salto);
+                    }
 
+                    /*
+                    else
+                    {*/
+                        mover_personaje(&dragon, teclas);
+                    // }
+                    
                     if (iteracion == 0)
                     {
                         // Aquí puedes agregar la lógica que deseas ejecutar cada 30 frames
