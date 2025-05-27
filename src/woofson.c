@@ -12,27 +12,21 @@ int main()
     Etapa etapa_juego = MENU_PRINCIPAL;  /* Para capturar el estado actual del juego */
     Musica* musica = {NULL}; /* Para manejar la música del juego */
     Personaje dragon = {NULL}; /* Para manejar el personaje del juego */
-    bool teclas[ALLEGRO_KEY_MAX] = {false}; /* Para manejar las teclas que se presionan */
+    /*extern */bool teclas[ALLEGRO_KEY_MAX]; /* Para manejar las teclas que se presionan */
     Natural ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;
     Natural iteracion = 0;
     Natural rojo, verde, azul;
 
     srand(time(NULL));  /* Se inicializa la semilla para los números aleatorios */
     
-    if (!inicializacion_allegro()) /* Se inicializan todos los módulos de la librería Allegro5 */
+    if (!inicializar_todo(&recursos))  /* Se inicializan todos los recursos de Allegro */
     {
         return 1;
     }
 
-    if (!creacion_recursos_allegro(&recursos))  /* Se inicializan y crean los recursos esenciales para el juego (incluido el menu) */
-    {
-        finalizacion_allegro(&recursos);
-        return 2;
-    }
-
     if (!inicializar_personaje(&dragon, 'D'))  /* Se inicializa el personaje */
     {
-        finalizacion_allegro(&recursos);
+        finalizar_allegro(&recursos);
         return 3;
     }
 
@@ -40,7 +34,7 @@ int main()
 
     if (!musica)
     {
-        finalizacion_allegro(&recursos);
+        finalizar_allegro(&recursos);
         return 3;
     }
 
@@ -61,7 +55,7 @@ int main()
             {
                 if (!inicializar_menu_principal(&menu))
                 {
-                    finalizacion_allegro(&recursos);
+                    finalizar_allegro(&recursos);
                     return 4;
                 }
             }
@@ -92,7 +86,7 @@ int main()
             {
                 if (!inicializar_menu_niveles(&menu))
                 {
-                    finalizacion_allegro(&recursos);
+                    finalizar_allegro(&recursos);
                     return 5;
                 }
             }
@@ -147,21 +141,17 @@ int main()
 
                 case ALLEGRO_EVENT_TIMER:
 
-                    if (dragon.en_salto)
+                    if (dragon.salto.en_salto)
                     {
-                        dragon.tiempo_salto += 1.0 / FPS;
-                        continuar_salto(&dragon, dragon.tiempo_salto);
+                        dragon.salto.tiempo_en_salto += 1.0 / FPS;
+                        continuar_salto(&dragon, dragon.salto.tiempo_en_salto);
                     }
 
-                    /*
-                    else
-                    {*/
-                        mover_personaje(&dragon, teclas);
-                    // }
+                    mover_personaje(&dragon, teclas);
                     
                     if (iteracion == 0)
                     {
-                        // Aquí puedes agregar la lógica que deseas ejecutar cada 30 frames
+                        // Cada 30 frames cambia el color de fondo de forma aleatoria
                         rojo = rand() % 256;
                         verde = rand() % 256;
                         azul = rand() % 256;
@@ -186,6 +176,10 @@ int main()
                     break;
             }
 
+            if (iteracion % 10 == 0)
+                printf("Posicion: (%hd, %hd) | Velocidad: (%hd, %hd)\n",
+                        dragon.posicion.x, dragon.posicion.y,
+                        dragon.velocidad.x, dragon.velocidad.y);
             // al_flip_display();
         }
 
@@ -197,7 +191,7 @@ int main()
     musica = NULL;
     al_destroy_bitmap(dragon.imagen);
     dragon.imagen = NULL;
-    finalizacion_allegro(&recursos);
+    finalizar_allegro(&recursos);
 
     return 0;
 }

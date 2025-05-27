@@ -10,8 +10,9 @@
 #include "menu.h"
 #include "enums.h"
 
-bool inicializacion_allegro();
-bool creacion_recursos_allegro(Recursos*);
-Procedure finalizacion_allegro(Recursos*);
+bool inicializar_allegro();
+bool crear_recursos_allegro(Recursos*);
+bool inicializar_todo(Recursos*);
+Procedure finalizar_allegro(Recursos*);
 
 #endif  // ALLEGRO_H

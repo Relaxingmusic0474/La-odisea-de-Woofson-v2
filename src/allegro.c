@@ -1,6 +1,12 @@
 #include "allegro.h"
 
-bool inicializacion_allegro()
+// bool teclas[ALLEGRO_KEY_MAX] = {false};  /* Array para manejar las teclas presionadas (global) */
+
+/**
+ * Función que inicializa Allegro5 y sus módulos necesarios.
+ * @return true si se inicializó correctamente, false en caso contrario.
+ */
+bool inicializar_allegro()
 {
     if (!al_init())
     {
@@ -66,7 +72,13 @@ bool inicializacion_allegro()
 }
 
 
-bool creacion_recursos_allegro(Recursos* R)
+/**
+ * Función que crea los recursos necesarios para el juego.
+ * Crea la ventana, la cola de eventos y el temporizador.
+ * @param R Puntero a la estructura Recursos donde se almacenarán los recursos creados.
+ * @return true si se crearon los recursos correctamente, false en caso contrario. 
+ */ 
+bool crear_recursos_allegro(Recursos* R)
 {
     R->ventana = al_create_display(ANCHO_VENTANA, ALTO_VENTANA);
 
@@ -141,7 +153,35 @@ bool creacion_recursos_allegro(Recursos* R)
 }
 
 
-Procedure finalizacion_allegro(Recursos* R)
+/**
+ * Función que inicializa todos los módulos y recursos de Allegro5 necesarios para el juego.
+ * @param R Puntero a la estructura Recursos donde se almacenarán los recursos creados.
+ * @return true si se inicializaron todos los recursos correctamente, false en caso contrario.
+ */
+bool inicializar_todo(Recursos* R)
+{
+    if (!inicializar_allegro())
+    {
+        finalizar_allegro(R);  // Por si el error ocurre después de haber inicializado algunos módulos
+        return false;
+    }
+
+    if (!crear_recursos_allegro(R))
+    {
+        finalizar_allegro(R);
+        return false;
+    }
+
+    return true;
+}
+
+
+/**
+ * Función que libera todos los recursos utilizados por Allegro5.
+ * Destruye la ventana, la cola de eventos y el temporizador.
+ * @param R Puntero a la estructura Recursos donde se almacenan los recursos a liberar.
+ */
+Procedure finalizar_allegro(Recursos* R)
 {
     if (R->cola_eventos != NULL)
     {

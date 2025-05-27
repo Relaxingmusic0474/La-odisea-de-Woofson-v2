@@ -6,7 +6,8 @@
 #include "types.h"
 #include "enums.h"
 
-typedef struct posicion Posicion;
+typedef struct vector Vector;
+typedef struct salto Salto;
 typedef struct personaje Personaje;
 typedef struct colision Colision;
 typedef struct boton Boton; 
@@ -15,32 +16,47 @@ typedef struct musica Musica;
 typedef struct eventos Eventos;
 typedef struct recursos Recursos;
 
-struct posicion
+struct vector
 {
-    double x;
-    double y;
+    Entero x;
+    Entero y;
+};
+
+struct salto  // ANALIZAR SI SERÁ NECESARIO AGREGAR LA POSICIÓN FINAL DEL SALTO A LA ESTRUCTURA
+{
+    float impulso; // Impulso que se le da al personaje al saltar
+    float tiempo_en_salto; // Tiempo que lleva en el salto
+    float altura_inicial; // Altura inicial del salto (útil sobre todo si salta desde una plataforma)
+    bool en_salto; // Si el personaje está en salto o no
+    bool es_interrumpido; // Si el salto es interrumpido por la colisión con algún techo o no
+    Entero altura_choque; // Este atributo cobra sentido si el salto es interrumpido por un techo
 };
 
 struct personaje
 {
     Imagen imagen;
-    Posicion posicion;
-    float velocidad;
-    float impulso;  // Este es el impulso que se le da al personaje al saltar
+    Vector posicion;
+    Vector velocidad;
+    // Vector aceleracion;  // Aceleración del personaje (puede ser útil para implementar la gravedad o un MRUV)
+    // float impulso;  // Este es el impulso que se le da al personaje al saltar
     float ancho;
     float alto;
-    char tipo;  // Si es malo o bueno
-    bool inicializado;
+    float escala_dibujo;  // Escala de dibujo del personaje (para que se vea más grande o más pequeño)
     int bandera_dibujo;  // Si se dibuja normal o en espejo
-    bool en_salto;
-    double tiempo_salto;  // Tiempo que lleva en el salto
+    char tipo;  // Si es malo o bueno
+    // bool inicializado;  // Este atributo puede que NO sea necesario (se podria eliminar)
+    
+    // Estos atributos ahora se reemplazarán por una variable estructura Salto
+    Salto salto;
+    // bool en_salto;
+    // float tiempo_salto;  // Tiempo que lleva en el salto
     // bool en_movimiento;
 };
 
 struct boton 
 { 
-    Posicion coordenada_inicial; 
-    Posicion coordenada_final;
+    Vector coordenada_inicial; 
+    Vector coordenada_final;
     char texto[15]; 
 }; 
 

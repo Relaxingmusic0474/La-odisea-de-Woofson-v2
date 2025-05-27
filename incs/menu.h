@@ -10,7 +10,7 @@
 #include "macros.h"
 #include "load.h"
 
-Posicion obtener_posicion_mouse(void); 
+Vector obtener_posicion_mouse(void); 
 Natural obtener_opcion_en_hover(Menu); 
 bool inicializar_menu_principal(Menu*);
 bool inicializar_menu_niveles(Menu*); 

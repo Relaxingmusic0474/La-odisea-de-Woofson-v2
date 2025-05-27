@@ -7,17 +7,20 @@
 #define NOMBRE_JUEGO "La odisea de Woofson"
 #define FPS 60
 #define g 550 // Gravedad en px/s^2
-#define ANCHO_VENTANA 1080
-#define ALTO_VENTANA 600
-#define ALTURA_PISO 500
+#define ANCHO_VENTANA 1620 // 1080
+#define ALTO_VENTANA 900 // 600
+#define ALTURA_PISO (ALTO_VENTANA * 5/6) // Altura del piso en px
 #define NRO_NIVELES 5
 #define NRO_MUESTRAS_AUDIO_RESERVADAS 10
 
 // Macros para las velocidades de los personajes
-#define VELOCIDAD_PERSONAJE 4
-#define VELOCIDAD_DRAGONES 2
+#define VELOCIDAD_PERSONAJE 5
+#define VELOCIDAD_DRAGONES 4
 #define VELOCIDAD_HUMANOIDES 3
 #define VELOCIDAD_JEFE 7
+
+// Macro para el impulso de salto del personaje
+#define IMPULSO_PERSONAJE 1000 // Impulso de salto del personaje en px/s
 
 // Macros para cargar fuentes de distinto tamaño
 #define NORMAL 14

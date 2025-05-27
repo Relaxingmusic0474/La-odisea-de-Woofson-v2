@@ -1,9 +1,9 @@
 #include "menu.h"
 
-Posicion obtener_posicion_mouse()
+Vector obtener_posicion_mouse()
 {
     ALLEGRO_MOUSE_STATE estado_mouse;
-    Posicion posicion_mouse;
+    Vector posicion_mouse;
 
     al_get_mouse_state(&estado_mouse);
 
@@ -16,7 +16,7 @@ Posicion obtener_posicion_mouse()
 
 Natural obtener_opcion_en_hover(Menu menu)
 {
-    Posicion posicion_mouse = obtener_posicion_mouse();
+    Vector posicion_mouse = obtener_posicion_mouse();
     Natural i;
 
     for (i=0; i<menu.nro_opciones; i++)  /* Se detecta si el mouse esta dentro de alguno de los botones de las opciones del menu */
@@ -152,7 +152,7 @@ bool inicializar_menu_niveles(Menu* menu)
 
 Procedure mostrar_menu(Menu menu)
 {
-    Posicion posicion_texto_opcion;
+    Vector posicion_texto_opcion;
     Natural i;
 
     menu.opcion_en_hover = obtener_opcion_en_hover(menu);  /* Se obtiene la opcion por la que pasa el cursor (sin seleccionarla aun) */
