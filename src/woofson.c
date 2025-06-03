@@ -11,8 +11,8 @@ int main()
     Menu menu = {NULL}; /* Para manejar los menús */
     Etapa etapa_juego = MENU_PRINCIPAL;  /* Para capturar el estado actual del juego */
     Musica* musica = {NULL}; /* Para manejar la música del juego */
-    Personaje dragon = {NULL}; /* Para manejar el personaje del juego */
-    /*extern */bool teclas[ALLEGRO_KEY_MAX]; /* Para manejar las teclas que se presionan */
+    Personaje dragon = {0}; /* Para manejar el personaje del juego */
+    /*extern */bool teclas[ALLEGRO_KEY_MAX] = {false}; /* Para manejar las teclas que se presionan */
     Natural ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;
     Natural iteracion = 0;
     Natural rojo, verde, azul;
@@ -29,6 +29,10 @@ int main()
         finalizar_allegro(&recursos);
         return 3;
     }
+
+    Natural nro_filas=0, nro_columnas=0, **mapa=NULL;
+
+    mapa = leer_mapa(1, &nro_filas, &nro_columnas);
 
     musica = cargar_musica(MUSICA_MENU);  /* Se carga la música del menú */
 
@@ -170,16 +174,19 @@ int main()
 				    }
 
                     al_draw_bitmap(dragon.imagen, dragon.posicion.x, dragon.posicion.y, dragon.bandera_dibujo);
+                    dibujar_mapa(mapa, nro_filas, nro_columnas);
 				    // al_draw_rotated_bitmap(dragon.imagen, al_get_bitmap_width(dragon.imagen) / 2, al_get_bitmap_height(dragon.imagen), dragon.posicion.x, dragon.posicion.y, ALLEGRO_PI/2, dragon.bandera_dibujo);
 				    al_flip_display();
 
                     break;
             }
 
+            /*
             if (iteracion % 10 == 0)
                 printf("Posicion: (%hd, %hd) | Velocidad: (%hd, %hd)\n",
                         dragon.posicion.x, dragon.posicion.y,
                         dragon.velocidad.x, dragon.velocidad.y);
+            */
             // al_flip_display();
         }
 
@@ -191,6 +198,7 @@ int main()
     musica = NULL;
     al_destroy_bitmap(dragon.imagen);
     dragon.imagen = NULL;
+    liberar_mapa(mapa, nro_filas);
     finalizar_allegro(&recursos);
 
     return 0;

@@ -1,7 +1,5 @@
 #include "allegro.h"
 
-// bool teclas[ALLEGRO_KEY_MAX] = {false};  /* Array para manejar las teclas presionadas (global) */
-
 /**
  * Función que inicializa Allegro5 y sus módulos necesarios.
  * @return true si se inicializó correctamente, false en caso contrario.

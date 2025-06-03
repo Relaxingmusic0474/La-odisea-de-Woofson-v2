@@ -81,10 +81,12 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX])
         // personaje->en_salto = true;
     }
 
+    
     if (teclas[ALLEGRO_KEY_DOWN] && !hay_colision_inferior(*personaje))
     {
-        personaje->posicion.y += personaje->velocidad.y;
+        personaje->posicion.y += 4; //personaje->velocidad.y;
     }
+    
 
     if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(*personaje))
     {
@@ -237,17 +239,6 @@ Procedure continuar_salto(Personaje* personaje, float t)
 }
 
 
-Procedure rebotar_con_techo(Personaje* personaje, float t)
-{
-    // Si el personaje colisiona con el techo, se invierte la velocidad en el eje y
-    personaje->velocidad.y = -personaje->velocidad.y;  // Invierte la velocidad en el eje y
-    personaje->posicion.y = personaje->salto.altura_inicial;  // Ajusta la posición para evitar que se salga por arriba 
-    // mover_personaje(personaje, teclas);  // Detiene el movimiento lateral
-
-    return;
-}
-
-
 Procedure colisionar_con_techo(Personaje* personaje, Entero altura_techo)
 {
     // Si el personaje colisiona con el techo, se invierte la velocidad en el eje y
@@ -273,10 +264,15 @@ Procedure caida_libre(Personaje* personaje, float t)
 }
 
 
+/**
+ * Función que calcula la velocidad vertical del personaje en un instante de tiempo, teniendo en cuenta que v = dy/dt.
+ * @param personaje Es el personaje del cual se quiere conocer su velocidad vertical.
+ * @return La velocidad vertical del personaje.
+ */
+
 Entero velocidad_instantanea(Personaje personaje, float t)
 {
-    // La velocidad instantánea en el salto es v = v0 - g*t
-    // En este caso, v0 = impulso, g = 550 px/s^2 (gravedad para el juego)
+    
     return -personaje.salto.impulso + g*t;
 }
 

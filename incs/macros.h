@@ -20,12 +20,16 @@
 #define VELOCIDAD_JEFE 7
 
 // Macro para el impulso de salto del personaje
-#define IMPULSO_PERSONAJE 1000 // Impulso de salto del personaje en px/s
+#define IMPULSO_PERSONAJE 1500 // Impulso de salto del personaje en px/s
 
 // Macros para cargar fuentes de distinto tamaño
 #define NORMAL 14
 #define GRANDE 24
 #define GIGANTE 36
+
+// Macros para los largos de cadena
+#define LARGO 25
+#define MAXLINEA 64
 
 // Macros para los colores
 #define ROJO al_map_rgb(255, 0, 0)
