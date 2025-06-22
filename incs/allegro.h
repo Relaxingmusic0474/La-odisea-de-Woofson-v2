@@ -9,10 +9,11 @@
 #include "macros.h"
 #include "menu.h"
 #include "enums.h"
+#include "characters.h"
 
 bool inicializar_allegro();
 bool crear_recursos_allegro(Recursos*);
-bool inicializar_todo(Recursos*);
+bool inicializar_todo(Recursos*, Personaje*);
 Procedure finalizar_allegro(Recursos*);
 
 #endif  // ALLEGRO_H

@@ -72,12 +72,15 @@ bool inicializar_allegro()
 
 /**
  * Función que crea los recursos necesarios para el juego.
- * Crea la ventana, la cola de eventos y el temporizador.
+ * Crea la ventana, la cola de eventos y el temporizador, y también lee los mapas de los niveles.
  * @param R Puntero a la estructura Recursos donde se almacenarán los recursos creados.
  * @return true si se crearon los recursos correctamente, false en caso contrario. 
  */ 
 bool crear_recursos_allegro(Recursos* R)
 {
+    Natural i=0;
+
+    /* Se crea la ventana */
     R->ventana = al_create_display(ANCHO_VENTANA, ALTO_VENTANA);
 
     if (!R->ventana)
@@ -87,16 +90,18 @@ bool crear_recursos_allegro(Recursos* R)
     }
 
     al_set_window_title(R->ventana, NOMBRE_JUEGO);
-    //al_set_window_position(R->ventana, 0, 0);
+    // al_set_window_position(R->ventana, 0, 0);
 
     R->cola_eventos = al_create_event_queue();
 
     if (!R->cola_eventos)
     {
         printf("Error al crear la cola de eventos.\n");
+        al_destroy_display(R->ventana);
+        R->ventana = NULL;
         return false;
     }
-    
+
     R->temporizador = al_create_timer(1./FPS);
 
     if (!R->temporizador)
@@ -147,24 +152,55 @@ bool crear_recursos_allegro(Recursos* R)
 
     al_register_event_source(R->cola_eventos, al_get_mouse_event_source());
 
+    /* Se leen los mapas de todos los niveles */
+    for (i=0; i<NRO_NIVELES; i++)
+    {
+        R->mapas[i] = leer_mapa(i+1);  // Se leen los mapas de los niveles, comenzando desde el nivel 1 (índice 0)
+
+        /* Si el mapa es NULL, se imprime un mensaje de error y se liberan los mapas ya leidos antes de retornar false */
+        if (R->mapas[i].mapa == NULL)
+        {
+            printf("Error al leer el mapa del nivel %d.\n", i);
+
+            // Liberar los mapas ya leídos antes de retornar false
+            for (Natural j = 0; j < i; j++)
+            {
+                liberar_mapa(&R->mapas[j]);
+            }
+            return false;
+        }
+    }
+
     return true;
 }
 
 
 /**
- * Función que inicializa todos los módulos y recursos de Allegro5 necesarios para el juego.
+ * Función que inicializa todos los módulos y recursos de Allegro5 necesarios para el juego, además de inicializar al personaje principal.
  * @param R Puntero a la estructura Recursos donde se almacenarán los recursos creados.
  * @return true si se inicializaron todos los recursos correctamente, false en caso contrario.
  */
-bool inicializar_todo(Recursos* R)
+bool inicializar_todo(Recursos* R, Personaje* P)
 {
+    /* Se inicializa la semilla para los números aleatorios */
+    srand(time(NULL));
+
+    /* Se inicializan todos los módulos de allegro */
     if (!inicializar_allegro())
     {
         finalizar_allegro(R);  // Por si el error ocurre después de haber inicializado algunos módulos
         return false;
     }
 
+    /* Se crean los recursos necesarios para el juego (ventana, cola de eventos, temporizador, mapa, etc) */
     if (!crear_recursos_allegro(R))
+    {
+        finalizar_allegro(R);  // En caso de error, se liberan los recursos creados
+        return false;
+    }
+
+    /* Se inicializa al personaje con un identificador */
+    if (!inicializar_personaje(P, 'D'))
     {
         finalizar_allegro(R);
         return false;
@@ -181,6 +217,8 @@ bool inicializar_todo(Recursos* R)
  */
 Procedure finalizar_allegro(Recursos* R)
 {
+    liberar_mapas(R->mapas, NRO_NIVELES);
+
     if (R->cola_eventos != NULL)
     {
         al_destroy_event_queue(R->cola_eventos);

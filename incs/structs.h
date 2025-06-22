@@ -8,6 +8,7 @@
 
 typedef struct vector Vector;
 typedef struct salto Salto;
+typedef struct mapa Mapa;
 typedef struct personaje Personaje;
 typedef struct colision Colision;
 typedef struct boton Boton; 
@@ -32,6 +33,13 @@ struct salto  // ANALIZAR SI SERÁ NECESARIO AGREGAR LA POSICIÓN FINAL DEL SALT
     Entero altura_choque; // Este atributo cobra sentido si el salto es interrumpido por un techo
 };
 
+struct mapa
+{
+    Natural** mapa;
+    Natural nro_filas;
+    Natural nro_columnas;
+};
+
 struct personaje
 {
     Imagen imagen;
@@ -45,11 +53,8 @@ struct personaje
     int bandera_dibujo;  // Si se dibuja normal o en espejo
     char tipo;  // Si es malo o bueno
     // bool inicializado;  // Este atributo puede que NO sea necesario (se podria eliminar)
-    
     // Estos atributos ahora se reemplazarán por una variable estructura Salto
     Salto salto;
-    // bool en_salto;
-    // float tiempo_salto;  // Tiempo que lleva en el salto
     // bool en_movimiento;
 };
 
@@ -92,6 +97,7 @@ struct recursos
     ALLEGRO_EVENT_QUEUE* cola_eventos;
     ALLEGRO_TIMER* temporizador;
     Eventos eventos;
+    Mapa mapas[NRO_NIVELES];
     /* 
     ALLEGRO_FONT* fuentes[6];  // Seran 2 posibles fuentes con 3 tamaños predeterminados cada una -> Se implementara la idea mas adelante
     Lista bitmaps;  // Bitmaps en una lista enlazada (para dinamismo) -> Se implementara la idea mas adelante

@@ -32,6 +32,29 @@ Natural obtener_opcion_en_hover(Menu menu)
 }
 
 
+/**
+ * Función que determina el color de la pantalla según la iteración del juego.
+ * @param iteracion Es el número de iteración del juego, que se incrementa cada frame.
+ * @param rojo Puntero al valor del componente rojo del color de fondo.
+ * @param verde Puntero al valor del componente verde del color de fondo.
+ * @param azul Puntero al valor del componente azul del color de fondo.
+ */
+Procedure determinar_color_pantalla(Natural iteracion, Natural* rojo, Natural* verde, Natural* azul)
+{
+    if (iteracion == 0)
+    {
+        // Cada 30 frames cambia el color de fondo de forma aleatoria
+        *rojo = rand() % 256;
+        *verde = rand() % 256;
+        *azul = rand() % 256;
+    }
+
+    al_clear_to_color(al_map_rgb(*rojo, *verde, *azul));
+
+    return;
+}
+
+
 bool inicializar_menu_principal(Menu* menu)
 {
     Natural i;

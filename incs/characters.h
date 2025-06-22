@@ -1,9 +1,17 @@
 #ifndef CHARACTERS_H
 #define CHARACTERS_H
 
-#include "allegro.h"
+#include "stdio.h"
+#include "stdbool.h"
+#include "allegro_libraries.h"
+#include "macros.h"
+#include "enums.h"
+#include "structs.h"
+#include "types.h"
 
 bool inicializar_personaje(Personaje*, char);
+Procedure inicializar_salto(Personaje*);
+Procedure determinar_como_dibujar_personaje(Personaje*, bool [ALLEGRO_KEY_MAX], Natural);
 Procedure mover_personaje(Personaje*, bool [ALLEGRO_KEY_MAX]);
 bool hay_colision_con_bordes(Personaje);
 bool hay_colision_izquierda(Personaje);

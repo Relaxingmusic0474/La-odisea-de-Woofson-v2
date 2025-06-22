@@ -96,7 +96,7 @@ FILE* cargar_mapa(Natural nro_nivel)
 
     if (!archivo_mapa)
     {
-        printf("Error al cargar el archivo del mapa\n");
+        printf("Error al cargar el archivo del mapa %s\n", ruta);
         return NULL;
     }
 
@@ -146,7 +146,7 @@ Natural obtener_nro_columnas(Natural nro_nivel)
 
     if (!archivo_mapa)
     {
-        return NULL;
+        return 0;
     }
 
     if (fgets(linea, MAXLINEA, archivo_mapa))
@@ -171,53 +171,43 @@ Natural obtener_nro_columnas(Natural nro_nivel)
  * @param nro_nivel El nivel del cual se puede cargar un mapa.
  * @return La matriz que se lee en el mapa.
  */
-Natural** leer_mapa(Natural nro_nivel, Natural* nro_filas, Natural* nro_columnas)
+Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
 {
     Natural i=0, j=0;
-    char ch = '\0';
-    Natural** mapa = NULL;
+    Mapa mapa = {NULL, 0, 0};
     FILE* archivo_mapa = NULL;
 
-    *nro_filas = 0, *nro_columnas = 0;  /* Por seguridad se inicializa en 0 */
+    mapa.nro_filas = obtener_nro_filas(nro_nivel);
 
-    *nro_filas = obtener_nro_filas(nro_nivel);
-
-    if (*nro_filas == 0)
+    if (mapa.nro_filas == 0)
     {
-        return NULL;
+        return mapa;
     }
 
-    *nro_columnas = obtener_nro_columnas(nro_nivel);
+    mapa.nro_columnas = obtener_nro_columnas(nro_nivel);
 
-    if (*nro_columnas == 0)
+    if (mapa.nro_columnas == 0)
     {
-        return NULL;
+        return MAPA_INVALIDO;
     }
 
-    mapa = (Natural **) malloc(*nro_filas * sizeof(Natural*));
+    mapa.mapa = (Natural **) malloc(mapa.nro_filas * sizeof(Natural*));
 
-    if (!mapa)
+    if (!mapa.mapa)
     {
         printf("Error de asignación de memoria");
-        return NULL;
+        return MAPA_INVALIDO;
     }
 
-    for (i=0; i<*nro_filas; i++)
+    for (i=0; i<mapa.nro_filas; i++)
     {
-        mapa[i] = (Natural *) malloc(*nro_columnas * sizeof(Natural));
+        mapa.mapa[i] = (Natural *) malloc(mapa.nro_columnas * sizeof(Natural));
 
-        if (!mapa[i])
+        if (!mapa.mapa[i])
         {
             printf("Error de asignación de memoria");
-
-            for (j=0; j<i; j++)
-            {
-                free(mapa[j]);
-            }
-
-            free(mapa);
-
-            return NULL;
+            liberar_mapa(&mapa);  // Liberar el mapa ya creado hasta ahora
+            return MAPA_INVALIDO;
         }
     }
 
@@ -225,15 +215,16 @@ Natural** leer_mapa(Natural nro_nivel, Natural* nro_filas, Natural* nro_columnas
 
     if (!archivo_mapa)
     {
-        return NULL;
+        liberar_mapa(&mapa);
+        return MAPA_INVALIDO;
     }
 
     i=0, j=0;
 
-    // Aqui el codigo para leer el archivo y asignar/reasignar dinamicamente el tamaño de la matriz dependiendo los datos que tenga el archivo
-    while (fscanf(archivo_mapa, "%hu ", &mapa[i][j]) == 1)
+    /* Como ya se sabe el nro de filas y el nro de columnas que tiene el mapa, ahora se lee cada uno de sus elementos */
+    while (fscanf(archivo_mapa, "%hu ", &mapa.mapa[i][j]) == 1)
     {
-        j = (j+1) % *nro_columnas;
+        j = (j+1) % (mapa.nro_columnas);
         
         if (j == 0)
         {
@@ -241,23 +232,29 @@ Natural** leer_mapa(Natural nro_nivel, Natural* nro_filas, Natural* nro_columnas
         }
     }
 
+    /* Como ya se leyó el mapa, se cierra el archivo */
     fclose(archivo_mapa);
 
     return mapa;
 }
 
 
-Procedure dibujar_mapa(Natural* mapa[], Natural nro_filas, Natural nro_columnas)
+/**
+ * Función que dibuja el mapa en la ventana.
+ * @param mapa Es el mapa que se desea dibujar.
+ */
+Procedure dibujar_mapa(Mapa mapa)
 {
     Natural i=0, j=0;
     
-    for (i=0; i<nro_filas; i++)
+    for (i=0; i<mapa.nro_filas; i++)
     {
-        for (j=0; j<nro_columnas; j++)
+        for (j=0; j<mapa.nro_columnas; j++)
         {
-            if (mapa[i][j] == 1)
+            if (mapa.mapa[i][j] == 1)
             {
-                al_draw_filled_rectangle(j*ANCHO_VENTANA/nro_columnas, i*810/nro_filas, (j+1)*ANCHO_VENTANA/nro_columnas, (i+1)*810/nro_filas, AZUL);
+                al_draw_filled_rectangle(j*ANCHO_VENTANA/mapa.nro_columnas, i*810/mapa.nro_filas, 
+                                        (j+1)*ANCHO_VENTANA/mapa.nro_columnas, (i+1)*810/mapa.nro_filas, AZUL);
             }
         }
     }
@@ -266,18 +263,47 @@ Procedure dibujar_mapa(Natural* mapa[], Natural nro_filas, Natural nro_columnas)
 }
 
 
-Procedure liberar_mapa(Natural* mapa[], Natural nro_filas)
+/**
+ * Función que libera la memoria de un mapa.
+ * @param mapa Es el mapa a liberar.
+ */
+Procedure liberar_mapa(Mapa* mapa)
 {
     Natural i=0;
 
-    for (i=0; i<nro_filas; i++)
+    for (i=0; i<mapa->nro_filas; i++)
     {
-        free(mapa[i]);
-        mapa[i] = NULL;
+        free(mapa->mapa[i]);
+        mapa->mapa[i] = NULL;        
     }
 
-    free(mapa);
-    mapa = NULL;
+    free(mapa->mapa);
+    mapa->mapa = NULL;
+
+    /* Reinicia el mapa a su estado inicial */
+    mapa->nro_filas = 0;
+    mapa->nro_columnas = 0;
+
+    return;
+}
+
+
+/**
+ * Función que libera todos los mapas del juego.
+ * @param mapas Es el arreglo de mapas a liberar.
+ * @param nro_niveles Es el número de niveles (cantidad de mapas) que hay en el juego.
+ */
+Procedure liberar_mapas(Mapa mapas[], Natural nro_niveles)
+{
+    Natural i=0;
+
+    for (i=0; i<nro_niveles; i++)
+    {
+        if (mapas[i].mapa != NULL)
+        {
+            liberar_mapa(&mapas[i]);
+        }
+    }
 
     return;
 }

@@ -12,27 +12,15 @@ int main()
     Etapa etapa_juego = MENU_PRINCIPAL;  /* Para capturar el estado actual del juego */
     Musica* musica = {NULL}; /* Para manejar la música del juego */
     Personaje dragon = {0}; /* Para manejar el personaje del juego */
-    /*extern */bool teclas[ALLEGRO_KEY_MAX] = {false}; /* Para manejar las teclas que se presionan */
-    Natural ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;
-    Natural iteracion = 0;
+    bool teclas[ALLEGRO_KEY_MAX] = {false}; /* Para manejar las teclas que se presionan */
+    Natural ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;  /* Para que el personaje parta mirando a la derecha */
+    Natural iteracion = 0;  /* Para controlar las iteraciones del juego */
     Natural rojo, verde, azul;
-
-    srand(time(NULL));  /* Se inicializa la semilla para los números aleatorios */
     
-    if (!inicializar_todo(&recursos))  /* Se inicializan todos los recursos de Allegro */
+    if (!inicializar_todo(&recursos, &dragon))  /* Se inicializan todos los recursos de Allegro */
     {
         return 1;
     }
-
-    if (!inicializar_personaje(&dragon, 'D'))  /* Se inicializa el personaje */
-    {
-        finalizar_allegro(&recursos);
-        return 3;
-    }
-
-    Natural nro_filas=0, nro_columnas=0, **mapa=NULL;
-
-    mapa = leer_mapa(1, &nro_filas, &nro_columnas);
 
     musica = cargar_musica(MUSICA_MENU);  /* Se carga la música del menú */
 
@@ -55,7 +43,7 @@ int main()
 
         if (etapa_juego == MENU_PRINCIPAL)
         {
-            if (!menu.inicializado) /* Se hace esta comprobación para que no se inicialice varias veces */
+            if (!menu.inicializado)  /* Se hace esta comprobación para que no se inicialice varias veces */
             {
                 if (!inicializar_menu_principal(&menu))
                 {
@@ -70,7 +58,7 @@ int main()
                 {
                     menu.opcion_en_hover = obtener_opcion_en_hover(menu);
             
-                    if (menu.opcion_en_hover >= 0 && menu.opcion_en_hover < menu.nro_opciones)
+                    if (menu.opcion_en_hover < menu.nro_opciones)
                     {
                         redirigir_menu(&menu, menu.opcion_en_hover, &etapa_juego);
                     }
@@ -101,7 +89,7 @@ int main()
                 {
                     menu.opcion_en_hover = obtener_opcion_en_hover(menu);
             
-                    if (menu.opcion_en_hover >= 0 && menu.opcion_en_hover < menu.nro_opciones)
+                    if (menu.opcion_en_hover < menu.nro_opciones)
                     {
                         redirigir_menu(&menu, menu.opcion_en_hover, &etapa_juego);
                     }
@@ -152,30 +140,10 @@ int main()
                     }
 
                     mover_personaje(&dragon, teclas);
-                    
-                    if (iteracion == 0)
-                    {
-                        // Cada 30 frames cambia el color de fondo de forma aleatoria
-                        rojo = rand() % 256;
-                        verde = rand() % 256;
-                        azul = rand() % 256;
-                    }
-
-                    al_clear_to_color(al_map_rgb(rojo, verde, azul));
-
-                    if (teclas[ALLEGRO_KEY_LEFT] || (!teclas[ALLEGRO_KEY_RIGHT] && ultima_tecla_lateral == ALLEGRO_KEY_LEFT))
-				    {
-					    dragon.bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;
-				    }
-
-				    else
-				    {
-					    dragon.bandera_dibujo = 0;
-				    }
-
+                    determinar_color_pantalla(iteracion, &rojo, &verde, &azul);  // Determina el color de la pantalla según la iteración
+                    determinar_como_dibujar_personaje(&dragon, teclas, ultima_tecla_lateral);  // Determina cómo se debe dibujar el personaje según las teclas presionadas
                     al_draw_bitmap(dragon.imagen, dragon.posicion.x, dragon.posicion.y, dragon.bandera_dibujo);
-                    dibujar_mapa(mapa, nro_filas, nro_columnas);
-				    // al_draw_rotated_bitmap(dragon.imagen, al_get_bitmap_width(dragon.imagen) / 2, al_get_bitmap_height(dragon.imagen), dragon.posicion.x, dragon.posicion.y, ALLEGRO_PI/2, dragon.bandera_dibujo);
+                    dibujar_mapa(recursos.mapas[NIVEL1]);  // Dibujamos el mapa del primer nivel
 				    al_flip_display();
 
                     break;
@@ -187,10 +155,9 @@ int main()
                         dragon.posicion.x, dragon.posicion.y,
                         dragon.velocidad.x, dragon.velocidad.y);
             */
-            // al_flip_display();
         }
 
-        iteracion = (iteracion + 1) % 30;
+        iteracion = (iteracion + 1) % 60;
     }
 
     al_destroy_sample(musica->musica);
@@ -198,7 +165,6 @@ int main()
     musica = NULL;
     al_destroy_bitmap(dragon.imagen);
     dragon.imagen = NULL;
-    liberar_mapa(mapa, nro_filas);
     finalizar_allegro(&recursos);
 
     return 0;

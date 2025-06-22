@@ -12,8 +12,9 @@ Musica* cargar_musica(TipoAudio);
 FILE* cargar_mapa(Natural);
 Natural obtener_nro_filas(Natural);
 Natural obtener_nro_columnas(Natural);
-Natural** leer_mapa(Natural, Natural*, Natural*);
-Procedure dibujar_mapa(Natural* [], Natural, Natural);
-Procedure liberar_mapa(Natural* [], Natural);
+Mapa leer_mapa(Natural/*, Natural*/);
+Procedure dibujar_mapa(Mapa/*Natural* [], Natural, Natural*/);
+Procedure liberar_mapa(Mapa*);
+Procedure liberar_mapas(Mapa[], Natural);
 
 #endif  // LOAD_H

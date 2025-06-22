@@ -41,5 +41,6 @@
 
 // Macros de estilo personal de programacion (para hacerlo mas legible para mi)
 #define LOOP while (1)
+#define MAPA_INVALIDO (Mapa) {NULL, 0, 0}
 
 #endif // MACROS_H

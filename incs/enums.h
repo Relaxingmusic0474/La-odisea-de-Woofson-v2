@@ -11,7 +11,7 @@ typedef enum fuente Fuente;
 
 enum etapa
 {
-    MENU_PRINCIPAL,
+    MENU_PRINCIPAL = -4,
     MENU_NIVELES,
     INSTRUCCIONES,
     RANKING,

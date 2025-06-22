@@ -47,7 +47,6 @@ bool inicializar_personaje(Personaje* personaje, char tipo)
     // personaje->impulso = 800;  // Este es el impulso que se le da al personaje al saltar
     personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
     inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
-    // personaje->inicializado = true;
 
     return true;
 }
@@ -62,6 +61,28 @@ Procedure inicializar_salto(Personaje* personaje)
     personaje->salto.altura_inicial = personaje->posicion.y;  // Reinicia la altura inicial del salto
     // personaje->en_salto = false;
     // personaje->tiempo_salto = 0;
+    return;
+}
+
+
+/**
+ * Función que determina cómo se debe dibujar el personaje según las teclas presionadas.
+ * @param personaje El personaje a dibujar.
+ * @param teclas Un arreglo de booleanos que indica qué teclas están presionadas.
+ */
+Procedure determinar_como_dibujar_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Natural ultima_tecla_lateral)
+{
+    /* Se determina cómo se debe dibujar el personaje según las teclas presionadas */
+    if (teclas[ALLEGRO_KEY_LEFT] || (!teclas[ALLEGRO_KEY_RIGHT] && ultima_tecla_lateral == ALLEGRO_KEY_LEFT))
+    {
+        personaje->bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;  // Dibuja el personaje mirando a la izquierda
+    }
+
+    else
+    {
+        personaje->bandera_dibujo = 0;  // Dibuja el personaje mirando a la derecha
+    }
+
     return;
 }
 
@@ -121,6 +142,8 @@ bool hay_colision_con_bordes(Personaje personaje)
 
     return false;
 }
+
+
 
 bool hay_colision_izquierda(Personaje personaje)
 {
@@ -275,6 +298,7 @@ Entero velocidad_instantanea(Personaje personaje, float t)
     
     return -personaje.salto.impulso + g*t;
 }
+
 
 /**
  * Función que verifica si una tecla es una tecla lateral (izquierda o derecha).
