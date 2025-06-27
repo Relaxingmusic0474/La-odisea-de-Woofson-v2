@@ -8,18 +8,14 @@
 #include "enums.h"
 #include "structs.h"
 #include "types.h"
+#include "collisions.h"
 
 bool inicializar_personaje(Personaje*, char);
 Procedure inicializar_salto(Personaje*);
 Procedure determinar_como_dibujar_personaje(Personaje*, bool [ALLEGRO_KEY_MAX], Natural);
-Procedure mover_personaje(Personaje*, bool [ALLEGRO_KEY_MAX]);
-bool hay_colision_con_bordes(Personaje);
-bool hay_colision_izquierda(Personaje);
-bool hay_colision_derecha(Personaje);
-bool hay_colision_superior(Personaje);
-bool hay_colision_inferior(Personaje);
-Procedure efectuar_colision_con_bordes(Personaje*);
-Procedure continuar_salto(Personaje*, float);
+Procedure dibujar_personaje(Personaje, bool [ALLEGRO_KEY_MAX], Natural);
+Procedure mover_personaje(Personaje*, bool [ALLEGRO_KEY_MAX], Mapa);
+Procedure continuar_salto(Personaje*, float, Mapa);
 Entero velocidad_instantanea(Personaje, float);
 bool es_tecla_lateral(Tecla);
 

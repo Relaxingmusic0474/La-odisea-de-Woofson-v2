@@ -132,29 +132,18 @@ int main()
 
 
                 case ALLEGRO_EVENT_TIMER:
+                    
+                    mover_personaje(&dragon, teclas, recursos.mapas[NIVEL1]);  /* Mueve al personaje según las teclas presionadas y considera lógica de salto */
 
-                    if (dragon.salto.en_salto)
-                    {
-                        dragon.salto.tiempo_en_salto += 1.0 / FPS;
-                        continuar_salto(&dragon, dragon.salto.tiempo_en_salto);
-                    }
+                    // printf("En plataforma: %s\n", dragon.en_plataforma ? "Sí" : "No");
 
-                    mover_personaje(&dragon, teclas);
                     determinar_color_pantalla(iteracion, &rojo, &verde, &azul);  // Determina el color de la pantalla según la iteración
-                    determinar_como_dibujar_personaje(&dragon, teclas, ultima_tecla_lateral);  // Determina cómo se debe dibujar el personaje según las teclas presionadas
-                    al_draw_bitmap(dragon.imagen, dragon.posicion.x, dragon.posicion.y, dragon.bandera_dibujo);
+                    dibujar_personaje(dragon, teclas, ultima_tecla_lateral);  // Dibuja el personaje en su posición actual
                     dibujar_mapa(recursos.mapas[NIVEL1]);  // Dibujamos el mapa del primer nivel
 				    al_flip_display();
 
                     break;
-            }
-
-            /*
-            if (iteracion % 10 == 0)
-                printf("Posicion: (%hd, %hd) | Velocidad: (%hd, %hd)\n",
-                        dragon.posicion.x, dragon.posicion.y,
-                        dragon.velocidad.x, dragon.velocidad.y);
-            */
+            }            
         }
 
         iteracion = (iteracion + 1) % 60;

@@ -19,8 +19,8 @@ typedef struct recursos Recursos;
 
 struct vector
 {
-    Entero x;
-    Entero y;
+    float x;
+    float y;
 };
 
 struct salto  // ANALIZAR SI SERÁ NECESARIO AGREGAR LA POSICIÓN FINAL DEL SALTO A LA ESTRUCTURA
@@ -52,10 +52,9 @@ struct personaje
     float escala_dibujo;  // Escala de dibujo del personaje (para que se vea más grande o más pequeño)
     int bandera_dibujo;  // Si se dibuja normal o en espejo
     char tipo;  // Si es malo o bueno
+    bool en_plataforma;  // Si el personaje está en una plataforma o no (si está en el suelo es false)
     // bool inicializado;  // Este atributo puede que NO sea necesario (se podria eliminar)
-    // Estos atributos ahora se reemplazarán por una variable estructura Salto
     Salto salto;
-    // bool en_movimiento;
 };
 
 struct boton 

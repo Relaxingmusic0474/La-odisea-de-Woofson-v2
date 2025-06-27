@@ -78,7 +78,7 @@ bool inicializar_allegro()
  */ 
 bool crear_recursos_allegro(Recursos* R)
 {
-    Natural i=0;
+    Natural i;
 
     /* Se crea la ventana */
     R->ventana = al_create_display(ANCHO_VENTANA, ALTO_VENTANA);
@@ -89,8 +89,9 @@ bool crear_recursos_allegro(Recursos* R)
         return false;
     }
 
-    al_set_window_title(R->ventana, NOMBRE_JUEGO);
-    // al_set_window_position(R->ventana, 0, 0);
+    /* Se ajusta el título de la ventana para que tenga e nombre del juego */
+    al_set_window_title(R->ventana, NOMBRE_JUEGO);  
+    // También se podría usar al_set_window_position() para posicionar la ventana en una ubicación específica
 
     R->cola_eventos = al_create_event_queue();
 
@@ -120,6 +121,7 @@ bool crear_recursos_allegro(Recursos* R)
         return false;
     }
 
+    /* Se registran los eventos de la ventana en la cola de eventos */
     al_register_event_source(R->cola_eventos, R->eventos.ventana);
 
     R->eventos.temporizador = al_get_timer_event_source(R->temporizador);
@@ -130,6 +132,7 @@ bool crear_recursos_allegro(Recursos* R)
         return false;
     }
 
+    /* Se registran los eventos del temporizador en la cola de eventos */
     al_register_event_source(R->cola_eventos, R->eventos.temporizador);
 
     R->eventos.teclado = al_get_keyboard_event_source();
@@ -140,6 +143,7 @@ bool crear_recursos_allegro(Recursos* R)
         return false;
     }
 
+    /* Se registran los eventos del teclado en la cola de eventos */
     al_register_event_source(R->cola_eventos, R->eventos.teclado);
 
     R->eventos.raton = al_get_mouse_event_source();
@@ -150,6 +154,7 @@ bool crear_recursos_allegro(Recursos* R)
         return false;
     }
 
+    /* Se registran los eventos del mouse en la cola de eventos */
     al_register_event_source(R->cola_eventos, al_get_mouse_event_source());
 
     /* Se leen los mapas de todos los niveles */
@@ -161,12 +166,7 @@ bool crear_recursos_allegro(Recursos* R)
         if (R->mapas[i].mapa == NULL)
         {
             printf("Error al leer el mapa del nivel %d.\n", i);
-
-            // Liberar los mapas ya leídos antes de retornar false
-            for (Natural j = 0; j < i; j++)
-            {
-                liberar_mapa(&R->mapas[j]);
-            }
+            liberar_mapas(R->mapas);  /* Liberar los mapas ya leídos antes de retornar false */
             return false;
         }
     }
@@ -217,7 +217,7 @@ bool inicializar_todo(Recursos* R, Personaje* P)
  */
 Procedure finalizar_allegro(Recursos* R)
 {
-    liberar_mapas(R->mapas, NRO_NIVELES);
+    liberar_mapas(R->mapas);
 
     if (R->cola_eventos != NULL)
     {
@@ -240,4 +240,14 @@ Procedure finalizar_allegro(Recursos* R)
     al_uninstall_system();
 
     return;
+}
+
+void mostrar_info(Personaje dragon, Natural iteracion)
+{
+    if (iteracion % 20 == 0)
+    {
+        printf("Posicion: (%.2f, %.2f) | Velocidad: (%.2f, %.2f) | Impulso: %.2f | Tiempo en salto: %.2f\n",
+        dragon.posicion.x, dragon.posicion.y, dragon.velocidad.x, dragon.velocidad.y,
+        dragon.salto.impulso, dragon.salto.tiempo_en_salto);
+    }
 }

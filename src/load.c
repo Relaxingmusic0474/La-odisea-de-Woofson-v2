@@ -254,7 +254,7 @@ Procedure dibujar_mapa(Mapa mapa)
             if (mapa.mapa[i][j] == 1)
             {
                 al_draw_filled_rectangle(j*ANCHO_VENTANA/mapa.nro_columnas, i*810/mapa.nro_filas, 
-                                        (j+1)*ANCHO_VENTANA/mapa.nro_columnas, (i+1)*810/mapa.nro_filas, AZUL);
+                                        (j+1)*ANCHO_VENTANA/mapa.nro_columnas, (i+1)*810/mapa.nro_filas, CAFE);
             }
         }
     }
@@ -289,15 +289,14 @@ Procedure liberar_mapa(Mapa* mapa)
 
 
 /**
- * Función que libera todos los mapas del juego.
+ * Función que libera todos los mapas del juego (todos los mapas de los niveles).
  * @param mapas Es el arreglo de mapas a liberar.
- * @param nro_niveles Es el número de niveles (cantidad de mapas) que hay en el juego.
  */
-Procedure liberar_mapas(Mapa mapas[], Natural nro_niveles)
+Procedure liberar_mapas(Mapa mapas[])
 {
     Natural i=0;
 
-    for (i=0; i<nro_niveles; i++)
+    for (i=0; i<NRO_NIVELES; i++)
     {
         if (mapas[i].mapa != NULL)
         {
