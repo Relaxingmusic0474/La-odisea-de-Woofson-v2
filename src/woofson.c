@@ -32,6 +32,16 @@ int main()
 
     al_play_sample(musica->musica, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, &musica->ID);  /* Se inicia la música del menú */
 
+    for (Natural i=0; i<recursos.mapas[NIVEL1].nro_filas; i++)
+    {
+        for (Natural j=0; j<recursos.mapas[NIVEL1].nro_columnas; j++)
+        {
+            printf("%hu ", recursos.mapas[NIVEL1].mapa[i][j]);
+        }
+
+        printf("\n");
+    }
+
     LOOP
     {
         al_wait_for_event(recursos.cola_eventos, &evento);  /* Se espera a que ocurra algun evento */
@@ -140,6 +150,7 @@ int main()
                     determinar_color_pantalla(iteracion, &rojo, &verde, &azul);  // Determina el color de la pantalla según la iteración
                     dibujar_personaje(dragon, teclas, ultima_tecla_lateral);  // Dibuja el personaje en su posición actual
                     dibujar_mapa(recursos.mapas[NIVEL1]);  // Dibujamos el mapa del primer nivel
+                    // mostrar_pantalla_datos();
 				    al_flip_display();
 
                     break;

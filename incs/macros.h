@@ -21,7 +21,6 @@
 
 // Macros para manejar cosas relacionadas con el salto del personaje
 #define IMPULSO_PERSONAJE 700  /* Impulso de salto del personaje en px/s */
-#define EPSILON 8  /* Tolerancia para evitar caidas al inframundo del personaje */
 
 // Macros para cargar fuentes de distinto tamaño
 #define NORMAL 14

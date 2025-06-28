@@ -125,10 +125,10 @@ Procedure dibujar_personaje(Personaje personaje, bool teclas[ALLEGRO_KEY_MAX], N
  */
 Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Mapa mapa)
 {
-    if (teclas[ALLEGRO_KEY_UP] && personaje->salto.en_salto == false && !hay_colision_superior(*personaje, mapa))
-    {        
+    if (teclas[ALLEGRO_KEY_UP] && !personaje->salto.en_salto && !hay_colision_superior(*personaje, mapa))
+    {
         personaje->salto.en_salto = true;  /* Activa el salto */
-        personaje->posicion.y--;  /* Para que no quede pegado al suelo al saltar parte 1 px sobre el suelo (no se notará) */
+        // personaje->posicion.y--;  /* Para que no quede pegado al suelo al saltar parte 1 px sobre el suelo (no se notará) */
         personaje->salto.altura_inicial = personaje->posicion.y;  /* Guarda la altura inicial del salto */
         personaje->salto.tiempo_en_salto = 0;  /* Reinicia el tiempo de salto */
     }
@@ -162,7 +162,7 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
     if (hay_colision_con_bordes(personaje, mapa))
     {
         efectuar_colision(personaje, mapa);
-    }
+    }    
 
     return;
 }
@@ -202,7 +202,7 @@ Procedure continuar_salto(Personaje* personaje, float t, Mapa mapa)
     /* Si el personaje colisiona ya sea con el suelo o con algún bloque sólido u objeto, se detiene el salto */
     if (hay_colision_inferior(personaje, mapa))
     {
-        printf("Estoy en el suelo o bloque\n");
+        // printf("Estoy en el suelo o bloque\n");
         efectuar_colision(personaje, mapa);  /* Efectúa la colisión con el suelo o bloque */
     }
 

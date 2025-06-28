@@ -21,7 +21,7 @@ bool hay_colision_con_bordes(Personaje* personaje, Mapa mapa)
 
 bool hay_colision_izquierda(Personaje personaje, Mapa mapa)
 {
-    if (personaje.posicion.x <= 0)
+    if (personaje.posicion.x < 0)
     {
         return true;
     }
@@ -34,7 +34,7 @@ bool hay_colision_izquierda(Personaje personaje, Mapa mapa)
 
 bool hay_colision_derecha(Personaje personaje, Mapa mapa)
 {
-    if (personaje.posicion.x + personaje.ancho >= ANCHO_VENTANA)
+    if (personaje.posicion.x + personaje.ancho - 1 > ANCHO_VENTANA)
     {
         return true;
     }
@@ -102,24 +102,26 @@ bool hay_bloque_debajo(Personaje* personaje, Mapa mapa)
     Natural i, j;
     Natural ancho_bloque = ANCHO_VENTANA / mapa.nro_columnas;  /* Ancho de cada bloque en el mapa */
     Natural alto_bloque = ALTURA_PISO / mapa.nro_filas;  /* Alto de cada bloque en el mapa */
-    Natural bloque_x, bloque_y;
+    Vector posicion_bloque;
     bool col_x, col_y;
+
+    frustracion(*personaje, personaje->salto.altura_choque, alto_bloque);
     
     for (i=0; i<mapa.nro_filas; i++)
     {
         for (j=0; j<mapa.nro_columnas; j++)
         {
-            if (mapa.mapa[i][j] == 1)  /* Si hay un bloque en la posición (i, j) */
+            if (mapa.mapa[i][j] == 1)   /* Si hay un bloque en la posición (i, j) */
             {
-                bloque_x = j * ancho_bloque;  /* Posición x del bloque */
-                bloque_y = i * alto_bloque;  /* Posición y del bloque */
+                posicion_bloque.x = j * ancho_bloque;   /* Posición x del bloque */
+                posicion_bloque.y = i * alto_bloque;   /* Posición y del bloque */
 
-                col_x = personaje->posicion.x + personaje->ancho - EPSILON > bloque_x && personaje->posicion.x + EPSILON < bloque_x + ancho_bloque;
-                col_y = personaje->posicion.y + personaje->alto >= bloque_y && personaje->posicion.y + personaje->alto <= bloque_y + alto_bloque;
+                col_x = personaje->posicion.x + personaje->ancho / 2 > posicion_bloque.x && personaje->posicion.x + personaje->ancho / 2 < posicion_bloque.x + ancho_bloque;
+                col_y = personaje->posicion.y + personaje->alto >= posicion_bloque.y && personaje->posicion.y + personaje->alto <= posicion_bloque.y + alto_bloque;
 
                 if (col_x && col_y)
                 {
-                    personaje->salto.altura_choque = bloque_y;  /* Guarda la altura del choque con el bloque */
+                    personaje->salto.altura_choque = posicion_bloque.y; /* Guarda la altura del choque con el bloque */
                     personaje->en_plataforma = true;  /* Indica que el personaje está en una plataforma */
                     return true;
                 }
@@ -176,6 +178,8 @@ Procedure efectuar_colision(Personaje* personaje, Mapa mapa)
         personaje->salto.impulso = IMPULSO_PERSONAJE;  // Reinicia el impulso del salto
         personaje->velocidad.y = 0;  // Detiene la velocidad en el eje y
     }
+
+    printf("¡Caida libre!.  Posicion: (%.2f, %.2f)\n", personaje->posicion.x, personaje->posicion.y);
 
     return;
 }

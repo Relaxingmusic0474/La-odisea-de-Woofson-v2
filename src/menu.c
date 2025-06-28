@@ -310,3 +310,13 @@ Procedure finalizar_menu(Menu* menu)
 
     return;   
 }
+
+Procedure mostrar_pantalla_datos()
+{
+    Natural i;
+
+    al_draw_filled_rectangle(0, 8./9*ALTO_VENTANA, ANCHO_VENTANA, ALTO_VENTANA, GRIS);
+    al_draw_rectangle(1./15*ANCHO_VENTANA, 9./10*ALTO_VENTANA, 1./3*ANCHO_VENTANA, 24./25*ALTO_VENTANA, NEGRO, 2);
+
+    return;
+}
