@@ -42,6 +42,7 @@ bool hay_colision_derecha(Personaje personaje, Mapa mapa)
     return false;
 }
 
+
 bool hay_colision_superior(Personaje personaje, Mapa mapa)
 {
     if (personaje.posicion.y < 0 || hay_bloque_arriba(&personaje, mapa))
@@ -77,7 +78,6 @@ Procedure frustracion(Personaje personaje, Natural bloque_y, Natural alto_bloque
 {
     printf("col_y: %.2f +  %.2f >= %hu y %.2f + %.2f <= %hu\n", personaje.posicion.y, personaje.alto, bloque_y, 
                        personaje.posicion.y, personaje.alto, bloque_y + alto_bloque);
-
 
     // Verifica si el personaje está colisionando con un bloque debajo
     /*
@@ -121,7 +121,7 @@ bool hay_bloque_debajo(Personaje* personaje, Mapa mapa)
 
                 if (col_x && col_y)
                 {
-                    personaje->salto.altura_choque = posicion_bloque.y; /* Guarda la altura del choque con el bloque */
+                    personaje->salto.altura_choque = posicion_bloque.y;  /* Guarda la altura del choque con el bloque */
                     personaje->en_plataforma = true;  /* Indica que el personaje está en una plataforma */
                     return true;
                 }

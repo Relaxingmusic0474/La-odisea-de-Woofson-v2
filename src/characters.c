@@ -144,13 +144,24 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
 
         if (!personaje->salto.en_salto && personaje->posicion.y + personaje->alto < ALTURA_PISO && !hay_bloque_debajo(personaje, mapa))
         {
-            
+            personaje->salto.en_salto = true;  /* Activa el salto si el personaje no está en el suelo */
+            personaje->salto.altura_inicial = personaje->posicion.y;  /* Guarda la altura inicial del salto */
+            personaje->salto.tiempo_en_salto = 0;  /* Reinicia el tiempo de salto */
+            personaje->salto.impulso = 0;  /* Parte con velocidad inicial 0 */
         }
     }
 
     if (teclas[ALLEGRO_KEY_RIGHT] && !hay_colision_derecha(*personaje, mapa))
     {
         personaje->posicion.x += personaje->velocidad.x;
+
+        if (!personaje->salto.en_salto && personaje->posicion.y + personaje->alto < ALTURA_PISO && !hay_bloque_debajo(personaje, mapa))
+        {
+            personaje->salto.en_salto = true;  /* Activa el salto si el personaje no está en el suelo */
+            personaje->salto.altura_inicial = personaje->posicion.y;  /* Guarda la altura inicial del salto */
+            personaje->salto.tiempo_en_salto = 0;  /* Reinicia el tiempo de salto */
+            personaje->salto.impulso = 0;  /* Parte con velocidad inicial 0 */
+        }
     }
     
     if (personaje->salto.en_salto)  /* Si el personaje ya está en salto, se continúa el salto */
@@ -224,15 +235,15 @@ Procedure colisionar_con_techo(Personaje* personaje, Entero altura_techo)
 
 
 /**
- * Función que simula la caída libre del personaje, actualizando su posición y velocidad en el eje y.
+ * Función que activa la caída libre del personaje, actualizando su posición y velocidad en el eje y.
  * @param personaje El personaje que está cayendo.
- * @param t El tiempo transcurrido desde el inicio de la caída.
  */
-Procedure caida_libre(Personaje* personaje, float t)
+Procedure activar_caida_libre(Personaje* personaje)
 {
-    personaje->posicion.y += g * t * t / 2;  // Actualiza la posición en el eje y
-    personaje->velocidad.y += g * t;  // Actualiza la velocidad en el eje y
-
+    personaje->salto.en_salto = true;  /* Marca que el personaje está en caída libre */
+    personaje->salto.altura_inicial = personaje->posicion.y;  /* Guarda la altura inicial de la caída */
+    personaje->salto.tiempo_en_salto = 0;  /* Reinicia el tiempo de salto */
+    personaje->salto.impulso = 0;  /* Parte con velocidad inicial 0 */
     return;
 }
 
