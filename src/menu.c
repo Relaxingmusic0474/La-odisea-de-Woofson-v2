@@ -217,6 +217,7 @@ Procedure redirigir_menu(Menu* menu, Natural opcion_clickeada, Etapa* etapa_actu
     {
         if (opcion_clickeada == 0)
         {
+            printf("\a");  // Efecto de sonido
             *etapa_actual = MENU_NIVELES;
             inicializar_menu_niveles(menu);    
             mostrar_menu(*menu);
@@ -241,6 +242,7 @@ Procedure redirigir_menu(Menu* menu, Natural opcion_clickeada, Etapa* etapa_actu
     {
         if (opcion_clickeada == 5)
         {
+            printf("\a");  // Efecto de sonido
             *etapa_actual = MENU_PRINCIPAL;
             inicializar_menu_principal(menu);
             mostrar_menu(*menu);
@@ -251,6 +253,7 @@ Procedure redirigir_menu(Menu* menu, Natural opcion_clickeada, Etapa* etapa_actu
             switch (opcion_clickeada)
             {
                 case 0:
+                    printf("\a");  // Efecto de sonido
                     *etapa_actual = NIVEL1;
                     al_clear_to_color(ROJO);
                     break;

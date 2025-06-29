@@ -188,14 +188,6 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
  */
 Procedure continuar_salto(Personaje* personaje, float t, Mapa mapa)
 {
-    /* 
-        El salto es un lanzamiento vertical, así que se ocupará la física de un proyectil
-        a = dv/dt; v = dy/dt; y = y0 + v0*t + 1/2*a*t^2
-        Pero a = -g, así que y = y0 + v0*t - 1/2*g*t^2
-        En las ventanas de Allegro, el eje y crece hacia abajo, por lo que en realidad y = y0 - v0*t + g/2*t^2
-        En este caso, y0 = posicion.y, v0 = impulso, g = 1050 px/s^2 (gravedad para el juego)
-    */
-
     personaje->posicion.y = personaje->salto.altura_inicial - personaje->salto.impulso * t + g * t * t / 2;
     personaje->velocidad.y = velocidad_instantanea(*personaje, t);  // Actualiza la velocidad en el eje y
 
@@ -213,7 +205,6 @@ Procedure continuar_salto(Personaje* personaje, float t, Mapa mapa)
     /* Si el personaje colisiona ya sea con el suelo o con algún bloque sólido u objeto, se detiene el salto */
     if (hay_colision_inferior(personaje, mapa))
     {
-        // printf("Estoy en el suelo o bloque\n");
         efectuar_colision(personaje, mapa);  /* Efectúa la colisión con el suelo o bloque */
     }
 

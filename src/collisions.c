@@ -71,27 +71,6 @@ bool hay_colision_inferior(Personaje* personaje, Mapa mapa)
 
 
 /**
- * Función que expresa mi frustración tratando de hacer este juego y entender por qué no funciona.
- * Puede ser de ayuda para depurar problemas de colisión.
- */
-Procedure frustracion(Personaje personaje, Natural bloque_y, Natural alto_bloque)
-{
-    printf("col_y: %.2f +  %.2f >= %hu y %.2f + %.2f <= %hu\n", personaje.posicion.y, personaje.alto, bloque_y, 
-                       personaje.posicion.y, personaje.alto, bloque_y + alto_bloque);
-
-    // Verifica si el personaje está colisionando con un bloque debajo
-    /*
-    if (personaje.posicion.x + personaje.ancho >= j * ANCHO_VENTANA / mapa.nro_columnas &&
-        personaje.posicion.x < (j + 1) * ANCHO_VENTANA / mapa.nro_columnas &&
-        personaje.posicion.y + personaje.alto >= i * ALTURA_PISO / mapa.nro_filas)
-    {
-        return true;
-    }
-    */
-}
-
-
-/**
  * Función que verifica si hay un bloque debajo del personaje.
  * @param personaje El personaje a verificar.
  * @param altura_bloque La altura del bloque debajo del personaje.
@@ -105,8 +84,6 @@ bool hay_bloque_debajo(Personaje* personaje, Mapa mapa)
     Vector posicion_bloque;
     bool col_x, col_y;
 
-    frustracion(*personaje, personaje->salto.altura_choque, alto_bloque);
-    
     for (i=0; i<mapa.nro_filas; i++)
     {
         for (j=0; j<mapa.nro_columnas; j++)
@@ -178,8 +155,6 @@ Procedure efectuar_colision(Personaje* personaje, Mapa mapa)
         personaje->salto.impulso = IMPULSO_PERSONAJE;  // Reinicia el impulso del salto
         personaje->velocidad.y = 0;  // Detiene la velocidad en el eje y
     }
-
-    printf("¡Caida libre!.  Posicion: (%.2f, %.2f)\n", personaje->posicion.x, personaje->posicion.y);
 
     return;
 }
