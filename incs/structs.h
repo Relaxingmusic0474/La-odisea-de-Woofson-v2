@@ -54,6 +54,7 @@ struct personaje
     char tipo;
     Imagen imagen;
     Natural nro_vidas;
+    Natural subvida_actual;
     Vector posicion;
     Vector velocidad;
     float ancho;

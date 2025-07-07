@@ -313,33 +313,36 @@ Procedure dibujar_texto_en_rectangulo(char* texto, Rectangulo rectangulo, float 
 }
 
 
-Procedure dibujar_rectangulo_en_rectangulo(Rectangulo rect_destino, float alto, float ancho, float porcentaje_x, float porcentaje_y, bool relleno, ALLEGRO_COLOR color)
+Rectangulo dibujar_rectangulo_en_rectangulo(Rectangulo rect_destino, float alto, float ancho, float porcentaje_x, float porcentaje_y, bool relleno, ALLEGRO_COLOR color)
 {
-    Vector posicion_inicial, posicion_final;
+    Rectangulo rect;
 
-    posicion_inicial.x = rect_destino.pos_inicial.x + porcentaje_x / 100 * (rect_destino.pos_final.x - rect_destino.pos_inicial.x) - ancho / 2;
-    posicion_inicial.y = rect_destino.pos_inicial.y + porcentaje_y / 100 * (rect_destino.pos_final.y - rect_destino.pos_inicial.y) - alto / 2;
+    rect.pos_inicial.x = rect_destino.pos_inicial.x + porcentaje_x / 100 * (rect_destino.pos_final.x - rect_destino.pos_inicial.x) - ancho / 2;
+    rect.pos_inicial.y = rect_destino.pos_inicial.y + porcentaje_y / 100 * (rect_destino.pos_final.y - rect_destino.pos_inicial.y) - alto / 2;
 
-    posicion_final.x = rect_destino.pos_inicial.x + porcentaje_x / 100 * (rect_destino.pos_final.x - rect_destino.pos_inicial.x) + ancho / 2;
-    posicion_final.y = rect_destino.pos_inicial.y + porcentaje_y / 100 * (rect_destino.pos_final.y - rect_destino.pos_inicial.y) + alto / 2;
+    rect.pos_final.x = rect_destino.pos_inicial.x + porcentaje_x / 100 * (rect_destino.pos_final.x - rect_destino.pos_inicial.x) + ancho / 2;
+    rect.pos_final.y = rect_destino.pos_inicial.y + porcentaje_y / 100 * (rect_destino.pos_final.y - rect_destino.pos_inicial.y) + alto / 2;
     
     if (relleno)
     {
-        al_draw_filled_rectangle(posicion_inicial.x, posicion_inicial.y, posicion_final.x, posicion_final.y, color);
+        al_draw_filled_rectangle(rect.pos_inicial.x, rect.pos_inicial.y, rect.pos_final.x, rect.pos_final.y, color);
     }
 
     else
     {
-        al_draw_rectangle(posicion_inicial.x, posicion_inicial.y, posicion_final.x, posicion_final.y, color, 2.0);
+        al_draw_rectangle(rect.pos_inicial.x, rect.pos_inicial.y, rect.pos_final.x, rect.pos_final.y, color, 2.0);
     }
+
+    return rect;
 }
 
 
 Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, Etapa etapa_actual)
 {
     Natural i;
-    Natural nivel, alto_linea;
+    Natural nivel, alto_linea, alto_barras;
     Rectangulo rectangulo_datos;
+    Rectangulo rectangulo_subvidas;
     char texto_nro_nivel[6] = {'\0'};
     char texto_nro_vidas[5] = {'\0'};
 
@@ -360,7 +363,19 @@ Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida, ALLE
     dibujar_texto_en_rectangulo(texto_nro_vidas, rectangulo_datos, 18.0, 35.0, fuente);
     dibujar_texto_en_rectangulo("VIDAS", rectangulo_datos, 16.3, 75.0, fuente_sec);
     dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 22.5, 50.0, false, NEGRO);
-    dibujar_rectangulo_en_rectangulo(rectangulo_datos, 50, 800, 50.0, 35.0, false, NEGRO);
+    rectangulo_subvidas = dibujar_rectangulo_en_rectangulo(rectangulo_datos, 50, 800, 50.0, 35.0, false, NEGRO);
     dibujar_texto_en_rectangulo("BARRA DE VIDA", rectangulo_datos, 50.0, 75.0, fuente_sec);
+
+    alto_barras = 0.85 * (rectangulo_subvidas.pos_final.y - rectangulo_subvidas.pos_inicial.y);
+
+    for (i=0; i<personaje.subvida_actual; i++)
+    {
+        dibujar_rectangulo_en_rectangulo(rectangulo_subvidas, alto_barras, 6.0, 0.625 + 99.375 / 100 * i, 50.0, true, VERDE_OSCURO);
+    }
+
+    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 78.0, 50.0, false, NEGRO);
+    dibujar_texto_en_rectangulo("Score:", rectangulo_datos, 85.0, 50.0, fuente);
+    
+    
     // al_draw_rectangle(1./15*ANCHO_VENTANA, 9./10*ALTO_VENTANA, 1./3*ANCHO_VENTANA, 24./25*ALTO_VENTANA, NEGRO, 2);
 }

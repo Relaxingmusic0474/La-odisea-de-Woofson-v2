@@ -46,6 +46,7 @@ bool inicializar_personaje(Personaje* personaje, char tipo)
     }
 
     personaje->nro_vidas = VIDAS_INICIALES;
+    personaje->subvida_actual = 100;
     personaje->escala_dibujo = 1.0;
     personaje->ancho = al_get_bitmap_width(personaje->imagen) * personaje->escala_dibujo;  // Ancho del personaje
     personaje->alto = al_get_bitmap_height(personaje->imagen) * personaje->escala_dibujo;  // Alto del personaje

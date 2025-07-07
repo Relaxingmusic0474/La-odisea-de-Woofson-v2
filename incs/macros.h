@@ -40,6 +40,7 @@
 // Macros para los colores
 #define ROJO al_map_rgb(255, 0, 0)
 #define VERDE al_map_rgb(0, 255, 0)
+#define VERDE_OSCURO al_map_rgb(0, 215, 0)
 #define AZUL al_map_rgb(0, 0, 255)
 #define BLANCO al_map_rgb(255, 255, 255)
 #define NEGRO al_map_rgb(0, 0, 0)

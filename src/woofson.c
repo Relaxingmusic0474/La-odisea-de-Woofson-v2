@@ -102,9 +102,17 @@ int main()
                     dibujar_personaje(recursos.pje_principal, teclas, ultima_tecla_lateral);  // Dibuja el personaje en su posición actual
                     dibujar_mapa(recursos.mapas[NIVEL1]);  // Dibujamos el mapa del primer nivel
 
-                    if (iteracion % 20 == 0)
+                    if (iteracion % 10 == 0)
                     {
                         mostrar_bloque_actual_personaje(recursos.pje_principal, recursos.mapas[NIVEL1]);
+                        
+                        recursos.pje_principal.subvida_actual--;
+
+                        if (recursos.pje_principal.subvida_actual == 0)
+                        {
+                            recursos.pje_principal.nro_vidas--;
+                            recursos.pje_principal.subvida_actual = 100;
+                        }
                     }
 
                     mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[4], recursos.fuentes[1], etapa_juego);
