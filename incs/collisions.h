@@ -2,6 +2,8 @@
 #define COLLISIONS_H
 
 #include "allegro.h"
+#include "structs.h"
+#include "debug.h"
 
 bool hay_colision_con_bordes(Personaje*, Mapa);
 bool hay_colision_izquierda(Personaje, Mapa);

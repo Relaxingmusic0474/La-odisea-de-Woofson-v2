@@ -5,11 +5,11 @@
 
 // Macros generales
 #define NOMBRE_JUEGO "La odisea de Woofson"
-#define FPS 60
-#define g 1050 // Gravedad en px/s^2
-#define ANCHO_VENTANA 1620 // 1080
-#define ALTO_VENTANA 900 // 600
-#define ALTURA_PISO (ALTO_VENTANA * 5/6) // Altura del piso en px
+#define FPS 60  // Frecuencia de actualización de la pantalla 
+#define g 1050  // Gravedad en px/s^2
+#define ANCHO_VENTANA 1620
+#define ALTO_VENTANA 900
+#define ALTURA_PISO (ALTO_VENTANA * 5/6)  // Altura del piso en px
 #define NRO_NIVELES 5
 #define NRO_MUESTRAS_AUDIO_RESERVADAS 4
 
@@ -19,8 +19,11 @@
 #define VELOCIDAD_HUMANOIDES 3
 #define VELOCIDAD_JEFE 7
 
+// Macro que define la cantidad de vidas que tendrá el personaje inicialmente
+#define VIDAS_INICIALES 5
+
 // Macros para manejar cosas relacionadas con el salto del personaje
-#define IMPULSO_PERSONAJE 700  /* Impulso de salto del personaje en px/s */
+#define IMPULSO_PERSONAJE 700  // Impulso de salto del personaje en px/s
 
 // Macros para cargar fuentes de distinto tamaño
 #define NORMAL 14
@@ -42,6 +45,6 @@
 
 // Macros de estilo personal de programacion (para hacerlo mas legible para mi)
 #define LOOP while (1)
-#define MAPA_INVALIDO (Mapa) {NULL, 0, 0}
+#define MAPA_INVALIDO (Mapa) {NULL, 0, 0, 0., 0.}
 
 #endif // MACROS_H

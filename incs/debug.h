@@ -5,5 +5,7 @@
 
 Procedure mostrar_mapa(Mapa);
 Procedure mostrar_datos_personaje(Personaje);
+Procedure mostrar_bloque_actual_personaje(Personaje, Mapa);
+Procedure caida_libre_activada(Personaje);
 
 #endif  // DEBUG_H

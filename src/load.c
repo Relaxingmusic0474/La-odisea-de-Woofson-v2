@@ -235,6 +235,9 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
     /* Como ya se leyó el mapa, se cierra el archivo */
     fclose(archivo_mapa);
 
+    mapa.alto_bloque = (float) ALTURA_PISO / mapa.nro_filas;
+    mapa.ancho_bloque = (float) ANCHO_VENTANA / mapa.nro_columnas;
+
     return mapa;
 }
 

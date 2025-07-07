@@ -7,6 +7,7 @@
 #include "enums.h"
 
 typedef struct vector Vector;
+typedef struct rectangulo Rectangulo;
 typedef struct salto Salto;
 typedef struct mapa Mapa;
 typedef struct personaje Personaje;
@@ -21,6 +22,12 @@ struct vector
 {
     float x;
     float y;
+};
+
+struct rectangulo
+{
+    Vector pos_inicial;
+    Vector pos_final;
 };
 
 struct salto  // ANALIZAR SI SERÁ NECESARIO AGREGAR LA POSICIÓN FINAL DEL SALTO A LA ESTRUCTURA
@@ -38,23 +45,24 @@ struct mapa
     Natural** mapa;
     Natural nro_filas;
     Natural nro_columnas;
+    float ancho_bloque;
+    float alto_bloque;
 };
 
 struct personaje
 {
+    char tipo;
     Imagen imagen;
+    Natural nro_vidas;
     Vector posicion;
     Vector velocidad;
-    // Vector aceleracion;  // Aceleración del personaje (puede ser útil para implementar la gravedad o un MRUV)
-    // float impulso;  // Este es el impulso que se le da al personaje al saltar
     float ancho;
     float alto;
     float escala_dibujo;  // Escala de dibujo del personaje (para que se vea más grande o más pequeño)
     int bandera_dibujo;  // Si se dibuja normal o en espejo
-    char tipo;  // Si es malo o bueno
     bool en_plataforma;  // Si el personaje está en una plataforma o no (si está en el suelo es false)
-    // bool inicializado;  // Este atributo puede que NO sea necesario (se podria eliminar)
     Salto salto;
+    Vector colision;  // Vector de colisión (para detectar colisiones con el mapa)
 };
 
 struct boton 
@@ -97,6 +105,7 @@ struct recursos
     ALLEGRO_TIMER* temporizador;
     Eventos eventos;
     Mapa mapas[NRO_NIVELES];
+    ALLEGRO_BITMAP* vida;
     /* 
     ALLEGRO_FONT* fuentes[6];  // Seran 2 posibles fuentes con 3 tamaños predeterminados cada una -> Se implementara la idea mas adelante
     Lista bitmaps;  // Bitmaps en una lista enlazada (para dinamismo) -> Se implementara la idea mas adelante

@@ -60,6 +60,7 @@ bool hay_colision_inferior(Personaje* personaje, Mapa mapa)
 {
     if (personaje->posicion.y + personaje->alto >= ALTURA_PISO || hay_bloque_debajo(personaje, mapa))
     {
+        
         return true;
     }
 
@@ -68,6 +69,7 @@ bool hay_colision_inferior(Personaje* personaje, Mapa mapa)
         return false;
     }
 }
+
 
 
 /**
@@ -98,8 +100,10 @@ bool hay_bloque_debajo(Personaje* personaje, Mapa mapa)
 
                 if (col_x && col_y)
                 {
-                    personaje->salto.altura_choque = posicion_bloque.y;  /* Guarda la altura del choque con el bloque */
+                    personaje->salto.en_salto = false;
+                    // personaje->salto.altura_choque = posicion_bloque.y;  /* Guarda la altura del choque con el bloque */
                     personaje->en_plataforma = true;  /* Indica que el personaje está en una plataforma */
+                    
                     return true;
                 }
             }
@@ -108,6 +112,7 @@ bool hay_bloque_debajo(Personaje* personaje, Mapa mapa)
 
     return false;
 }
+
 
 
 /* ADVERTENCIA: PUEDE NO ESTAR BIEN ESTA FUNCION */
@@ -141,6 +146,7 @@ Procedure efectuar_colision(Personaje* personaje, Mapa mapa)
         if (!personaje->en_plataforma)
         {
             personaje->posicion.y = ALTURA_PISO - personaje->alto;  /* Ajusta la posición del personaje al suelo */
+            personaje->salto.en_salto = false;
         }
 
         else 

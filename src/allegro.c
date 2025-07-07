@@ -60,7 +60,7 @@ bool inicializar_allegro()
         return false;
     }
 
-    if (!al_reserve_samples(NRO_MUESTRAS_AUDIO_RESERVADAS))  /* Reservamos 10 muestras de audio para evitar problemas de memoria */
+    if (!al_reserve_samples(NRO_MUESTRAS_AUDIO_RESERVADAS))
     {
         printf("Error al reservar las muestras de audio.\n");
         return false;
@@ -98,8 +98,6 @@ bool crear_recursos_allegro(Recursos* R)
     if (!R->cola_eventos)
     {
         printf("Error al crear la cola de eventos.\n");
-        al_destroy_display(R->ventana);
-        R->ventana = NULL;
         return false;
     }
 
@@ -171,6 +169,14 @@ bool crear_recursos_allegro(Recursos* R)
         }
     }
 
+    R->vida = al_load_bitmap("assets/images/corazon.png");
+
+    if (!R->vida)
+    {
+        printf("Error al cargar la imagen de las vidas del personaje\n");
+        return false;
+    }
+
     return true;
 }
 
@@ -217,6 +223,11 @@ bool inicializar_todo(Recursos* R, Personaje* P)
  */
 Procedure finalizar_allegro(Recursos* R)
 {
+    if (R->vida != NULL)
+    {
+        al_destroy_bitmap(R->vida);
+    }
+
     liberar_mapas(R->mapas);
 
     if (R->cola_eventos != NULL)
@@ -238,16 +249,4 @@ Procedure finalizar_allegro(Recursos* R)
     }
 
     al_uninstall_system();
-
-    return;
-}
-
-void mostrar_info(Personaje dragon, Natural iteracion)
-{
-    if (iteracion % 20 == 0)
-    {
-        printf("Posicion: (%.2f, %.2f) | Velocidad: (%.2f, %.2f) | Impulso: %.2f | Tiempo en salto: %.2f\n",
-        dragon.posicion.x, dragon.posicion.y, dragon.velocidad.x, dragon.velocidad.y,
-        dragon.salto.impulso, dragon.salto.tiempo_en_salto);
-    }
 }

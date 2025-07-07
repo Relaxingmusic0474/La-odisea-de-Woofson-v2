@@ -18,6 +18,6 @@ bool inicializar_menu_niveles(Menu*);
 Procedure mostrar_menu(Menu);
 Procedure redirigir_menu(Menu*, Natural, Etapa*);
 Procedure finalizar_menu(Menu*);
-Procedure mostrar_pantalla_datos(void);
+Procedure mostrar_pantalla_datos(Personaje, ALLEGRO_BITMAP*);
 
 #endif  // MENU_H

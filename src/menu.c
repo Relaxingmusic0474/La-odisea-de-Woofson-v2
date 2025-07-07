@@ -217,7 +217,6 @@ Procedure redirigir_menu(Menu* menu, Natural opcion_clickeada, Etapa* etapa_actu
     {
         if (opcion_clickeada == 0)
         {
-            printf("\a");  // Efecto de sonido
             *etapa_actual = MENU_NIVELES;
             inicializar_menu_niveles(menu);    
             mostrar_menu(*menu);
@@ -242,7 +241,6 @@ Procedure redirigir_menu(Menu* menu, Natural opcion_clickeada, Etapa* etapa_actu
     {
         if (opcion_clickeada == 5)
         {
-            printf("\a");  // Efecto de sonido
             *etapa_actual = MENU_PRINCIPAL;
             inicializar_menu_principal(menu);
             mostrar_menu(*menu);
@@ -253,7 +251,6 @@ Procedure redirigir_menu(Menu* menu, Natural opcion_clickeada, Etapa* etapa_actu
             switch (opcion_clickeada)
             {
                 case 0:
-                    printf("\a");  // Efecto de sonido
                     *etapa_actual = NIVEL1;
                     al_clear_to_color(ROJO);
                     break;
@@ -314,12 +311,32 @@ Procedure finalizar_menu(Menu* menu)
     return;   
 }
 
-Procedure mostrar_pantalla_datos()
+Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida)
 {
     Natural i;
+    Rectangulo rectangulo_datos;
 
-    al_draw_filled_rectangle(0, 8./9*ALTO_VENTANA, ANCHO_VENTANA, ALTO_VENTANA, GRIS);
+    rectangulo_datos.pos_inicial.x = 0;
+    rectangulo_datos.pos_inicial.y = (8./9) * ALTO_VENTANA;
+    rectangulo_datos.pos_final.x = ANCHO_VENTANA;
+    rectangulo_datos.pos_final.y = ALTO_VENTANA;
+
+    dibujar_rectangulo(rectangulo_datos, GRIS);
+    dibujar_vidas(personaje, vida);
     al_draw_rectangle(1./15*ANCHO_VENTANA, 9./10*ALTO_VENTANA, 1./3*ANCHO_VENTANA, 24./25*ALTO_VENTANA, NEGRO, 2);
 
     return;
 }
+
+
+Procedure dibujar_vidas(Personaje personaje, ALLEGRO_BITMAP* vida)
+{
+    al_draw_bitmap(vida, 100, 820, 0);
+}
+
+
+Procedure dibujar_rectangulo(Rectangulo rectangulo, ALLEGRO_COLOR color)
+{
+    al_draw_filled_rectangle(rectangulo.pos_inicial.x, rectangulo.pos_inicial.y, rectangulo.pos_final.x, rectangulo.pos_final.y, color);
+}
+

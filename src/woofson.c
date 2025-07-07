@@ -142,8 +142,15 @@ int main()
                     determinar_color_pantalla(iteracion, &rojo, &verde, &azul);  // Determina el color de la pantalla según la iteración
                     dibujar_personaje(dragon, teclas, ultima_tecla_lateral);  // Dibuja el personaje en su posición actual
                     dibujar_mapa(recursos.mapas[NIVEL1]);  // Dibujamos el mapa del primer nivel
-                    // mostrar_pantalla_datos();
-				    al_flip_display();
+
+                    if (iteracion % 20 == 0)
+                    {
+                        mostrar_bloque_actual_personaje(dragon, recursos.mapas[NIVEL1]);
+                    }
+
+                    mostrar_pantalla_datos(dragon, recursos.vida);
+				    
+                    al_flip_display();
 
                     break;
             }            

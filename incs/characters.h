@@ -16,6 +16,7 @@ Procedure determinar_como_dibujar_personaje(Personaje*, bool [ALLEGRO_KEY_MAX], 
 Procedure dibujar_personaje(Personaje, bool [ALLEGRO_KEY_MAX], Natural);
 Procedure mover_personaje(Personaje*, bool [ALLEGRO_KEY_MAX], Mapa);
 Procedure continuar_salto(Personaje*, float, Mapa);
+Procedure activar_caida_libre(Personaje*);
 Entero velocidad_instantanea(Personaje, float);
 bool es_tecla_lateral(Tecla);
 
