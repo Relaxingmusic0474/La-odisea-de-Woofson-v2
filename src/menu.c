@@ -191,17 +191,17 @@ Procedure mostrar_menu(Menu menu)
 }
 
 
-Procedure redirigir_menu(Menu* menu, ALLEGRO_FONT* fuente, Natural opcion_clickeada, Etapa* etapa_actual)
+Procedure redirigir_menu(Recursos* recursos, Menu* menu, ALLEGRO_FONT* fuente, Natural opcion_clickeada, Etapa* etapa_actual)
 {
-    finalizar_menu(menu);
+    finalizar_menu(&recursos->menu_actual);
 
     if (*etapa_actual == MENU_PRINCIPAL)
     {
-        if (opcion_clickeada == 0)
+        if (opcion_clickeada == 0)  
         {
             *etapa_actual = MENU_NIVELES;
-            inicializar_menu_niveles(menu, fuente);    
-            mostrar_menu(*menu);
+            inicializar_menu_niveles(&recursos->menu_actual, fuente);    
+            mostrar_menu(recursos->menu_actual);
         }
 
         else if (opcion_clickeada == 1)
@@ -224,8 +224,8 @@ Procedure redirigir_menu(Menu* menu, ALLEGRO_FONT* fuente, Natural opcion_clicke
         if (opcion_clickeada == 5)
         {
             *etapa_actual = MENU_PRINCIPAL;
-            inicializar_menu_principal(menu, fuente);
-            mostrar_menu(*menu);
+            inicializar_menu_principal(&recursos->menu_actual, fuente);
+            mostrar_menu(recursos->menu_actual);
         }
 
         else
@@ -234,6 +234,8 @@ Procedure redirigir_menu(Menu* menu, ALLEGRO_FONT* fuente, Natural opcion_clicke
             {
                 case 0:
                     *etapa_actual = NIVEL1;
+                    printf("La musica actual es %p\n", recursos->musica_actual);
+                    cambiar_musica(recursos, recursos->musicas[1]);
                     al_clear_to_color(ROJO);
                     break;
 

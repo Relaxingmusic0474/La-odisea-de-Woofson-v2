@@ -19,8 +19,6 @@ int main()
     {
         return 1;
     }
-
-    mostrar_mapa(recursos.mapas[NIVEL1]);  /* Se muestra el mapa del primer nivel */
     
     LOOP
     {
@@ -36,10 +34,10 @@ int main()
             if (evento.type == CLICK)
             {
                 recursos.menu_actual.opcion_en_hover = obtener_opcion_en_hover(recursos.menu_actual);
-            
+
                 if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
                 {
-                    redirigir_menu(&recursos.menu_actual, recursos.fuentes[2], recursos.menu_actual.opcion_en_hover, &etapa_juego);
+                    redirigir_menu(&recursos, &recursos.menu_actual, recursos.fuentes[2], recursos.menu_actual.opcion_en_hover, &etapa_juego);
                 }
             }
 
@@ -58,7 +56,7 @@ int main()
         
                 if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
                 {
-                    redirigir_menu(&recursos.menu_actual, recursos.fuentes[3], recursos.menu_actual.opcion_en_hover, &etapa_juego);
+                    redirigir_menu(&recursos, &recursos.menu_actual, recursos.fuentes[3], recursos.menu_actual.opcion_en_hover, &etapa_juego);
                 }
             }
 

@@ -8,7 +8,8 @@
 #include "stdio.h"
 
 ALLEGRO_FONT* cargar_fuente(Fuente, Natural);
-Musica* cargar_musica(TipoAudio);
+Musica* cargar_musica(TipoAudio, ALLEGRO_MIXER*);
+bool cambiar_musica(Recursos*, Musica*);
 FILE* cargar_mapa(Natural);
 Natural obtener_nro_filas(Natural);
 Natural obtener_nro_columnas(Natural);

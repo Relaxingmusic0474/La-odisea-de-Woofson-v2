@@ -60,11 +60,11 @@ bool inicializar_allegro()
         return false;
     }
 
-    if (!al_reserve_samples(NRO_MUESTRAS_AUDIO_RESERVADAS))
+    if (!al_reserve_samples(16))
     {
-        printf("Error al reservar las muestras de audio.\n");
+        printf("Error al reservar las muestras de audio");
         return false;
-    }  
+    }
 
     return true;
 }
@@ -217,19 +217,60 @@ bool crear_recursos_allegro(Recursos* R)
 
     R->menu_actual = R->menus[0];  // Menú principal
 
+    // Se crea la voz
+    R->voz = al_create_voice(44100, ALLEGRO_AUDIO_DEPTH_INT16, ALLEGRO_CHANNEL_CONF_2);
+
+    if (!R->voz)
+    {
+        printf("Error al crear la voz.\n");
+        return false;
+    }
+
+    // Se crea el mezclador de sonidos
+    R->mixer = al_create_mixer(44100, ALLEGRO_AUDIO_DEPTH_INT16, ALLEGRO_CHANNEL_CONF_2);
+
+    if (!R->mixer)
+    {
+        printf("Error al crear el mixer.\n");
+        return false;
+    }
+
+    // Conectar mixer a la voz
+    if (!al_attach_mixer_to_voice(R->mixer, R->voz)) 
+    {
+        printf("Error al intentar conectar el mixer a la voz\n");
+        al_destroy_mixer(R->mixer);
+        al_destroy_voice(R->voz);
+        R->mixer = NULL;
+        R->voz = NULL;
+        return false;
+    }
+
     for (i=0; i<NRO_MUSICAS; i++)
     {
-        R->musicas[i] = i==0 ? cargar_musica(MUSICA_MENU) : cargar_musica(NIVEL1);
+        R->musicas[i] = i==0 ? cargar_musica(MUSICA_MENU, R->mixer) : cargar_musica(MUSICA_NIVEL_1, R->mixer);
         
         if (!R->musicas[i])
         {
             return false;
         }
+
+        else
+        {
+            printf("Musica cargada correctamente.\n");
+        }
     }
 
     R->musica_actual = R->musicas[0];  // Música menú
 
-    al_play_sample(R->musica_actual->musica, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, &R->musica_actual->ID);
+    // Configurar volumen, balance, velocidad de reproducción
+    al_set_sample_instance_gain(R->musica_actual->instancia, 1.0);  // Volumen
+    al_set_sample_instance_pan(R->musica_actual->instancia, 0.0);  // Centro
+    al_set_sample_instance_speed(R->musica_actual->instancia, 1.0);  // Velocidad normal
+    al_set_sample_instance_playmode(R->musica_actual->instancia, ALLEGRO_PLAYMODE_LOOP);  // Repetir
+
+    // Reproducir
+    al_play_sample_instance(R->musica_actual->instancia);
 
     return true;
 }
@@ -270,14 +311,39 @@ bool inicializar_todo(Recursos* R)
  */
 Procedure finalizar_allegro(Recursos* R)
 {
-    Natural i, j;
+    Natural i;
 
     for (i=0; i<NRO_MUSICAS; i++)
     {
-        al_destroy_sample(R->musicas[i]->musica);
-        R->musicas[i]->musica = NULL;
-        free(R->musicas[i]);
-        R->musicas[i] = NULL;
+        if (R->musicas[i])
+        {
+            if (R->musicas[i]->instancia != NULL)
+            {
+                al_destroy_sample_instance(R->musicas[i]->instancia);
+                R->musicas[i]->instancia = NULL;
+            }
+
+            if (R->musicas[i]->musica != NULL)
+            {
+                al_destroy_sample(R->musicas[i]->musica);
+                R->musicas[i]->musica = NULL;
+            }
+
+            free(R->musicas[i]);
+            R->musicas[i] = NULL;
+        }
+    }
+
+    if (R->mixer != NULL)
+    {
+        al_destroy_mixer(R->mixer);
+        R->mixer = NULL;
+    }
+
+    if (R->voz != NULL)
+    {
+        al_destroy_voice(R->voz);
+        R->voz = NULL;
     }
 
     // Se destruyen de forma iterativa todas las fuentes usadas

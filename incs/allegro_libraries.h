@@ -17,6 +17,7 @@
 
 typedef ALLEGRO_BITMAP* Imagen;
 typedef ALLEGRO_SAMPLE* Audio;
+typedef ALLEGRO_SAMPLE_INSTANCE* InstanciaAudio;
 typedef ALLEGRO_DISPLAY* Ventana;
 typedef int Tecla;
 

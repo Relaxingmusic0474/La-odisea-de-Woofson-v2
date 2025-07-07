@@ -85,7 +85,7 @@ struct menu
 struct musica
 {
     Audio musica;
-    ALLEGRO_SAMPLE_ID ID;
+    InstanciaAudio instancia;
     TipoAudio tipo;
     // ALLEGRO_VOICE* voz;
 };
@@ -110,6 +110,8 @@ struct recursos
     Menu menu_actual;
     Musica* musicas[NRO_MUSICAS];
     Musica* musica_actual;
+    ALLEGRO_VOICE* voz;
+    ALLEGRO_MIXER* mixer;
     ALLEGRO_FONT* fuentes[NRO_FUENTES];
     ALLEGRO_BITMAP* vida;
     /* 
