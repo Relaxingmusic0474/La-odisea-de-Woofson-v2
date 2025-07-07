@@ -39,23 +39,23 @@ Natural obtener_opcion_en_hover(Menu menu)
  * @param verde Puntero al valor del componente verde del color de fondo.
  * @param azul Puntero al valor del componente azul del color de fondo.
  */
-Procedure determinar_color_pantalla(Natural iteracion, Natural* rojo, Natural* verde, Natural* azul)
+Procedure determinar_color_pantalla(Natural iteracion)
 {
-    if (iteracion == 0)
+    static Natural rojo, verde, azul;
+
+    if (iteracion % 30 == 0)
     {
         // Cada 30 frames cambia el color de fondo de forma aleatoria
-        *rojo = rand() % 256;
-        *verde = rand() % 256;
-        *azul = rand() % 256;
+        rojo = rand() % 256;
+        verde = rand() % 256;
+        azul = rand() % 256;
     }
 
-    al_clear_to_color(al_map_rgb(*rojo, *verde, *azul));
-
-    return;
+    al_clear_to_color(al_map_rgb(rojo, verde, azul));
 }
 
 
-bool inicializar_menu_principal(Menu* menu)
+bool inicializar_menu_principal(Menu* menu, ALLEGRO_FONT* fuente)
 {
     Natural i;
     char* textos_opciones_menu[] = {"JUGAR", "INSTRUCCIONES", "RANKING"};
@@ -92,24 +92,15 @@ bool inicializar_menu_principal(Menu* menu)
         return false;
     }
 
-    menu->fuente = cargar_fuente(TIMES_NEW_ROMAN, GRANDE);
-
-    if (!menu->fuente)
-    {
-        printf("Error al cargar la fuente del menu principal.\n");
-        finalizar_menu(menu);
-        return false;
-    }
-
+    menu->fuente = fuente;
     menu->inicializado = true;
-
     printf("El menu principal ya esta inicializado.\n");
 
     return true;
 }
 
 
-bool inicializar_menu_niveles(Menu* menu)
+bool inicializar_menu_niveles(Menu* menu, ALLEGRO_FONT* fuente)
 {
     Natural i;
     char* textos_opciones_menu[] = {"1", "2", "3", "4", "5", "Volver atrás"};  /* Se harán los botones de los niveles, más uno para volver para atrás */
@@ -156,17 +147,8 @@ bool inicializar_menu_niveles(Menu* menu)
         return false;
     }
 
-    menu->fuente = cargar_fuente(COMFORTAA_LIGHT, GRANDE);
-
-    if (!menu->fuente)
-    {
-        printf("Error al cargar la fuente del menu de niveles.\n");
-        finalizar_menu(menu);
-        return false;
-    }
-
+    menu->fuente = fuente;
     menu->inicializado = true;
-
     printf("El menu de niveles ya esta inicializado.\n");
 
     return true;
@@ -209,7 +191,7 @@ Procedure mostrar_menu(Menu menu)
 }
 
 
-Procedure redirigir_menu(Menu* menu, Natural opcion_clickeada, Etapa* etapa_actual)
+Procedure redirigir_menu(Menu* menu, ALLEGRO_FONT* fuente, Natural opcion_clickeada, Etapa* etapa_actual)
 {
     finalizar_menu(menu);
 
@@ -218,7 +200,7 @@ Procedure redirigir_menu(Menu* menu, Natural opcion_clickeada, Etapa* etapa_actu
         if (opcion_clickeada == 0)
         {
             *etapa_actual = MENU_NIVELES;
-            inicializar_menu_niveles(menu);    
+            inicializar_menu_niveles(menu, fuente);    
             mostrar_menu(*menu);
         }
 
@@ -242,7 +224,7 @@ Procedure redirigir_menu(Menu* menu, Natural opcion_clickeada, Etapa* etapa_actu
         if (opcion_clickeada == 5)
         {
             *etapa_actual = MENU_PRINCIPAL;
-            inicializar_menu_principal(menu);
+            inicializar_menu_principal(menu, fuente);
             mostrar_menu(*menu);
         }
 
@@ -286,11 +268,13 @@ Procedure redirigir_menu(Menu* menu, Natural opcion_clickeada, Etapa* etapa_actu
 
 Procedure finalizar_menu(Menu* menu)
 {
+    /*
     if (menu->fuente != NULL)
     {
         al_destroy_font(menu->fuente);
         menu->fuente = NULL;
     }
+    */
     
     if (menu->opciones != NULL)
     {
@@ -307,8 +291,6 @@ Procedure finalizar_menu(Menu* menu)
     menu->nro_opciones = 0;
     menu->opcion_en_hover = -1;
     menu->inicializado = false;
-
-    return;   
 }
 
 Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida)
@@ -324,8 +306,6 @@ Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida)
     dibujar_rectangulo(rectangulo_datos, GRIS);
     dibujar_vidas(personaje, vida);
     al_draw_rectangle(1./15*ANCHO_VENTANA, 9./10*ALTO_VENTANA, 1./3*ANCHO_VENTANA, 24./25*ALTO_VENTANA, NEGRO, 2);
-
-    return;
 }
 
 

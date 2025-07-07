@@ -32,12 +32,12 @@ struct rectangulo
 
 struct salto  // ANALIZAR SI SERÁ NECESARIO AGREGAR LA POSICIÓN FINAL DEL SALTO A LA ESTRUCTURA
 {
-    float impulso; // Impulso que se le da al personaje al saltar
-    float tiempo_en_salto; // Tiempo que lleva en el salto
-    float altura_inicial; // Altura inicial del salto (útil sobre todo si salta desde una plataforma)
-    bool en_salto; // Si el personaje está en salto o no
-    bool es_interrumpido; // Si el salto es interrumpido por la colisión con algún techo o no
-    Entero altura_choque; // Este atributo cobra sentido si el salto es interrumpido por un techo
+    float impulso;  // Impulso que se le da al personaje al saltar
+    float tiempo_en_salto;  // Tiempo que lleva en el salto
+    float altura_inicial;  // Altura inicial del salto (útil sobre todo si salta desde una plataforma)
+    bool en_salto;  // Si el personaje está en salto o no
+    bool es_interrumpido;  // Si el salto es interrumpido por la colisión con algún techo o no
+    Entero altura_choque;  // Este atributo cobra sentido si el salto es interrumpido por un techo
 };
 
 struct mapa
@@ -105,6 +105,7 @@ struct recursos
     ALLEGRO_TIMER* temporizador;
     Eventos eventos;
     Mapa mapas[NRO_NIVELES];
+    ALLEGRO_FONT* fuentes[NRO_FUENTES];
     ALLEGRO_BITMAP* vida;
     /* 
     ALLEGRO_FONT* fuentes[6];  // Seran 2 posibles fuentes con 3 tamaños predeterminados cada una -> Se implementara la idea mas adelante

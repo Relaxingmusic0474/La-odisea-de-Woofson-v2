@@ -78,7 +78,7 @@ bool inicializar_allegro()
  */ 
 bool crear_recursos_allegro(Recursos* R)
 {
-    Natural i;
+    Natural i, j;
 
     /* Se crea la ventana */
     R->ventana = al_create_display(ANCHO_VENTANA, ALTO_VENTANA);
@@ -91,7 +91,6 @@ bool crear_recursos_allegro(Recursos* R)
 
     /* Se ajusta el título de la ventana para que tenga e nombre del juego */
     al_set_window_title(R->ventana, NOMBRE_JUEGO);  
-    // También se podría usar al_set_window_position() para posicionar la ventana en una ubicación específica
 
     R->cola_eventos = al_create_event_queue();
 
@@ -164,7 +163,6 @@ bool crear_recursos_allegro(Recursos* R)
         if (R->mapas[i].mapa == NULL)
         {
             printf("Error al leer el mapa del nivel %d.\n", i);
-            liberar_mapas(R->mapas);  /* Liberar los mapas ya leídos antes de retornar false */
             return false;
         }
     }
@@ -175,6 +173,27 @@ bool crear_recursos_allegro(Recursos* R)
     {
         printf("Error al cargar la imagen de las vidas del personaje\n");
         return false;
+    }
+
+    /* Se cargan las fuentes */
+    for (i=0; i<3; i++)
+    {
+        for (j=0; j<2; j++)
+        {
+            R->fuentes[2*i+j] = cargar_fuente((Fuente) j, i==0 ? NORMAL : (i==1 ? GRANDE : GIGANTE));
+            
+            if (R->fuentes[2*i+j] == NULL)
+            {
+                printf("Error al cargar la fuente %s de tamaño %hu\n", 
+                        j==0 ? "Comfortaa-Light" : "Times New Roman", 
+                        i==0 ? NORMAL : (i==1 ? GRANDE : GIGANTE));
+                return false;
+            }
+            
+            printf("Se cargó la fuente %s de tamaño %hu\n", 
+                        j==0 ? "Comfortaa-Light" : "Times New Roman", 
+                        i==0 ? NORMAL : (i==1 ? GRANDE : GIGANTE));
+        }
     }
 
     return true;
@@ -223,6 +242,18 @@ bool inicializar_todo(Recursos* R, Personaje* P)
  */
 Procedure finalizar_allegro(Recursos* R)
 {
+    Natural i, j;
+
+    // Se destruyen de forma iterativa todas las fuentes usadas
+    for (i=0; i<NRO_FUENTES; i++)
+    {
+        if (R->fuentes[i] != NULL)
+        {
+            al_destroy_font(R->fuentes[i]);
+            R->fuentes[i] = NULL;
+        }
+    }
+
     if (R->vida != NULL)
     {
         al_destroy_bitmap(R->vida);

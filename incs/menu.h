@@ -12,11 +12,11 @@
 
 Vector obtener_posicion_mouse(void); 
 Natural obtener_opcion_en_hover(Menu);
-Procedure determinar_color_pantalla(Natural, Natural*, Natural*, Natural*);
-bool inicializar_menu_principal(Menu*);
-bool inicializar_menu_niveles(Menu*); 
+Procedure determinar_color_pantalla(Natural);
+bool inicializar_menu_principal(Menu*, ALLEGRO_FONT*);
+bool inicializar_menu_niveles(Menu*, ALLEGRO_FONT*); 
 Procedure mostrar_menu(Menu);
-Procedure redirigir_menu(Menu*, Natural, Etapa*);
+Procedure redirigir_menu(Menu*, ALLEGRO_FONT*, Natural, Etapa*);
 Procedure finalizar_menu(Menu*);
 Procedure mostrar_pantalla_datos(Personaje, ALLEGRO_BITMAP*);
 

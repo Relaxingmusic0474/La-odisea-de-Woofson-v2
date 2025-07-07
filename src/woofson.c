@@ -18,7 +18,6 @@ int main()
     bool teclas[ALLEGRO_KEY_MAX] = {false}; /* Para manejar las teclas que se presionan */
     Natural ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;  /* Para que el personaje parta mirando a la derecha */
     Natural iteracion = 0;  /* Para controlar las iteraciones del juego */
-    Natural rojo, verde, azul;
     
     if (!inicializar_todo(&recursos, &dragon))  /* Se inicializan todos los recursos de Allegro */
     {
@@ -50,7 +49,7 @@ int main()
         {
             if (!menu.inicializado)  /* Se hace esta comprobación para que no se inicialice varias veces */
             {
-                if (!inicializar_menu_principal(&menu))
+                if (!inicializar_menu_principal(&menu, recursos.fuentes[3]))
                 {
                     finalizar_allegro(&recursos);
                     return 4;
@@ -65,7 +64,7 @@ int main()
             
                     if (menu.opcion_en_hover < menu.nro_opciones)
                     {
-                        redirigir_menu(&menu, menu.opcion_en_hover, &etapa_juego);
+                        redirigir_menu(&menu, recursos.fuentes[2], menu.opcion_en_hover, &etapa_juego);
                     }
                 }
 
@@ -81,7 +80,7 @@ int main()
         {
             if (!menu.inicializado)
             {
-                if (!inicializar_menu_niveles(&menu))
+                if (!inicializar_menu_niveles(&menu, recursos.fuentes[2]))
                 {
                     finalizar_allegro(&recursos);
                     return 5;
@@ -96,7 +95,7 @@ int main()
             
                     if (menu.opcion_en_hover < menu.nro_opciones)
                     {
-                        redirigir_menu(&menu, menu.opcion_en_hover, &etapa_juego);
+                        redirigir_menu(&menu, recursos.fuentes[3], menu.opcion_en_hover, &etapa_juego);
                     }
                 }
 
@@ -139,7 +138,7 @@ int main()
                 case ALLEGRO_EVENT_TIMER:
                     
                     mover_personaje(&dragon, teclas, recursos.mapas[NIVEL1]);  /* Mueve al personaje según las teclas presionadas y considera lógica de salto */
-                    determinar_color_pantalla(iteracion, &rojo, &verde, &azul);  // Determina el color de la pantalla según la iteración
+                    determinar_color_pantalla(iteracion/*, &rojo, &verde, &azul*/);  // Determina el color de la pantalla según la iteración
                     dibujar_personaje(dragon, teclas, ultima_tecla_lateral);  // Dibuja el personaje en su posición actual
                     dibujar_mapa(recursos.mapas[NIVEL1]);  // Dibujamos el mapa del primer nivel
 

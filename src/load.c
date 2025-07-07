@@ -174,7 +174,7 @@ Natural obtener_nro_columnas(Natural nro_nivel)
 Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
 {
     Natural i=0, j=0;
-    Mapa mapa = {NULL, 0, 0};
+    Mapa mapa = MAPA_INVALIDO;
     FILE* archivo_mapa = NULL;
 
     mapa.nro_filas = obtener_nro_filas(nro_nivel);

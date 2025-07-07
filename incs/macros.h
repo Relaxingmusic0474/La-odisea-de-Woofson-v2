@@ -11,6 +11,7 @@
 #define ALTO_VENTANA 900
 #define ALTURA_PISO (ALTO_VENTANA * 5/6)  // Altura del piso en px
 #define NRO_NIVELES 5
+#define NRO_FUENTES 6
 #define NRO_MUESTRAS_AUDIO_RESERVADAS 4
 
 // Macros para las velocidades de los personajes
