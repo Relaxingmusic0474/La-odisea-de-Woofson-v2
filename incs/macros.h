@@ -29,7 +29,7 @@
 #define IMPULSO_PERSONAJE 700  // Impulso de salto del personaje en px/s
 
 // Macros para cargar fuentes de distinto tamaño
-#define NORMAL 14
+#define NORMAL 20
 #define GRANDE 24
 #define GIGANTE 36
 
