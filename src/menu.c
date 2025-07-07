@@ -267,15 +267,7 @@ Procedure redirigir_menu(Menu* menu, ALLEGRO_FONT* fuente, Natural opcion_clicke
 
 
 Procedure finalizar_menu(Menu* menu)
-{
-    /*
-    if (menu->fuente != NULL)
-    {
-        al_destroy_font(menu->fuente);
-        menu->fuente = NULL;
-    }
-    */
-    
+{    
     if (menu->opciones != NULL)
     {
         free(menu->opciones);

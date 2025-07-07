@@ -11,7 +11,6 @@ int main()
 {
     Recursos recursos = {NULL};  /* Se inicializan los recursos del juego */
     ALLEGRO_EVENT evento; /* Ṕara agregar los eventos que vayan ocurriendo a la cola de eventos */
-    Menu menu = {NULL}; /* Para manejar los menús */
     Etapa etapa_juego = MENU_PRINCIPAL;  /* Para capturar el estado actual del juego */
     Musica* musica = {NULL}; /* Para manejar la música del juego */
     Personaje dragon = {0}; /* Para manejar el personaje del juego */
@@ -47,63 +46,39 @@ int main()
 
         if (etapa_juego == MENU_PRINCIPAL)
         {
-            if (!menu.inicializado)  /* Se hace esta comprobación para que no se inicialice varias veces */
+            if (evento.type == CLICK)
             {
-                if (!inicializar_menu_principal(&menu, recursos.fuentes[3]))
+                recursos.menu_actual.opcion_en_hover = obtener_opcion_en_hover(recursos.menu_actual);
+            
+                if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
                 {
-                    finalizar_allegro(&recursos);
-                    return 4;
+                    redirigir_menu(&recursos.menu_actual, recursos.fuentes[2], recursos.menu_actual.opcion_en_hover, &etapa_juego);
                 }
             }
 
-            else
+            else if (evento.type == ALLEGRO_EVENT_TIMER)
             {
-                if (evento.type == CLICK)
-                {
-                    menu.opcion_en_hover = obtener_opcion_en_hover(menu);
-            
-                    if (menu.opcion_en_hover < menu.nro_opciones)
-                    {
-                        redirigir_menu(&menu, recursos.fuentes[2], menu.opcion_en_hover, &etapa_juego);
-                    }
-                }
-
-                else if (evento.type == ALLEGRO_EVENT_TIMER)
-                {
-                    al_clear_to_color(NEGRO);
-                    mostrar_menu(menu);
-                }
+                al_clear_to_color(NEGRO);
+                mostrar_menu(recursos.menu_actual);
             }
         }
 
         else if (etapa_juego == MENU_NIVELES)
         {
-            if (!menu.inicializado)
+            if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
             {
-                if (!inicializar_menu_niveles(&menu, recursos.fuentes[2]))
+                recursos.menu_actual.opcion_en_hover = obtener_opcion_en_hover(recursos.menu_actual);
+        
+                if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
                 {
-                    finalizar_allegro(&recursos);
-                    return 5;
+                    redirigir_menu(&recursos.menu_actual, recursos.fuentes[3], recursos.menu_actual.opcion_en_hover, &etapa_juego);
                 }
             }
 
-            else
+            else if (evento.type == ALLEGRO_EVENT_TIMER)
             {
-                if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
-                {
-                    menu.opcion_en_hover = obtener_opcion_en_hover(menu);
-            
-                    if (menu.opcion_en_hover < menu.nro_opciones)
-                    {
-                        redirigir_menu(&menu, recursos.fuentes[3], menu.opcion_en_hover, &etapa_juego);
-                    }
-                }
-
-                else if (evento.type == ALLEGRO_EVENT_TIMER)
-                {
-                    al_clear_to_color(NEGRO);
-                    mostrar_menu(menu);
-                }
+                al_clear_to_color(NEGRO);
+                mostrar_menu(recursos.menu_actual);
             }
         }
 

@@ -79,6 +79,7 @@ bool inicializar_allegro()
 bool crear_recursos_allegro(Recursos* R)
 {
     Natural i, j;
+    bool exito = false;
 
     /* Se crea la ventana */
     R->ventana = al_create_display(ANCHO_VENTANA, ALTO_VENTANA);
@@ -160,7 +161,7 @@ bool crear_recursos_allegro(Recursos* R)
         R->mapas[i] = leer_mapa(i+1);  // Se leen los mapas de los niveles, comenzando desde el nivel 1 (índice 0)
 
         /* Si el mapa es NULL, se imprime un mensaje de error y se liberan los mapas ya leidos antes de retornar false */
-        if (R->mapas[i].mapa == NULL)
+        if (!R->mapas[i].mapa)
         {
             printf("Error al leer el mapa del nivel %d.\n", i);
             return false;
@@ -182,7 +183,7 @@ bool crear_recursos_allegro(Recursos* R)
         {
             R->fuentes[2*i+j] = cargar_fuente((Fuente) j, i==0 ? NORMAL : (i==1 ? GRANDE : GIGANTE));
             
-            if (R->fuentes[2*i+j] == NULL)
+            if (!R->fuentes[2*i+j])
             {
                 printf("Error al cargar la fuente %s de tamaño %hu\n", 
                         j==0 ? "Comfortaa-Light" : "Times New Roman", 
@@ -195,6 +196,20 @@ bool crear_recursos_allegro(Recursos* R)
                         i==0 ? NORMAL : (i==1 ? GRANDE : GIGANTE));
         }
     }
+
+    /* Se cargan los menus */
+    for (i=0; i<NRO_MENUS; i++)
+    {
+        exito = i==0 ? inicializar_menu_principal(&R->menus[i], R->fuentes[3]) : inicializar_menu_niveles(&R->menus[i], R->fuentes[2]);
+
+        if (!exito)
+        {
+            printf("Error al cargar %s\n", i==0 ? "el menú principal" : "el menú de niveles");
+            return false;
+        }
+    }
+
+    R->menu_actual = R->menus[0];  // Menú principal
 
     return true;
 }

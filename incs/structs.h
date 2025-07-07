@@ -105,10 +105,11 @@ struct recursos
     ALLEGRO_TIMER* temporizador;
     Eventos eventos;
     Mapa mapas[NRO_NIVELES];
+    Menu menus[NRO_MENUS];
+    Menu menu_actual;
     ALLEGRO_FONT* fuentes[NRO_FUENTES];
     ALLEGRO_BITMAP* vida;
     /* 
-    ALLEGRO_FONT* fuentes[6];  // Seran 2 posibles fuentes con 3 tamaños predeterminados cada una -> Se implementara la idea mas adelante
     Lista bitmaps;  // Bitmaps en una lista enlazada (para dinamismo) -> Se implementara la idea mas adelante
     */
 };
