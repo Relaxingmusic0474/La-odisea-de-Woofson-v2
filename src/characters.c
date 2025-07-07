@@ -206,19 +206,6 @@ Procedure continuar_salto(Personaje* personaje, float t, Mapa mapa)
 
 
 /**
- * Función que simula la colisión del personaje con el techo, invirtiendo su velocidad en el eje y.
- * @param personaje El personaje que colisiona con el techo.
- * @param altura_techo La altura del techo con el que colisiona el personaje.
- */
-Procedure colisionar_con_techo(Personaje* personaje, Entero altura_techo)
-{
-    personaje->velocidad.y = -personaje->velocidad.y;  /* Aplicando la 3ra ley de Newton, se invierte la velocidad en y */
-    personaje->posicion.y = altura_techo;  /* Ajusta la posición del personaje al techo */
-    return;
-}
-
-
-/**
  * Función que activa la caída libre del personaje, actualizando su posición y velocidad en el eje y.
  * @param personaje El personaje que está cayendo.
  */

@@ -56,20 +56,19 @@ bool hay_colision_superior(Personaje personaje, Mapa mapa)
     }
 }
 
+
 bool hay_colision_inferior(Personaje* personaje, Mapa mapa)
 {
-    if (personaje->posicion.y + personaje->alto >= ALTURA_PISO || hay_bloque_debajo(personaje, mapa))
+    if (personaje->posicion.y + personaje->alto >= ALTURA_PISO)
     {
-        
+        personaje->posicion.y = ALTURA_PISO - personaje->alto;
+        personaje->salto.en_salto = false;
+        personaje->en_plataforma = false;
         return true;
     }
 
-    else
-    {
-        return false;
-    }
+    return hay_bloque_debajo(personaje, mapa);
 }
-
 
 
 /**
