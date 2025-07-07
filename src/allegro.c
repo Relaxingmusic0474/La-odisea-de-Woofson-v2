@@ -168,6 +168,12 @@ bool crear_recursos_allegro(Recursos* R)
         }
     }
 
+    if (!inicializar_personaje(&R->pje_principal, 'D'))
+    {
+        return false;
+    }
+
+
     R->vida = al_load_bitmap("assets/images/corazon.png");
 
     if (!R->vida)
@@ -204,12 +210,26 @@ bool crear_recursos_allegro(Recursos* R)
 
         if (!exito)
         {
-            printf("Error al cargar %s\n", i==0 ? "el menú principal" : "el menú de niveles");
+            // printf("Error al cargar %s\n", i==0 ? "el menú principal" : "el menú de niveles");
             return false;
         }
     }
 
     R->menu_actual = R->menus[0];  // Menú principal
+
+    for (i=0; i<NRO_MUSICAS; i++)
+    {
+        R->musicas[i] = i==0 ? cargar_musica(MUSICA_MENU) : cargar_musica(NIVEL1);
+        
+        if (!R->musicas[i])
+        {
+            return false;
+        }
+    }
+
+    R->musica_actual = R->musicas[0];  // Música menú
+
+    al_play_sample(R->musica_actual->musica, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, &R->musica_actual->ID);
 
     return true;
 }
@@ -220,7 +240,7 @@ bool crear_recursos_allegro(Recursos* R)
  * @param R Puntero a la estructura Recursos donde se almacenarán los recursos creados.
  * @return true si se inicializaron todos los recursos correctamente, false en caso contrario.
  */
-bool inicializar_todo(Recursos* R, Personaje* P)
+bool inicializar_todo(Recursos* R)
 {
     /* Se inicializa la semilla para los números aleatorios */
     srand(time(NULL));
@@ -239,13 +259,6 @@ bool inicializar_todo(Recursos* R, Personaje* P)
         return false;
     }
 
-    /* Se inicializa al personaje con un identificador */
-    if (!inicializar_personaje(P, 'D'))
-    {
-        finalizar_allegro(R);
-        return false;
-    }
-
     return true;
 }
 
@@ -258,6 +271,14 @@ bool inicializar_todo(Recursos* R, Personaje* P)
 Procedure finalizar_allegro(Recursos* R)
 {
     Natural i, j;
+
+    for (i=0; i<NRO_MUSICAS; i++)
+    {
+        al_destroy_sample(R->musicas[i]->musica);
+        R->musicas[i]->musica = NULL;
+        free(R->musicas[i]);
+        R->musicas[i] = NULL;
+    }
 
     // Se destruyen de forma iterativa todas las fuentes usadas
     for (i=0; i<NRO_FUENTES; i++)
@@ -272,6 +293,12 @@ Procedure finalizar_allegro(Recursos* R)
     if (R->vida != NULL)
     {
         al_destroy_bitmap(R->vida);
+    }
+
+    if (R->pje_principal.imagen != NULL)
+    {
+        al_destroy_bitmap(R->pje_principal.imagen);
+        R->pje_principal.imagen = NULL;
     }
 
     liberar_mapas(R->mapas);

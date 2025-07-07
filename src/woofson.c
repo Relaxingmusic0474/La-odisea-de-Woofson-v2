@@ -6,32 +6,19 @@
 #include "load.h"
 #include "debug.h"
 
-
 int main()
 {
     Recursos recursos = {NULL};  /* Se inicializan los recursos del juego */
     ALLEGRO_EVENT evento; /* Ṕara agregar los eventos que vayan ocurriendo a la cola de eventos */
     Etapa etapa_juego = MENU_PRINCIPAL;  /* Para capturar el estado actual del juego */
-    Musica* musica = {NULL}; /* Para manejar la música del juego */
-    Personaje dragon = {0}; /* Para manejar el personaje del juego */
     bool teclas[ALLEGRO_KEY_MAX] = {false}; /* Para manejar las teclas que se presionan */
     Natural ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;  /* Para que el personaje parta mirando a la derecha */
     Natural iteracion = 0;  /* Para controlar las iteraciones del juego */
     
-    if (!inicializar_todo(&recursos, &dragon))  /* Se inicializan todos los recursos de Allegro */
+    if (!inicializar_todo(&recursos))  /* Se inicializan todos los recursos de Allegro */
     {
         return 1;
     }
-
-    musica = cargar_musica(MUSICA_MENU);  /* Se carga la música del menú */
-
-    if (!musica)
-    {
-        finalizar_allegro(&recursos);
-        return 3;
-    }
-
-    al_play_sample(musica->musica, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, &musica->ID);  /* Se inicia la música del menú */
 
     mostrar_mapa(recursos.mapas[NIVEL1]);  /* Se muestra el mapa del primer nivel */
     
@@ -112,17 +99,17 @@ int main()
 
                 case ALLEGRO_EVENT_TIMER:
                     
-                    mover_personaje(&dragon, teclas, recursos.mapas[NIVEL1]);  /* Mueve al personaje según las teclas presionadas y considera lógica de salto */
+                    mover_personaje(&recursos.pje_principal, teclas, recursos.mapas[NIVEL1]);  /* Mueve al personaje según las teclas presionadas y considera lógica de salto */
                     determinar_color_pantalla(iteracion/*, &rojo, &verde, &azul*/);  // Determina el color de la pantalla según la iteración
-                    dibujar_personaje(dragon, teclas, ultima_tecla_lateral);  // Dibuja el personaje en su posición actual
+                    dibujar_personaje(recursos.pje_principal, teclas, ultima_tecla_lateral);  // Dibuja el personaje en su posición actual
                     dibujar_mapa(recursos.mapas[NIVEL1]);  // Dibujamos el mapa del primer nivel
 
                     if (iteracion % 20 == 0)
                     {
-                        mostrar_bloque_actual_personaje(dragon, recursos.mapas[NIVEL1]);
+                        mostrar_bloque_actual_personaje(recursos.pje_principal, recursos.mapas[NIVEL1]);
                     }
 
-                    mostrar_pantalla_datos(dragon, recursos.vida);
+                    mostrar_pantalla_datos(recursos.pje_principal, recursos.vida);
 				    
                     al_flip_display();
 
@@ -133,11 +120,6 @@ int main()
         iteracion = (iteracion + 1) % 60;
     }
 
-    al_destroy_sample(musica->musica);
-    free(musica);
-    musica = NULL;
-    al_destroy_bitmap(dragon.imagen);
-    dragon.imagen = NULL;
     finalizar_allegro(&recursos);
 
     return 0;

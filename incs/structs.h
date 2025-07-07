@@ -79,7 +79,7 @@ struct menu
     Boton* opciones;
     Natural nro_opciones;
     Natural opcion_en_hover;
-    bool inicializado;
+    bool finalizado;
 }; 
 
 struct musica
@@ -100,6 +100,7 @@ struct eventos
 
 struct recursos
 {
+    Personaje pje_principal;
     Ventana ventana;
     ALLEGRO_EVENT_QUEUE* cola_eventos;
     ALLEGRO_TIMER* temporizador;
@@ -107,6 +108,8 @@ struct recursos
     Mapa mapas[NRO_NIVELES];
     Menu menus[NRO_MENUS];
     Menu menu_actual;
+    Musica* musicas[NRO_MUSICAS];
+    Musica* musica_actual;
     ALLEGRO_FONT* fuentes[NRO_FUENTES];
     ALLEGRO_BITMAP* vida;
     /* 

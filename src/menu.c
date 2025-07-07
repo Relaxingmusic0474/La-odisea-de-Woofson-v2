@@ -93,7 +93,7 @@ bool inicializar_menu_principal(Menu* menu, ALLEGRO_FONT* fuente)
     }
 
     menu->fuente = fuente;
-    menu->inicializado = true;
+    menu->finalizado = false;
     printf("El menu principal ya esta inicializado.\n");
 
     return true;
@@ -148,7 +148,7 @@ bool inicializar_menu_niveles(Menu* menu, ALLEGRO_FONT* fuente)
     }
 
     menu->fuente = fuente;
-    menu->inicializado = true;
+    menu->finalizado = false;
     printf("El menu de niveles ya esta inicializado.\n");
 
     return true;
@@ -267,7 +267,7 @@ Procedure redirigir_menu(Menu* menu, ALLEGRO_FONT* fuente, Natural opcion_clicke
 
 
 Procedure finalizar_menu(Menu* menu)
-{    
+{   
     if (menu->opciones != NULL)
     {
         free(menu->opciones);
@@ -282,8 +282,9 @@ Procedure finalizar_menu(Menu* menu)
     
     menu->nro_opciones = 0;
     menu->opcion_en_hover = -1;
-    menu->inicializado = false;
+    menu->finalizado = true;
 }
+
 
 Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida)
 {
@@ -311,4 +312,3 @@ Procedure dibujar_rectangulo(Rectangulo rectangulo, ALLEGRO_COLOR color)
 {
     al_draw_filled_rectangle(rectangulo.pos_inicial.x, rectangulo.pos_inicial.y, rectangulo.pos_final.x, rectangulo.pos_final.y, color);
 }
-

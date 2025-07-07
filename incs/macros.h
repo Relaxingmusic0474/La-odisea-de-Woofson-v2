@@ -1,7 +1,7 @@
 #ifndef MACROS_H
 #define MACROS_H
 
-#include "allegro5/allegro_color.h"  // Para las macros de los colores (lineas 40 a 45)
+#include "allegro5/allegro_color.h"  // Para las macros de los colores (lineas 41 a 47)
 
 // Macros generales
 #define NOMBRE_JUEGO "La odisea de Woofson"
@@ -12,6 +12,7 @@
 #define ALTURA_PISO (ALTO_VENTANA * 5/6)  // Altura del piso en px
 #define NRO_NIVELES 5
 #define NRO_MENUS 2
+#define NRO_MUSICAS 2
 #define NRO_FUENTES 6
 #define NRO_MUESTRAS_AUDIO_RESERVADAS 4
 

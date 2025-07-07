@@ -13,7 +13,7 @@
 
 bool inicializar_allegro();
 bool crear_recursos_allegro(Recursos*);
-bool inicializar_todo(Recursos*, Personaje*);
+bool inicializar_todo(Recursos*);
 Procedure finalizar_allegro(Recursos*);
 
 #endif  // ALLEGRO_H

@@ -50,6 +50,7 @@ Musica* cargar_musica(TipoAudio tipo_audio)
             break;
 
         case MUSICA_NIVEL_1:
+            musica->musica = al_load_sample("assets/music/Soundtrack-A.ogg");
             break;
 
         case MUSICA_NIVEL_2:
@@ -71,7 +72,7 @@ Musica* cargar_musica(TipoAudio tipo_audio)
 
     if (!musica->musica)
     {
-        printf("Error al cargar la musica.\n");
+        printf("Error al cargar la musica %s.\n", tipo_audio == MUSICA_MENU ? "Soundtrack-menu.ogg" : "Soundtrack-A.ogg");
         free(musica);
         musica = NULL;
     }
