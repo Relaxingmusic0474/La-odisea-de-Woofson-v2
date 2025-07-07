@@ -234,7 +234,6 @@ Procedure redirigir_menu(Recursos* recursos, Menu* menu, ALLEGRO_FONT* fuente, N
             {
                 case 0:
                     *etapa_actual = NIVEL1;
-                    printf("La musica actual es %p\n", recursos->musica_actual);
                     cambiar_musica(recursos, recursos->musicas[1]);
                     al_clear_to_color(ROJO);
                     break;
@@ -288,10 +287,59 @@ Procedure finalizar_menu(Menu* menu)
 }
 
 
-Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida)
+Procedure dibujar_rectangulo(Rectangulo rectangulo, ALLEGRO_COLOR color)
+{
+    al_draw_filled_rectangle(rectangulo.pos_inicial.x, rectangulo.pos_inicial.y, rectangulo.pos_final.x, rectangulo.pos_final.y, color);
+}
+
+
+Procedure dibujar_imagen_en_rectangulo(Imagen imagen, Rectangulo rectangulo, Natural porcentaje_x, Natural porcentaje_y)
+{
+    Vector posicion_dibujo;
+    int alto_imagen = al_get_bitmap_height(imagen);
+    posicion_dibujo.x = rectangulo.pos_inicial.x + (float) porcentaje_x / 100 * (rectangulo.pos_final.x - rectangulo.pos_inicial.x);
+    posicion_dibujo.y = rectangulo.pos_inicial.y + (float) porcentaje_y / 100 * (rectangulo.pos_final.y - rectangulo.pos_inicial.y);
+    al_draw_bitmap(imagen, posicion_dibujo.x, posicion_dibujo.y - (float) alto_imagen / 2, ALLEGRO_ALIGN_CENTRE);
+}
+
+
+Procedure dibujar_texto_en_rectangulo(char* texto, Rectangulo rectangulo, Natural porcentaje_x, Natural porcentaje_y, ALLEGRO_FONT* fuente)
+{
+    Vector posicion_texto;
+    int alto_texto = al_get_font_line_height(fuente);
+    posicion_texto.x = rectangulo.pos_inicial.x + (float) porcentaje_x / 100 * (rectangulo.pos_final.x - rectangulo.pos_inicial.x);
+    posicion_texto.y = rectangulo.pos_inicial.y + (float) porcentaje_y / 100 * (rectangulo.pos_final.y - rectangulo.pos_inicial.y);
+    al_draw_text(fuente, NEGRO, posicion_texto.x, posicion_texto.y - (float) alto_texto / 2, ALLEGRO_ALIGN_CENTRE, texto);
+}
+
+
+Procedure dibujar_rectangulo_en_rectangulo(Rectangulo rect_destino, float alto, float ancho, Natural porcentaje_x, Natural porcentaje_y, bool relleno, ALLEGRO_COLOR color)
+{
+    Vector posicion_inicial, posicion_final;
+
+    posicion_inicial.x = rect_destino.pos_inicial.x + (float) porcentaje_x / 100 * (rect_destino.pos_final.x - rect_destino.pos_inicial.x) - ancho/2;
+    posicion_inicial.y = rect_destino.pos_inicial.y + (float) porcentaje_y / 100 * (rect_destino.pos_final.y - rect_destino.pos_inicial.y) - alto/2;
+
+    posicion_final.x = rect_destino.pos_inicial.x + (float) porcentaje_x / 100 * (rect_destino.pos_final.x - rect_destino.pos_inicial.x) + ancho/2;
+    posicion_final.y = rect_destino.pos_inicial.y + (float) porcentaje_y / 100 * (rect_destino.pos_final.y - rect_destino.pos_inicial.y) + alto/2;
+    
+    if (relleno)
+    {
+        al_draw_filled_rectangle(posicion_inicial.x, posicion_inicial.y, posicion_final.x, posicion_final.y, color);
+    }
+
+    else
+    {
+        al_draw_rectangle(posicion_inicial.x, posicion_inicial.y, posicion_final.x, posicion_final.y, color, 2.0);
+    }
+}
+
+
+Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida, ALLEGRO_FONT* fuente)
 {
     Natural i;
     Rectangulo rectangulo_datos;
+    char texto_nro_vidas[5] = {'\0'};
 
     rectangulo_datos.pos_inicial.x = 0;
     rectangulo_datos.pos_inicial.y = (8./9) * ALTO_VENTANA;
@@ -299,18 +347,10 @@ Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida)
     rectangulo_datos.pos_final.y = ALTO_VENTANA;
 
     dibujar_rectangulo(rectangulo_datos, GRIS);
-    dibujar_vidas(personaje, vida);
-    al_draw_rectangle(1./15*ANCHO_VENTANA, 9./10*ALTO_VENTANA, 1./3*ANCHO_VENTANA, 24./25*ALTO_VENTANA, NEGRO, 2);
-}
-
-
-Procedure dibujar_vidas(Personaje personaje, ALLEGRO_BITMAP* vida)
-{
-    al_draw_bitmap(vida, 100, 820, 0);
-}
-
-
-Procedure dibujar_rectangulo(Rectangulo rectangulo, ALLEGRO_COLOR color)
-{
-    al_draw_filled_rectangle(rectangulo.pos_inicial.x, rectangulo.pos_inicial.y, rectangulo.pos_final.x, rectangulo.pos_final.y, color);
+    dibujar_imagen_en_rectangulo(vida, rectangulo_datos, 5, 50);  // Se dibuja el corazón en un 5% en x y un 50% en y del rectángulo
+    sprintf(texto_nro_vidas, "× %hu", personaje.nro_vidas);
+    dibujar_texto_en_rectangulo(texto_nro_vidas, rectangulo_datos, 10, 50, fuente);
+    dibujar_rectangulo_en_rectangulo(rectangulo_datos, 50, 500, 40, 40, false, NEGRO);
+    
+    // al_draw_rectangle(1./15*ANCHO_VENTANA, 9./10*ALTO_VENTANA, 1./3*ANCHO_VENTANA, 24./25*ALTO_VENTANA, NEGRO, 2);
 }

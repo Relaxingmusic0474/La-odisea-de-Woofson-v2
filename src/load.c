@@ -105,84 +105,32 @@ Musica* cargar_musica(TipoAudio tipo, ALLEGRO_MIXER* mixer)
 
 
 /**
- * Función para cambiar la música
- * @param R Puntero a la estructura Recursos (estructura global del juego)
- * @return true si cambia la música correctamente, y false en caso contrario
+ * Función para cambiar la música actual.
+ * @param R Puntero a la estructura Recursos (estructura global del juego).
+ * @param musica_nueva La música que se desea reproducir.
+ * @return true si cambia la música correctamente, y false en caso contrario.
  */
 bool cambiar_musica(Recursos* R, Musica* musica_nueva)
 {
-    printf("Dentro de la funcion polemica 1\n");
-
-    if (!R) {
-    printf("ERROR: El puntero R es NULL.\n");
-    return false;
-}
-if (!musica_nueva) {
-    printf("ERROR: El puntero musica_nueva es NULL.\n");
-    return false;
-}
-if (!musica_nueva->instancia) {
-    printf("ERROR: La instancia de musica_nueva es NULL.\n");
-    return false;
-}
-
-if (!R->musica_actual)
-{
-    printf("ERROR: La musica actual es NULL\n");
-    return false;
-}
-
-if (!R->musica_actual->instancia)
-{
-    printf("ERROR: La instancia de la musica actual es NULL");
-    return false;
-}
-
-
-    if (!R->musica_actual || !R->musica_actual->instancia)
-    {
-        printf("ERROR: musica_actual o su instancia es NULL\n");
-        return false;
-    }
-
-
-    if (al_get_sample_instance_playing(R->musica_actual->instancia))
-    {
-        printf("La musica %p se esta reproduciendo\n", R->musica_actual->instancia);
-    }
-    else
-    {
-        printf("La musica es %p y no se esta reproduciendo\n", R->musica_actual->instancia);
-    }
-
-
     // Se para la musica actual y se cambia la musica actual
     if (!al_stop_sample_instance(R->musica_actual->instancia))
     {
         return false;
     }
 
-    printf("Dentro de la funcion polemica 2\n");
-
     R->musica_actual = musica_nueva;
 
-    printf("Dentro de la funcion polemica 3\n");
-
-    printf("Mixer: %p, Instancia: %p\n", (void *) R->mixer, (void *) R->musica_actual->instancia);
-
-    printf("Dentro de la funcion polemica 4\n");
-
-    if (!al_get_sample_instance_attached(R->musica_actual->instancia)) {
-    if (!al_attach_sample_instance_to_mixer(R->musica_actual->instancia, R->mixer)) {
-        printf("ERROR: No se pudo conectar la instancia al mixer\n");
-        return false;
+    if (!al_get_sample_instance_attached(R->musica_actual->instancia)) 
+    {
+        if (!al_attach_sample_instance_to_mixer(R->musica_actual->instancia, R->mixer)) 
+        {
+            printf("ERROR: No se pudo conectar la instancia al mixer\n");
+            return false;
+        }
     }
-    }
-
-    printf("Dentro de la funcion polemica 5\n");
 
     // Configurar volumen, balance, velocidad de reproducción
-    al_set_sample_instance_gain(R->musica_actual->instancia, 1.0);  // Volumen
+    al_set_sample_instance_gain(R->musica_actual->instancia, 0.5);  // Volumen
     al_set_sample_instance_pan(R->musica_actual->instancia, 0.0);  // Centro
     al_set_sample_instance_speed(R->musica_actual->instancia, 1.0);  // Velocidad normal
     al_set_sample_instance_playmode(R->musica_actual->instancia, ALLEGRO_PLAYMODE_LOOP);  // Repetir

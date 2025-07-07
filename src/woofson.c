@@ -107,7 +107,7 @@ int main()
                         mostrar_bloque_actual_personaje(recursos.pje_principal, recursos.mapas[NIVEL1]);
                     }
 
-                    mostrar_pantalla_datos(recursos.pje_principal, recursos.vida);
+                    mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[4]);
 				    
                     al_flip_display();
 
