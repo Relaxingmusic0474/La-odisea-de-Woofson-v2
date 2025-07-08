@@ -318,8 +318,8 @@ Procedure dibujar_mapa(Mapa mapa)
         {
             if (mapa.mapa[i][j] == 1)
             {
-                al_draw_filled_rectangle(j*ANCHO_VENTANA/mapa.nro_columnas, i*810/mapa.nro_filas, 
-                                        (j+1)*ANCHO_VENTANA/mapa.nro_columnas, (i+1)*810/mapa.nro_filas, CAFE);
+                al_draw_filled_rectangle(j*ANCHO_VENTANA/mapa.nro_columnas, i*ALTURA_PISO/mapa.nro_filas, 
+                                        (j+1)*ANCHO_VENTANA/mapa.nro_columnas, (i+1)*ALTURA_PISO/mapa.nro_filas, CAFE);
             }
         }
     }

@@ -124,17 +124,18 @@ Procedure dibujar_personaje(Personaje personaje, bool teclas[ALLEGRO_KEY_MAX], N
  */
 Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Mapa mapa)
 {
-    if (teclas[ALLEGRO_KEY_UP] && !personaje->salto.en_salto && !hay_colision_superior(*personaje, mapa))
+    if (teclas[ALLEGRO_KEY_UP] && !personaje->salto.en_salto && !hay_colision_superior(personaje, mapa))
     {
         personaje->salto.en_salto = true;  /* Activa el salto */
-        // personaje->posicion.y--;  /* Para que no quede pegado al suelo al saltar parte 1 px sobre el suelo (no se notará) */
         personaje->salto.altura_inicial = personaje->posicion.y;  /* Guarda la altura inicial del salto */
         personaje->salto.tiempo_en_salto = 0;  /* Reinicia el tiempo de salto */
     }
     
     if (teclas[ALLEGRO_KEY_DOWN] && !hay_colision_inferior(personaje, mapa) && !hay_bloque_debajo(personaje, mapa))
     {
-        personaje->posicion.y += 4;  /* Por si el personaje está en el aire y quiere bajar un poco más rápido */
+        personaje->velocidad.y += 4;
+        personaje->posicion.y += personaje->velocidad.y;
+        // personaje->posicion.y += 4;  /* Por si el personaje está en el aire y quiere bajar un poco más rápido */
     }   
 
     if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(*personaje, mapa))
@@ -172,7 +173,6 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
 }
 
 
-
 /**
  * Función que actualiza la posición del personaje durante un salto.
  * @param personaje El personaje que está saltando.
@@ -184,15 +184,9 @@ Procedure continuar_salto(Personaje* personaje, float t, Mapa mapa)
     personaje->posicion.y = personaje->salto.altura_inicial - personaje->salto.impulso * t + g * t * t / 2;
     personaje->velocidad.y = velocidad_instantanea(*personaje, t);  /* Actualiza la velocidad en el eje y */
 
-    if (hay_colision_superior(*personaje, mapa))
+    if (hay_colision_superior(personaje, mapa))
     {
-        personaje->salto.es_interrumpido = true;  /* Marca que el salto es interrumpido por la colisión con el techo */
-        personaje->posicion.y = 0;
-        personaje->salto.tiempo_en_salto = 0;  /* Reinicia el tiempo de salto para evitar problemas de acumulación */
-        personaje->salto.altura_choque = personaje->posicion.y;  /* Guarda la altura del choque con el techo */
-        personaje->salto.altura_inicial = personaje->salto.altura_choque;
-        personaje->salto.impulso = personaje->velocidad.y;  /* Reinicia el impulso del salto */
-        personaje->velocidad.y = -personaje->velocidad.y;  /* Invierte la velocidad en el eje y */
+        efectuar_colision(personaje, mapa);
     }
 
     /* Si el personaje colisiona ya sea con el suelo o con algún bloque sólido u objeto, se detiene el salto */

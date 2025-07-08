@@ -9,14 +9,13 @@
 bool hay_colision_con_bordes(Personaje* personaje, Mapa mapa)
 {
     if (hay_colision_izquierda(*personaje, mapa) || hay_colision_derecha(*personaje, mapa) ||
-        hay_colision_superior(*personaje, mapa) || hay_colision_inferior(personaje, mapa))        
+        hay_colision_superior(personaje, mapa) || hay_colision_inferior(personaje, mapa))        
     {
         return true;
     }
 
     return false;
 }
-
 
 
 bool hay_colision_izquierda(Personaje personaje, Mapa mapa)
@@ -32,6 +31,7 @@ bool hay_colision_izquierda(Personaje personaje, Mapa mapa)
     }
 }
 
+
 bool hay_colision_derecha(Personaje personaje, Mapa mapa)
 {
     if (personaje.posicion.x + personaje.ancho - 1 > ANCHO_VENTANA)
@@ -43,17 +43,16 @@ bool hay_colision_derecha(Personaje personaje, Mapa mapa)
 }
 
 
-bool hay_colision_superior(Personaje personaje, Mapa mapa)
+bool hay_colision_superior(Personaje* personaje, Mapa mapa)
 {
-    if (personaje.posicion.y < 0 || hay_bloque_arriba(&personaje, mapa))
+    if (personaje->posicion.y < 0)
     {
+        personaje->salto.altura_choque = 0;
+        personaje->salto.es_interrumpido = true;
         return true;
     }
-
-    else
-    {
-        return false;
-    }
+    
+    return hay_bloque_arriba(personaje, mapa);
 }
 
 
@@ -79,33 +78,24 @@ bool hay_colision_inferior(Personaje* personaje, Mapa mapa)
  */
 bool hay_bloque_debajo(Personaje* personaje, Mapa mapa)
 {
-    Natural i, j;
     Natural ancho_bloque = ANCHO_VENTANA / mapa.nro_columnas;  /* Ancho de cada bloque en el mapa */
     Natural alto_bloque = ALTURA_PISO / mapa.nro_filas;  /* Alto de cada bloque en el mapa */
-    Vector posicion_bloque;
-    bool col_x, col_y;
+    float x_medio, y_inf;
+    int fil, col;
 
-    for (i=0; i<mapa.nro_filas; i++)
+    x_medio = personaje->posicion.x + personaje->ancho / 2;
+    y_inf = personaje->posicion.y + personaje->alto;
+
+    fil = (int) (y_inf / alto_bloque);
+    col = (int) (x_medio / ancho_bloque);
+
+    if (fil >= 0 && fil < mapa.nro_filas)
     {
-        for (j=0; j<mapa.nro_columnas; j++)
+        if (mapa.mapa[fil][col] == 1)
         {
-            if (mapa.mapa[i][j] == 1)   /* Si hay un bloque en la posición (i, j) */
-            {
-                posicion_bloque.x = j * ancho_bloque;   /* Posición x del bloque */
-                posicion_bloque.y = i * alto_bloque;   /* Posición y del bloque */
-
-                col_x = personaje->posicion.x + personaje->ancho / 2 > posicion_bloque.x && personaje->posicion.x + personaje->ancho / 2 < posicion_bloque.x + ancho_bloque;
-                col_y = personaje->posicion.y + personaje->alto >= posicion_bloque.y && personaje->posicion.y + personaje->alto <= posicion_bloque.y + alto_bloque;
-
-                if (col_x && col_y)
-                {
-                    personaje->salto.en_salto = false;
-                    // personaje->salto.altura_choque = posicion_bloque.y;  /* Guarda la altura del choque con el bloque */
-                    personaje->en_plataforma = true;  /* Indica que el personaje está en una plataforma */
-                    
-                    return true;
-                }
-            }
+            personaje->salto.altura_choque = fil * alto_bloque - personaje->alto;
+            personaje->en_plataforma = true;
+            return true;
         }
     }
 
@@ -113,11 +103,31 @@ bool hay_bloque_debajo(Personaje* personaje, Mapa mapa)
 }
 
 
-
 /* ADVERTENCIA: PUEDE NO ESTAR BIEN ESTA FUNCION */
 bool hay_bloque_arriba(Personaje* personaje, Mapa mapa)
 {
-    return false;  /* Por ahora no se implementa la colisión con bloques arriba del personaje */
+    Natural ancho_bloque = ANCHO_VENTANA / mapa.nro_columnas;  /* Ancho de cada bloque en el mapa */
+    Natural alto_bloque = ALTURA_PISO / mapa.nro_filas;  /* Alto de cada bloque en el mapa */
+    float x_medio, y_sup;
+    int fil, col;
+
+    x_medio = personaje->posicion.x + personaje->ancho / 2;
+    y_sup = personaje->posicion.y;
+
+    fil = (int) (y_sup / alto_bloque);
+    col = (int) (x_medio / ancho_bloque);
+
+    if (fil >= 0 && fil < mapa.nro_filas)
+    {
+        if (mapa.mapa[fil][col] == 1)
+        {
+            personaje->salto.altura_choque = (fil+1) * alto_bloque;
+            personaje->salto.es_interrumpido = true;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 
@@ -133,17 +143,23 @@ Procedure efectuar_colision(Personaje* personaje, Mapa mapa)
         personaje->posicion.x = ANCHO_VENTANA - personaje->ancho;
     }
 
-    else if (hay_colision_superior(*personaje, mapa))
+    else if (hay_colision_superior(personaje, mapa))
     {
-        personaje->posicion.y = 0;
+        // personaje->salto.es_interrumpido = true;  /* Marca que el salto es interrumpido por la colisión con el techo */
+        personaje->posicion.y = personaje->salto.altura_choque;
+        personaje->salto.tiempo_en_salto = 0;  /* Reinicia el tiempo de salto para evitar problemas de acumulación */
+        // personaje->salto.altura_choque = personaje->posicion.y;  /* Guarda la altura del choque con el techo */
+        personaje->salto.altura_inicial = personaje->salto.altura_choque;
+        personaje->salto.impulso = personaje->velocidad.y;  /* Reinicia el impulso del salto */
+        personaje->velocidad.y = -personaje->velocidad.y;  /* Invierte la velocidad en el eje y */
+        // personaje->posicion.y = 0;
     }
 
-    else  /* Para el suelo */
+    else  
     {
-        personaje->salto.altura_choque = personaje->posicion.y;  /* Guarda la altura del choque con el suelo o bloque */
-
-        if (!personaje->en_plataforma)
+        if (!personaje->en_plataforma)  /* Para el suelo */
         {
+            personaje->salto.altura_choque = personaje->posicion.y;  /* Guarda la altura del choque con el suelo o bloque */
             personaje->posicion.y = ALTURA_PISO - personaje->alto;  /* Ajusta la posición del personaje al suelo */
             personaje->salto.en_salto = false;
         }
