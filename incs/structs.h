@@ -64,6 +64,8 @@ struct personaje
     bool en_plataforma;  // Si el personaje está en una plataforma o no (si está en el suelo es false)
     Salto salto;
     Vector colision;  // Vector de colisión (para detectar colisiones con el mapa)
+    // CREAR UN ARREGLO DE MUNICIONES
+    
 };
 
 struct boton 

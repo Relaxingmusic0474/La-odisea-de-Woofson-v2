@@ -4,6 +4,7 @@
 #include "allegro_libraries.h"
 #include "stdio.h"
 #include "stdbool.h"
+#include "math.h"
 #include "types.h"
 #include "structs.h"
 #include "macros.h"

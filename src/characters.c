@@ -133,9 +133,8 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
     
     if (teclas[ALLEGRO_KEY_DOWN] && !hay_colision_inferior(personaje, mapa) && !hay_bloque_debajo(personaje, mapa))
     {
-        personaje->velocidad.y += 4;
+        personaje->velocidad.y += ACELERACION_ADREDE;  /* Aumenta la velocidad vertical al presionar hacia abajo */
         personaje->posicion.y += personaje->velocidad.y;
-        // personaje->posicion.y += 4;  /* Por si el personaje está en el aire y quiere bajar un poco más rápido */
     }   
 
     if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(*personaje, mapa))

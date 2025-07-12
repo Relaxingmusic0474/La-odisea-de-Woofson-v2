@@ -60,12 +60,6 @@ bool inicializar_allegro()
         return false;
     }
 
-    if (!al_reserve_samples(16))
-    {
-        printf("Error al reservar las muestras de audio");
-        return false;
-    }
-
     return true;
 }
 

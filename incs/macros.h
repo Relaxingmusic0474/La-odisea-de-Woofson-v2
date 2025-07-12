@@ -14,13 +14,14 @@
 #define NRO_MENUS 2
 #define NRO_MUSICAS 2
 #define NRO_FUENTES 6
-#define NRO_MUESTRAS_AUDIO_RESERVADAS 4
+#define NRO_FRAMES 10
 
 // Macros para las velocidades de los personajes
 #define VELOCIDAD_PERSONAJE 5
 #define VELOCIDAD_DRAGONES 4
 #define VELOCIDAD_HUMANOIDES 3
 #define VELOCIDAD_JEFE 7
+#define ACELERACION_ADREDE 5 // Aceleración adicional que se genera al presionar la tecla de abajo estando en caida libre
 
 // Macro que define la cantidad de vidas que tendrá el personaje inicialmente
 #define VIDAS_INICIALES 5

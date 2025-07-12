@@ -13,6 +13,8 @@ bool hay_colision_inferior(Personaje*, Mapa);
 Procedure frustracion(Personaje personaje, Natural bloque_y, Natural alto_bloque);
 bool hay_bloque_debajo(Personaje*, Mapa);
 bool hay_bloque_arriba(Personaje*, Mapa);
+bool hay_bloque_izquierda(Personaje*, Mapa);
+bool hay_bloque_derecha(Personaje*, Mapa);
 Procedure efectuar_colision(Personaje*, Mapa);
 
 #endif // COLLISIONS_H
