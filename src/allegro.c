@@ -86,8 +86,8 @@ bool crear_recursos_allegro(Recursos* R)
         return false;
     }
 
-    /* Se ajusta el título de la ventana para que tenga e nombre del juego */
-    al_set_window_title(R->ventana, NOMBRE_JUEGO);  
+    al_set_window_title(R->ventana, NOMBRE_JUEGO);  // Se ajusta el título de la ventana para que tenga e nombre del juego
+    al_set_window_position(R->ventana, 0, 0);  // Se posiciona la ventana en la esquina superior izquierda de la pantalla
 
     R->cola_eventos = al_create_event_queue();
 
