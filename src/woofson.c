@@ -35,7 +35,7 @@ int main()
 
                 if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
                 {
-                    redirigir_menu(&recursos, &recursos.menu_actual, recursos.fuentes[2], recursos.menu_actual.opcion_en_hover, &etapa_juego);
+                    redirigir_menu(&recursos, recursos.fuentes[2], recursos.menu_actual.opcion_en_hover, &etapa_juego);
                 }
             }
 
@@ -54,7 +54,7 @@ int main()
         
                 if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
                 {
-                    redirigir_menu(&recursos, &recursos.menu_actual, recursos.fuentes[3], recursos.menu_actual.opcion_en_hover, &etapa_juego);
+                    redirigir_menu(&recursos, recursos.fuentes[3], recursos.menu_actual.opcion_en_hover, &etapa_juego);
                 }
             }
 

@@ -191,7 +191,7 @@ Procedure mostrar_menu(Menu menu)
 }
 
 
-Procedure redirigir_menu(Recursos* recursos, Menu* menu, ALLEGRO_FONT* fuente, Natural opcion_clickeada, Etapa* etapa_actual)
+Procedure redirigir_menu(Recursos* recursos, ALLEGRO_FONT* fuente, Natural opcion_clickeada, Etapa* etapa_actual)
 {
     finalizar_menu(&recursos->menu_actual);
 
