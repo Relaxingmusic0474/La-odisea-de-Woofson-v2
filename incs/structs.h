@@ -52,16 +52,19 @@ struct mapa
 struct personaje
 {
     char tipo;
-    Imagen imagen;
+    Imagen frames[NRO_FRAMES];  // Arreglo de imágenes para las animaciones del personaje
+    Imagen imagen;  // Imagen actual del personaje
+    Natural id_nro_frame; // Número del frame actual del personaje (para las animaciones)
     Natural nro_vidas;
     Natural subvida_actual;
     Vector posicion;
     Vector velocidad;
     float ancho;
     float alto;
-    float escala_dibujo;  // Escala de dibujo del personaje (para que se vea más grande o más pequeño)
     int bandera_dibujo;  // Si se dibuja normal o en espejo
     bool en_plataforma;  // Si el personaje está en una plataforma o no (si está en el suelo es false)
+    bool caminata;  // Si el personaje está en movimiento o intentando moverse (caminando, corriendo o pataleando)
+    unsigned int fps_en_caminata;  // Número de frames en caminata (para la animación)
     Salto salto;
     Vector colision;  // Vector de colisión (para detectar colisiones con el mapa)
     // CREAR UN ARREGLO DE MUNICIONES

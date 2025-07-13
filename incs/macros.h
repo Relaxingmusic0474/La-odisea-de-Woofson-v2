@@ -17,7 +17,8 @@
 #define NRO_FRAMES 10
 
 // Macros para las velocidades de los personajes
-#define VELOCIDAD_PERSONAJE 5
+#define VELOCIDAD_MAXIMA_PERSONAJE 5
+#define ACELERACION_PERSONAJE 0.2  // Aceleración del personaje al caminar
 #define VELOCIDAD_DRAGONES 4
 #define VELOCIDAD_HUMANOIDES 3
 #define VELOCIDAD_JEFE 7

@@ -208,14 +208,11 @@ Procedure efectuar_colision(Personaje* personaje, Mapa mapa)
 
     else if (hay_colision_superior(personaje, mapa))
     {
-        // personaje->salto.es_interrumpido = true;  /* Marca que el salto es interrumpido por la colisión con el techo */
         personaje->posicion.y = personaje->salto.altura_choque;
         personaje->salto.tiempo_en_salto = 0;  /* Reinicia el tiempo de salto para evitar problemas de acumulación */
-        // personaje->salto.altura_choque = personaje->posicion.y;  /* Guarda la altura del choque con el techo */
         personaje->salto.altura_inicial = personaje->salto.altura_choque;
         personaje->salto.impulso = personaje->velocidad.y;  /* Reinicia el impulso del salto */
         personaje->velocidad.y = -personaje->velocidad.y;  /* Invierte la velocidad en el eje y */
-        // personaje->posicion.y = 0;
     }
 
     else  

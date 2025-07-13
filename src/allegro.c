@@ -162,7 +162,7 @@ bool crear_recursos_allegro(Recursos* R)
         }
     }
 
-    if (!inicializar_personaje(&R->pje_principal, 'D'))
+    if (!inicializar_personaje(&R->pje_principal, 'W'))
     {
         return false;
     }
@@ -355,10 +355,13 @@ Procedure finalizar_allegro(Recursos* R)
         al_destroy_bitmap(R->vida);
     }
 
-    if (R->pje_principal.imagen != NULL)
+    for (i=0; i<NRO_FRAMES; i++)
     {
-        al_destroy_bitmap(R->pje_principal.imagen);
-        R->pje_principal.imagen = NULL;
+        if (R->pje_principal.frames[i] != NULL)
+        {
+            al_destroy_bitmap(R->pje_principal.frames[i]);
+            R->pje_principal.frames[i] = NULL;
+        }
     }
 
     liberar_mapas(R->mapas);

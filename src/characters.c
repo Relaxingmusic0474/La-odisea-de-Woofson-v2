@@ -8,13 +8,38 @@
  */
 bool inicializar_personaje(Personaje* personaje, char tipo)
 {
+    Natural i;
+    char ruta_imagen[50] = {'\0'};
+
+    for (i=0; i<NRO_FRAMES; i++)
+    {
+        personaje->frames[i] = NULL;  // Inicializa cada frame a NULL
+    }
+
     switch (tipo)
     {
         case 'W':
             personaje->tipo = 'W';  // Woofson
-            personaje->velocidad.x = VELOCIDAD_PERSONAJE;
+            personaje->velocidad.x = 0;
             personaje->velocidad.y = 0;  // Inicialmente no está en salto
-            personaje->imagen = al_load_bitmap("assets/images/woofson.png");
+            personaje->caminata = false;  // Inicialmente no está en movimiento
+            personaje->fps_en_caminata = 0;  // Inicializa el tiempo de caminata a 0
+
+            for (i=0; i<NRO_FRAMES; i++)
+            {
+                sprintf(ruta_imagen, "assets/images/woofson_frames/woofson-%hu.png", i+1);
+                personaje->frames[i] = al_load_bitmap(ruta_imagen);
+
+                if (!personaje->frames[i])
+                {
+                    printf("Error al cargar la imagen del frame %hu del personaje Woofson.\n", i+1);
+                    return false;
+                }
+            }
+
+            personaje->imagen = personaje->frames[0];
+            personaje->id_nro_frame = 0;  // Inicializa el número de frame actual a 0
+            personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Ancho del personaje
             break;
 
         case 'D':
@@ -47,9 +72,8 @@ bool inicializar_personaje(Personaje* personaje, char tipo)
 
     personaje->nro_vidas = VIDAS_INICIALES;
     personaje->subvida_actual = 100;
-    personaje->escala_dibujo = 1.0;
-    personaje->ancho = al_get_bitmap_width(personaje->imagen) * personaje->escala_dibujo;  // Ancho del personaje
-    personaje->alto = al_get_bitmap_height(personaje->imagen) * personaje->escala_dibujo;  // Alto del personaje
+    personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Ancho del personaje
+    personaje->alto = al_get_bitmap_height(personaje->imagen);  // Alto del personaje
     personaje->posicion.x = ANCHO_VENTANA * 0.1;
     personaje->posicion.y = ALTURA_PISO - personaje->alto;  // Se coloca en el piso
     personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
@@ -82,7 +106,6 @@ Procedure inicializar_salto(Personaje* personaje)
  */
 Procedure determinar_como_dibujar_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Natural ultima_tecla_lateral)
 {
-    /* Se determina cómo se debe dibujar el personaje según las teclas presionadas */
     if (teclas[ALLEGRO_KEY_LEFT] || (!teclas[ALLEGRO_KEY_RIGHT] && ultima_tecla_lateral == ALLEGRO_KEY_LEFT))
     {
         personaje->bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;  // Dibuja el personaje mirando a la izquierda
@@ -92,8 +115,6 @@ Procedure determinar_como_dibujar_personaje(Personaje* personaje, bool teclas[AL
     {
         personaje->bandera_dibujo = 0;  // Dibuja el personaje mirando a la derecha
     }
-
-    return;
 }
 
 
@@ -105,17 +126,43 @@ Procedure determinar_como_dibujar_personaje(Personaje* personaje, bool teclas[AL
  */
 Procedure dibujar_personaje(Personaje personaje, bool teclas[ALLEGRO_KEY_MAX], Natural ultima_tecla_lateral)
 {
-    /* Se determina cómo se debe dibujar el personaje según las teclas presionadas */
     determinar_como_dibujar_personaje(&personaje, teclas, ultima_tecla_lateral);
-
-    /* Se dibuja el personaje en su posición actual */
     al_draw_bitmap(personaje.imagen, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);
-
-    return;
 }
 
 
-/**
+Procedure actualizar_frame(Personaje* personaje)
+{
+    if (personaje->velocidad.x != 0)  // Si el personaje está caminando
+    {
+        personaje->id_nro_frame = (++personaje->id_nro_frame) % NRO_FRAMES;  // Evita que el frame se salga del rango
+
+        if (personaje->frames[personaje->id_nro_frame])  // Verifica si hay un frame siguiente para evitar errores de acceso a memoria
+        {
+            personaje->imagen = personaje->frames[personaje->id_nro_frame];  // Cambia al siguiente frame de animación
+            personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Actualiza el ancho del personaje (el alto no cambia)
+        }
+    }
+}
+
+
+bool es_posible_mover_personaje_lateralmente(Personaje personaje, bool teclas[ALLEGRO_KEY_MAX], Mapa mapa)
+{
+    if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(personaje, mapa))
+    {
+        return true;  // Puede moverse a la izquierda
+    }
+
+    else if (teclas[ALLEGRO_KEY_RIGHT] && !hay_colision_derecha(personaje, mapa))
+    {
+        return true;  // Puede moverse a la derecha
+    }
+
+    return false;  // No puede moverse lateralmente
+}
+
+
+ /**
  * Función para plasmar la lógica del movimiento del personaje según las teclas presionadas y el mapa.
  * También maneja la lógica del salto y las colisiones con el mapa.
  * @param personaje Puntero al personaje que se va a mover.
@@ -124,6 +171,51 @@ Procedure dibujar_personaje(Personaje personaje, bool teclas[ALLEGRO_KEY_MAX], N
  */
 Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Mapa mapa)
 {
+    personaje->caminata = teclas[ALLEGRO_KEY_LEFT] ^ teclas[ALLEGRO_KEY_RIGHT];  // Actualiza el estado de caminata según las teclas presionadas
+
+    if (personaje->caminata)
+    {   
+        personaje->fps_en_caminata++;
+
+        if (personaje->fps_en_caminata % 5 == 0)  // Actualiza el frame cada 5 iteraciones
+        {
+            actualizar_frame(personaje);  // Actualiza el frame del personaje si está caminando
+        }
+
+        if (es_posible_mover_personaje_lateralmente(*personaje, teclas, mapa))
+        {
+            if (fabs(personaje->velocidad.x) < VELOCIDAD_MAXIMA_PERSONAJE)
+            {
+                personaje->velocidad.x = teclas[ALLEGRO_KEY_LEFT] ? personaje->velocidad.x - ACELERACION_PERSONAJE 
+                                                                  : personaje->velocidad.x + ACELERACION_PERSONAJE;   // Acelera el personaje al caminar dependiendo del sentido
+            }
+
+            else
+            {
+                personaje->velocidad.x = teclas[ALLEGRO_KEY_LEFT] ? -VELOCIDAD_MAXIMA_PERSONAJE 
+                                                                  : VELOCIDAD_MAXIMA_PERSONAJE;  // Si el módulo de la velocidad es mayor a la máxima, la limita
+            }
+        }
+    }
+
+    else
+    {
+        if (fabs(personaje->velocidad.x) < ACELERACION_PERSONAJE)  // Si la velocidad es menor a la aceleración, se detiene
+        {
+            personaje->velocidad.x = 0;
+            personaje->fps_en_caminata = 0;  // Reinicia el tiempo de caminata al detenerse
+            personaje->imagen = personaje->frames[0];  // Vuelve al primer frame de la animación
+        }
+
+        else
+        {
+            personaje->velocidad.x = personaje->velocidad.x < 0 ? personaje->velocidad.x + ACELERACION_PERSONAJE 
+                                                                : personaje->velocidad.x - ACELERACION_PERSONAJE;  // Disminuye la velocidad de movimiento del personaje al dejar de caminar
+        }
+    }
+
+    personaje->posicion.x += personaje->velocidad.x;  // Actualiza la posición del personaje en el eje x
+
     if (teclas[ALLEGRO_KEY_UP] && !personaje->salto.en_salto && !hay_colision_superior(personaje, mapa))
     {
         personaje->salto.en_salto = true;  /* Activa el salto */
@@ -139,8 +231,6 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
 
     if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(*personaje, mapa))
     {
-        personaje->posicion.x -= personaje->velocidad.x;
-
         if (!personaje->salto.en_salto && personaje->posicion.y + personaje->alto < ALTURA_PISO && !hay_bloque_debajo(personaje, mapa))
         {
             activar_caida_libre(personaje);  /* Activa la caída libre si el personaje no está en el suelo */
@@ -166,9 +256,7 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
     if (hay_colision_con_bordes(personaje, mapa))
     {
         efectuar_colision(personaje, mapa);
-    }    
-
-    return;
+    }
 }
 
 
