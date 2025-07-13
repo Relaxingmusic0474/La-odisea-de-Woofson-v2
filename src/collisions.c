@@ -79,59 +79,37 @@ bool hay_colision_inferior(Personaje* personaje, Mapa mapa)
 bool hay_bloque_debajo(Personaje* personaje, Mapa mapa)
 {
     int fil, col;
-    float x_medio, y_inf;
+    Natural i, nro_pasos, verificaciones;
+    float paso, x0, x, y_inf;
 
-    x_medio = personaje->posicion.x + personaje->ancho / 2;
+    x0 = personaje->posicion.x;
     y_inf = personaje->posicion.y + personaje->alto;
 
     fil = (int) (y_inf / mapa.alto_bloque);
-    col = (int) (x_medio / mapa.ancho_bloque);
 
-    if (fil >= 0 && fil < mapa.nro_filas)
+    nro_pasos = (Natural) ceilf(personaje->ancho / mapa.ancho_bloque);
+    verificaciones = nro_pasos + 1;  // Considerando que los puntos a evaluar son 1 más que los subintervalos
+    paso = personaje->ancho / nro_pasos;  // Ancho de cada paso de verificación
+
+    for (i=0; i<verificaciones; i++)
     {
-        if (mapa.mapa[fil][col] == 1)
+        x = x0 + i * paso;
+
+        col = (int) (x / mapa.ancho_bloque);
+
+        if (col >= 0 && col < mapa.nro_columnas)
         {
-            personaje->salto.altura_choque = fil * mapa.alto_bloque - personaje->alto;
-            personaje->en_plataforma = true;
-            return true;
+            if (mapa.mapa[fil][col] == 1)
+            {
+                personaje->en_plataforma = true;
+                personaje->salto.altura_choque =  fil * mapa.alto_bloque - personaje->alto;
+                return true;  // Hay un bloque debajo del personaje
+            }
         }
     }
 
-    return false;
+    return false;  // No hay bloque debajo del personaje
 }
-
-
-/**
- * Función que verifica si hay un bloque arriba del personaje.
- * @param personaje El personaje a verificar.
- * @param mapa El mapa del juego, que contiene los bloques y obstáculos.
- * @return true si hay un bloque arriba del personaje, false en caso contrario.
- */
-/*
-bool hay_bloque_arriba(Personaje* personaje, Mapa mapa)
-{
-    int fil, col;
-    float x_medio, y_sup;
-
-    x_medio = personaje->posicion.x + personaje->ancho / 2;
-    y_sup = personaje->posicion.y;
-
-    fil = (int) (y_sup / mapa.alto_bloque);
-    col = (int) (x_medio / mapa.ancho_bloque);
-
-    if (fil >= 0 && fil < mapa.nro_filas)
-    {
-        if (mapa.mapa[fil][col] == 1)
-        {
-            personaje->salto.altura_choque = (fil+1) * mapa.alto_bloque;
-            personaje->salto.es_interrumpido = true;
-            return true;
-        }
-    }
-
-    return false;
-}
-*/
 
 
 bool hay_bloque_arriba(Personaje* personaje, Mapa mapa)

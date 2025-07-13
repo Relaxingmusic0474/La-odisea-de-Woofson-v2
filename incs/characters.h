@@ -14,6 +14,8 @@ bool inicializar_personaje(Personaje*, char);
 Procedure inicializar_salto(Personaje*);
 Procedure determinar_como_dibujar_personaje(Personaje*, bool [ALLEGRO_KEY_MAX], Natural);
 Procedure dibujar_personaje(Personaje, bool [ALLEGRO_KEY_MAX], Natural);
+Procedure actualizar_frame(Personaje*);
+bool es_posible_mover_personaje_lateralmente(Personaje, bool [ALLEGRO_KEY_MAX], Mapa);
 Procedure mover_personaje(Personaje*, bool [ALLEGRO_KEY_MAX], Mapa);
 Procedure continuar_salto(Personaje*, float, Mapa);
 Procedure activar_caida_libre(Personaje*);
