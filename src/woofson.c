@@ -102,7 +102,7 @@ int main()
                     dibujar_personaje(recursos.pje_principal, teclas, ultima_tecla_lateral);  // Dibuja el personaje en su posición actual
                     dibujar_mapa(recursos.mapas[NIVEL1]);  // Dibujamos el mapa del primer nivel
 
-                    if (iteracion % 30 == 0)
+                    if (iteracion % 10 == 0)
                     {
                         // mostrar_datos_personaje(recursos.pje_principal);
                         // mostrar_bloque_actual_personaje(recursos.pje_principal, recursos.mapas[NIVEL1]);

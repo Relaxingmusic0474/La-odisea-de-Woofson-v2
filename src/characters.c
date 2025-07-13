@@ -40,6 +40,15 @@ bool inicializar_personaje(Personaje* personaje, char tipo)
             personaje->imagen = personaje->frames[0];
             personaje->id_nro_frame = 0;  // Inicializa el número de frame actual a 0
             personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Ancho del personaje
+            personaje->nro_vidas = VIDAS_INICIALES;
+            personaje->subvida_actual = 100;
+            personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Ancho del personaje
+            personaje->alto = al_get_bitmap_height(personaje->imagen);  // Alto del personaje
+            personaje->posicion.x = ANCHO_VENTANA * 0.1;
+            personaje->posicion.y = ALTURA_PISO - personaje->alto;  // Se coloca en el piso
+            personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
+            personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
+            inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
             break;
 
         case 'D':
@@ -69,16 +78,6 @@ bool inicializar_personaje(Personaje* personaje, char tipo)
         printf("Error al cargar la imagen del personaje.\n");
         return false;
     }
-
-    personaje->nro_vidas = VIDAS_INICIALES;
-    personaje->subvida_actual = 100;
-    personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Ancho del personaje
-    personaje->alto = al_get_bitmap_height(personaje->imagen);  // Alto del personaje
-    personaje->posicion.x = ANCHO_VENTANA * 0.1;
-    personaje->posicion.y = ALTURA_PISO - personaje->alto;  // Se coloca en el piso
-    personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
-    personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
-    inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
 
     return true;
 }
@@ -131,11 +130,15 @@ Procedure dibujar_personaje(Personaje personaje, bool teclas[ALLEGRO_KEY_MAX], N
 }
 
 
+/**
+ * Función que actualiza el frame del personaje según su velocidad y estado de caminata.
+ * @param personaje Puntero al personaje cuyo frame se va a actualizar.
+ */
 Procedure actualizar_frame(Personaje* personaje)
 {
     if (personaje->velocidad.x != 0)  // Si el personaje está caminando
     {
-        personaje->id_nro_frame = (++personaje->id_nro_frame) % NRO_FRAMES;  // Evita que el frame se salga del rango
+        personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES;  // Evita que el frame se salga del rango
 
         if (personaje->frames[personaje->id_nro_frame])  // Verifica si hay un frame siguiente para evitar errores de acceso a memoria
         {
@@ -146,6 +149,13 @@ Procedure actualizar_frame(Personaje* personaje)
 }
 
 
+/**
+ * Función que verifica si el personaje puede moverse lateralmente según las teclas presionadas y el mapa.
+ * @param personaje El personaje a verificar.
+ * @param teclas Un arreglo de booleanos que indica qué teclas están presionadas.
+ * @param mapa El mapa del juego, que contiene los bloques y obstáculos.
+ * @return true si el personaje puede moverse lateralmente, false en caso contrario.
+ */
 bool es_posible_mover_personaje_lateralmente(Personaje personaje, bool teclas[ALLEGRO_KEY_MAX], Mapa mapa)
 {
     if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(personaje, mapa))
@@ -177,7 +187,7 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
     {   
         personaje->fps_en_caminata++;
 
-        if (personaje->fps_en_caminata % 5 == 0)  // Actualiza el frame cada 5 iteraciones
+        if (personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)  // Actualiza el frame cada cierto numero de iteraciones que depende de la velocidad
         {
             actualizar_frame(personaje);  // Actualiza el frame del personaje si está caminando
         }
@@ -209,6 +219,13 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
 
         else
         {
+            personaje->fps_en_caminata++;
+            
+            if (personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)
+            {
+                actualizar_frame(personaje);  // Actualiza el frame del personaje si está caminando
+            }
+            
             personaje->velocidad.x = personaje->velocidad.x < 0 ? personaje->velocidad.x + ACELERACION_PERSONAJE 
                                                                 : personaje->velocidad.x - ACELERACION_PERSONAJE;  // Disminuye la velocidad de movimiento del personaje al dejar de caminar
         }
@@ -229,7 +246,7 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
         personaje->posicion.y += personaje->velocidad.y;
     }   
 
-    if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(*personaje, mapa))
+    if (personaje->velocidad.x < 0 && !hay_colision_izquierda(*personaje, mapa))
     {
         if (!personaje->salto.en_salto && personaje->posicion.y + personaje->alto < ALTURA_PISO && !hay_bloque_debajo(personaje, mapa))
         {
@@ -237,10 +254,8 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
         }
     }
 
-    if (teclas[ALLEGRO_KEY_RIGHT] && !hay_colision_derecha(*personaje, mapa))
+    if (personaje->velocidad.x > 0 && !hay_colision_derecha(*personaje, mapa))
     {
-        personaje->posicion.x += personaje->velocidad.x;
-
         if (!personaje->salto.en_salto && personaje->posicion.y + personaje->alto < ALTURA_PISO && !hay_bloque_debajo(personaje, mapa))
         {
             activar_caida_libre(personaje);  /* Activa la caída libre si el personaje no está en el suelo */
