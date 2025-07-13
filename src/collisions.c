@@ -66,7 +66,7 @@ bool hay_bloque_arriba(Personaje* personaje, Mapa mapa)
 
         if (col >= 0 && col < mapa.nro_columnas)
         {
-            if (mapa.mapa[fil][col] == 1)
+            if (mapa.mapa[fil][col] != NADA)
             {
                 personaje->salto.altura_choque = (fil+1) * mapa.alto_bloque;
                 personaje->salto.es_interrumpido = true;
@@ -128,7 +128,7 @@ bool hay_bloque_debajo(Personaje* personaje, Mapa mapa)
 
         if (col >= 0 && col < mapa.nro_columnas)
         {
-            if (mapa.mapa[fil][col] == 1)
+            if (mapa.mapa[fil][col] != NADA)
             {
                 personaje->en_plataforma = true;
                 personaje->salto.altura_choque =  fil * mapa.alto_bloque - personaje->alto;
@@ -188,7 +188,7 @@ bool hay_bloque_izquierda(Personaje* personaje, Mapa mapa)
 
         if (fil >= 0 && fil < mapa.nro_filas)
         {
-            if (mapa.mapa[fil][col] == 1)
+            if (mapa.mapa[fil][col] != NADA)
             {
                 personaje->posicion.x = (col + 1) * mapa.ancho_bloque;  // Ajusta la posición del personaje al borde izquierdo del bloque
                 return true;
@@ -247,7 +247,7 @@ bool hay_bloque_derecha(Personaje* personaje, Mapa mapa)
 
         if (fil >= 0 && fil < mapa.nro_filas)
         {
-            if (mapa.mapa[fil][col] == 1)
+            if (mapa.mapa[fil][col] != NADA)
             {
                 personaje->posicion.x = col * mapa.ancho_bloque - personaje->ancho;  // Ajusta la posición del personaje al borde derecho del bloque
                 return true;

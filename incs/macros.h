@@ -1,7 +1,7 @@
 #ifndef MACROS_H
 #define MACROS_H
 
-#include "allegro5/allegro_color.h"  // Para las macros de los colores (lineas 43 a 50)
+#include "allegro5/allegro_color.h"  // Para las macros de los colores (lineas 49 a 57)
 
 // Macros generales
 #define NOMBRE_JUEGO "La odisea de Woofson"
@@ -17,6 +17,12 @@
 #define NRO_FRAMES_MOVIMIENTO 10
 #define NRO_FRAMES_PELEA (NRO_FRAMES_MOVIMIENTO)
 #define NRO_FRAMES 20  // Número de frames que tendrá cada personaje
+#define MAX_RAYOS 8  // Número máximo de rayos que se pueden detectar en el mapa
+
+// Macros para los elementos del mapa
+#define NADA 0  // Representa un espacio vacío en el mapa
+#define BLOQUE 1  // Representa un bloque del mapa (un bloque sólido)
+#define TRAMPA 2  // Representa una trampa del mapa (un bloque del cual sale una trampa)
 
 // Macros para las velocidades de los personajes
 #define VELOCIDAD_MAXIMA_PERSONAJE 8
@@ -25,6 +31,9 @@
 #define VELOCIDAD_HUMANOIDES 3
 #define VELOCIDAD_JEFE 7
 #define ACELERACION_ADREDE 5 // Aceleración adicional que se genera al presionar la tecla de abajo estando en caida libre
+
+// Macro para definir los daños que causan las trampas o los enemigos al personaje
+#define DANHO_RAYO 28
 
 // Macro que define la cantidad de vidas que tendrá el personaje inicialmente
 #define VIDAS_INICIALES 5
@@ -39,7 +48,7 @@
 
 // Macros para los largos de cadena
 #define LARGO 25
-#define MAXLINEA 64
+#define MAXLINEA 128
 
 // Macros para los colores
 #define ROJO al_map_rgb(255, 0, 0)
@@ -50,6 +59,7 @@
 #define NEGRO al_map_rgb(0, 0, 0)
 #define GRIS al_map_rgb(205, 205, 205)
 #define CAFE al_map_rgb(111, 78, 55)
+#define AMARILLO al_map_rgb(255, 255, 0)
 
 // Macros de estilo personal de programacion (para hacerlo mas legible para mi)
 #define LOOP while (1)

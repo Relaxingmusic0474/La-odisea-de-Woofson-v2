@@ -9,6 +9,7 @@
 typedef struct vector Vector;
 typedef struct rectangulo Rectangulo;
 typedef struct salto Salto;
+typedef struct rayo Rayo;
 typedef struct mapa Mapa;
 typedef struct personaje Personaje;
 typedef struct colision Colision;
@@ -38,6 +39,16 @@ struct salto  // ANALIZAR SI SERÁ NECESARIO AGREGAR LA POSICIÓN FINAL DEL SALT
     bool en_salto;  // Si el personaje está en salto o no
     bool es_interrumpido;  // Si el salto es interrumpido por la colisión con algún techo o no
     Entero altura_choque;  // Este atributo cobra sentido si el salto es interrumpido por un techo
+};
+
+struct rayo  // Tipo de trampa que se usa en el juego
+{
+    Vector origen;  // Punto de origen del rayo
+    Vector objetivo;  // Posición a la que apunta el rayo
+    Vector posicion;  // Posición actual del rayo
+    Vector velocidad;  // Velocidad del rayo
+    Natural danho;  // Daño que causa el rayo al impactar al personaje
+    bool activo;  // Si el rayo está activo o no (si se ha disparado)
 };
 
 struct mapa

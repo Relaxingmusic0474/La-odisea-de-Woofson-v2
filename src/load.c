@@ -316,10 +316,15 @@ Procedure dibujar_mapa(Mapa mapa)
     {
         for (j=0; j<mapa.nro_columnas; j++)
         {
-            if (mapa.mapa[i][j] == 1)
+            if (mapa.mapa[i][j] == BLOQUE || mapa.mapa[i][j] == TRAMPA)
             {
                 al_draw_filled_rectangle(j*ANCHO_VENTANA/mapa.nro_columnas, i*ALTURA_PISO/mapa.nro_filas, 
                                         (j+1)*ANCHO_VENTANA/mapa.nro_columnas, (i+1)*ALTURA_PISO/mapa.nro_filas, CAFE);
+            }
+
+            if (mapa.mapa[i][j] == TRAMPA)
+            {
+                al_draw_filled_circle((j+0.5)*ANCHO_VENTANA/mapa.nro_columnas, (i+0.5)*ALTURA_PISO/mapa.nro_filas, 5, ROJO);
             }
         }
     }
