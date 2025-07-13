@@ -66,7 +66,6 @@ struct personaje
     bool caminata;  // Si el personaje está en movimiento o intentando moverse (caminando, corriendo o pataleando)
     unsigned int fps_en_caminata;  // Número de frames en caminata (para la animación)
     Salto salto;
-    Vector colision;  // Vector de colisión (para detectar colisiones con el mapa)
     // CREAR UN ARREGLO DE MUNICIONES
     
 };
