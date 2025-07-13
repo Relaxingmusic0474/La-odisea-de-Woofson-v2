@@ -14,7 +14,9 @@
 #define NRO_MENUS 2
 #define NRO_MUSICAS 2
 #define NRO_FUENTES 6
-#define NRO_FRAMES 10
+#define NRO_FRAMES_MOVIMIENTO 10
+#define NRO_FRAMES_PELEA (NRO_FRAMES_MOVIMIENTO)
+#define NRO_FRAMES 20  // Número de frames que tendrá cada personaje
 
 // Macros para las velocidades de los personajes
 #define VELOCIDAD_MAXIMA_PERSONAJE 8

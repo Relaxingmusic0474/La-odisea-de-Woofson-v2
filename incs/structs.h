@@ -65,6 +65,7 @@ struct personaje
     bool en_plataforma;  // Si el personaje está en una plataforma o no (si está en el suelo es false)
     bool caminata;  // Si el personaje está en movimiento o intentando moverse (caminando, corriendo o pataleando)
     unsigned int fps_en_caminata;  // Número de frames en caminata (para la animación)
+    unsigned int fps_en_pelea; // Número de frames en pelea (para la animación)
     Salto salto;
     // CREAR UN ARREGLO DE MUNICIONES
     

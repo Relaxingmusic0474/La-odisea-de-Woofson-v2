@@ -136,18 +136,27 @@ Procedure dibujar_personaje(Personaje personaje, Natural ultima_tecla_lateral)
 /**
  * Función que actualiza el frame del personaje según su velocidad y estado de caminata.
  * @param personaje Puntero al personaje cuyo frame se va a actualizar.
+ * @param modo Modo de actualización del frame ('M' para movimiento, 'P' para pelea).
  */
-Procedure actualizar_frame(Personaje* personaje)
+Procedure actualizar_frame(Personaje* personaje, char modo)
 {
-    if (personaje->velocidad.x != 0)  // Si el personaje está caminando
+    if (modo == 'P')  // Si está en modo pelea, se actualiza el frame de pelea
     {
-        personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES;  // Evita que el frame se salga del rango
+        personaje->id_nro_frame = NRO_FRAMES_MOVIMIENTO + (personaje->id_nro_frame + 1) % NRO_FRAMES_PELEA ;  // Evita que el frame se salga del rango
+    }
 
-        if (personaje->frames[personaje->id_nro_frame])  // Verifica si hay un frame siguiente para evitar errores de acceso a memoria
+    else  // Si está en modo movimiento, se actualiza el frame de movimiento siempre que esté en movimiento o en pataleo
+    {
+        if (personaje->velocidad.x != 0)
         {
-            personaje->imagen = personaje->frames[personaje->id_nro_frame];  // Cambia al siguiente frame de animación
-            personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Actualiza el ancho del personaje (el alto no cambia)
+            personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_MOVIMIENTO;  // Evita que el frame se salga del rango
         }
+    }
+
+    if (personaje->frames[personaje->id_nro_frame])  // Verifica si hay un frame siguiente para evitar errores de acceso a memoria
+    {
+        personaje->imagen = personaje->frames[personaje->id_nro_frame];  // Cambia al siguiente frame de animación
+        personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Actualiza el ancho del personaje (el alto no cambia)
     }
 }
 
@@ -189,14 +198,27 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa)
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
 
     personaje->caminata = teclas[ALLEGRO_KEY_LEFT] ^ teclas[ALLEGRO_KEY_RIGHT];  // Actualiza el estado de caminata según las teclas presionadas
+    
+    if (teclas[ALLEGRO_KEY_SPACE])
+    {
+        personaje->fps_en_pelea++;
 
+        if (personaje->fps_en_pelea % 8 == 0)  // Actualiza el frame de pelea cada 8 frames
+        {
+            actualizar_frame(personaje, 'P');  // Actualiza el frame del personaje si está en pelea
+        }
+    }
+    
     if (personaje->caminata)
-    {   
+    {
         personaje->fps_en_caminata++;
 
-        if (personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)  // Actualiza el frame cada cierto numero de iteraciones que depende de la velocidad
+        if (!teclas[ALLEGRO_KEY_SPACE])  // Si no está en pelea, actualiza el frame de caminata
         {
-            actualizar_frame(personaje);  // Actualiza el frame del personaje si está caminando
+            if (personaje->velocidad.x != 0 && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)  // Actualiza el frame cada cierto numero de iteraciones que depende de la velocidad
+            {
+                actualizar_frame(personaje, 'M');  // Actualiza el frame del personaje si está caminando
+            }
         }
 
         if (es_posible_mover_personaje_lateralmente(personaje, mapa))
@@ -221,16 +243,21 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa)
         {
             personaje->velocidad.x = 0;
             personaje->fps_en_caminata = 0;  // Reinicia el tiempo de caminata al detenerse
-            personaje->imagen = personaje->frames[0];  // Vuelve al primer frame de la animación
+            
+            if (!teclas[ALLEGRO_KEY_SPACE])
+            {
+                personaje->id_nro_frame = 0;  // Reinicia el frame del personaje al detenerse
+                personaje->imagen = personaje->frames[0];  // Vuelve al primer frame de la animación
+            }
         }
 
         else
         {
             personaje->fps_en_caminata++;
             
-            if (personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)
+            if (!teclas[ALLEGRO_KEY_SPACE] && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)
             {
-                actualizar_frame(personaje);  // Actualiza el frame del personaje si está caminando
+                actualizar_frame(personaje, 'M');  // Actualiza el frame del personaje si está caminando
             }
             
             personaje->velocidad.x = personaje->velocidad.x < 0 ? personaje->velocidad.x + ACELERACION_PERSONAJE 
