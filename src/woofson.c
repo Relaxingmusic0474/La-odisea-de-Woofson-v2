@@ -11,7 +11,7 @@ int main()
     Recursos recursos = {0};  /* Se inicializan los recursos del juego */
     ALLEGRO_EVENT evento; /* Ṕara agregar los eventos que vayan ocurriendo a la cola de eventos */
     Etapa etapa_juego = MENU_PRINCIPAL;  /* Para capturar el estado actual del juego */
-    bool teclas[ALLEGRO_KEY_MAX] = {false}; /* Para manejar las teclas que se presionan */
+    extern bool teclas[ALLEGRO_KEY_MAX]; /* Para manejar las teclas que se presionan */
     Natural ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;  /* Para que el personaje parta mirando a la derecha */
     Natural iteracion = 0;  /* Para controlar las iteraciones del juego */
     
@@ -98,13 +98,16 @@ int main()
                 case ALLEGRO_EVENT_TIMER:
                 
                     determinar_color_pantalla(iteracion/*, &rojo, &verde, &azul*/);  // Determina el color de la pantalla según la iteración
-                    mover_personaje(&recursos.pje_principal, teclas, recursos.mapas[NIVEL1]);  /* Mueve al personaje según las teclas presionadas y considera lógica de salto */
-                    dibujar_personaje(recursos.pje_principal, teclas, ultima_tecla_lateral);  // Dibuja el personaje en su posición actual
+                    mover_personaje(&recursos.pje_principal, recursos.mapas[NIVEL1]);  /* Mueve al personaje según las teclas presionadas y considera lógica de salto */
+                    dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral);  // Dibuja el personaje en su posición actual
                     dibujar_mapa(recursos.mapas[NIVEL1]);  // Dibujamos el mapa del primer nivel
 
                     if (iteracion % 10 == 0)
                     {
-                        // mostrar_datos_personaje(recursos.pje_principal);
+                        printf("Posición x: %.2f\n", recursos.pje_principal.posicion.x);
+                        printf("Velocidad x: %.2f\n", recursos.pje_principal.velocidad.x);
+                        //mostrar_datos_personaje(recursos.pje_principal);
+
                         // mostrar_bloque_actual_personaje(recursos.pje_principal, recursos.mapas[NIVEL1]);
                         
                         recursos.pje_principal.subvida_actual--;

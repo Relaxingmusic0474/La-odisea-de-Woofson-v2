@@ -103,8 +103,10 @@ Procedure inicializar_salto(Personaje* personaje)
  * @param personaje El personaje a dibujar.
  * @param teclas Un arreglo de booleanos que indica qué teclas están presionadas.
  */
-Procedure determinar_como_dibujar_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Natural ultima_tecla_lateral)
+Procedure determinar_como_dibujar_personaje(Personaje* personaje, Natural ultima_tecla_lateral)
 {
+    extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
+
     if (teclas[ALLEGRO_KEY_LEFT] || (!teclas[ALLEGRO_KEY_RIGHT] && ultima_tecla_lateral == ALLEGRO_KEY_LEFT))
     {
         personaje->bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;  // Dibuja el personaje mirando a la izquierda
@@ -123,9 +125,10 @@ Procedure determinar_como_dibujar_personaje(Personaje* personaje, bool teclas[AL
  * @param teclas Un arreglo de booleanos que indica qué teclas están presionadas.
  * @param ultima_tecla_lateral La última tecla lateral presionada (para determinar la dirección de dibujo).
  */
-Procedure dibujar_personaje(Personaje personaje, bool teclas[ALLEGRO_KEY_MAX], Natural ultima_tecla_lateral)
+Procedure dibujar_personaje(Personaje personaje, Natural ultima_tecla_lateral)
 {
-    determinar_como_dibujar_personaje(&personaje, teclas, ultima_tecla_lateral);
+    extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
+    determinar_como_dibujar_personaje(&personaje, ultima_tecla_lateral);
     al_draw_bitmap(personaje.imagen, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);
 }
 
@@ -156,8 +159,10 @@ Procedure actualizar_frame(Personaje* personaje)
  * @param mapa El mapa del juego, que contiene los bloques y obstáculos.
  * @return true si el personaje puede moverse lateralmente, false en caso contrario.
  */
-bool es_posible_mover_personaje_lateralmente(Personaje personaje, bool teclas[ALLEGRO_KEY_MAX], Mapa mapa)
+bool es_posible_mover_personaje_lateralmente(Personaje *personaje, Mapa mapa)
 {
+    extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
+
     if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(personaje, mapa))
     {
         return true;  // Puede moverse a la izquierda
@@ -179,8 +184,10 @@ bool es_posible_mover_personaje_lateralmente(Personaje personaje, bool teclas[AL
  * @param teclas Un arreglo de booleanos que indica qué teclas están presionadas.
  * @param mapa El mapa del juego, que contiene los bloques y obstáculos.
  */
-Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Mapa mapa)
+Procedure mover_personaje(Personaje* personaje, Mapa mapa)
 {
+    extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
+
     personaje->caminata = teclas[ALLEGRO_KEY_LEFT] ^ teclas[ALLEGRO_KEY_RIGHT];  // Actualiza el estado de caminata según las teclas presionadas
 
     if (personaje->caminata)
@@ -192,7 +199,7 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
             actualizar_frame(personaje);  // Actualiza el frame del personaje si está caminando
         }
 
-        if (es_posible_mover_personaje_lateralmente(*personaje, teclas, mapa))
+        if (es_posible_mover_personaje_lateralmente(personaje, mapa))
         {
             if (fabs(personaje->velocidad.x) < VELOCIDAD_MAXIMA_PERSONAJE)
             {
@@ -246,7 +253,7 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
         personaje->posicion.y += personaje->velocidad.y;
     }   
 
-    if (personaje->velocidad.x < 0 && !hay_colision_izquierda(*personaje, mapa))
+    if (personaje->velocidad.x < 0 && !hay_colision_izquierda(personaje, mapa))
     {
         if (!personaje->salto.en_salto && personaje->posicion.y + personaje->alto < ALTURA_PISO && !hay_bloque_debajo(personaje, mapa))
         {
@@ -254,7 +261,7 @@ Procedure mover_personaje(Personaje* personaje, bool teclas[ALLEGRO_KEY_MAX], Ma
         }
     }
 
-    if (personaje->velocidad.x > 0 && !hay_colision_derecha(*personaje, mapa))
+    if (personaje->velocidad.x > 0 && !hay_colision_derecha(personaje, mapa))
     {
         if (!personaje->salto.en_salto && personaje->posicion.y + personaje->alto < ALTURA_PISO && !hay_bloque_debajo(personaje, mapa))
         {
@@ -334,4 +341,39 @@ Entero velocidad_instantanea(Personaje personaje, float t)
 bool es_tecla_lateral(Tecla tecla)  // El tipo Tecla es un int, pero se usa Tecla para mayor legibilidad
 {
     return (tecla == ALLEGRO_KEY_LEFT || tecla == ALLEGRO_KEY_RIGHT);
+}
+
+
+/**
+ * Función que hace patalear al personaje (se usa para las colisiones con bloques).
+ * @param personaje El personaje que va a patalear.
+ * @param direccion La dirección en la que se va a patalear (1 para derecha, -1 para izquierda).
+ */
+Procedure patalear(Personaje* personaje, int direccion)
+{
+    if (personaje->caminata)
+    {
+        if (fabs(personaje->velocidad.x) < VELOCIDAD_MAXIMA_PERSONAJE)
+        {
+            personaje->velocidad.x = personaje->velocidad.x + ACELERACION_PERSONAJE * direccion;  /* Se acelera el pataleo del personaje */   
+        }
+
+        else if (fabs(personaje->velocidad.x) > VELOCIDAD_MAXIMA_PERSONAJE)
+        {
+            personaje->velocidad.x = VELOCIDAD_MAXIMA_PERSONAJE * direccion;  /* Se limita la magnitud de la velocidad del pataleo */
+        }
+    }
+
+    else
+    {
+        if (fabs(personaje->velocidad.x) < ACELERACION_PERSONAJE)
+        {
+            personaje->velocidad.x = 0;  /* Detiene la velocidad en el eje x */
+        }
+
+        else
+        {
+            personaje->velocidad.x = personaje->velocidad.x - ACELERACION_PERSONAJE * direccion;  /* Disminuye la magnitud de la velocidad de pataleo */
+        }
+    }
 }

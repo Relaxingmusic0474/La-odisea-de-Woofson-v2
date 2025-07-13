@@ -12,14 +12,15 @@
 
 bool inicializar_personaje(Personaje*, char);
 Procedure inicializar_salto(Personaje*);
-Procedure determinar_como_dibujar_personaje(Personaje*, bool [ALLEGRO_KEY_MAX], Natural);
-Procedure dibujar_personaje(Personaje, bool [ALLEGRO_KEY_MAX], Natural);
+Procedure determinar_como_dibujar_personaje(Personaje*, Natural);
+Procedure dibujar_personaje(Personaje, Natural);
 Procedure actualizar_frame(Personaje*);
-bool es_posible_mover_personaje_lateralmente(Personaje, bool [ALLEGRO_KEY_MAX], Mapa);
-Procedure mover_personaje(Personaje*, bool [ALLEGRO_KEY_MAX], Mapa);
+bool es_posible_mover_personaje_lateralmente(Personaje*, Mapa);
+Procedure mover_personaje(Personaje*, Mapa);
 Procedure continuar_salto(Personaje*, float, Mapa);
 Procedure activar_caida_libre(Personaje*);
 Entero velocidad_instantanea(Personaje, float);
 bool es_tecla_lateral(Tecla);
+Procedure patalear(Personaje*, int);
 
 #endif  // CHARACTERS_H
