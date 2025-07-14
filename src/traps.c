@@ -21,6 +21,8 @@ Procedure inicializar_rayo(Rayo* rayo, Musica* sonido_rayo)
     rayo->porcentaje_progreso = 0;  // Inicializa el porcentaje de progreso a 0
     rayo->tiempo_en_etapa = 0;  // Inicializa el tiempo en etapa a 0
     rayo->efecto_sonido = sonido_rayo;  // Se asigna el efecto de sonido del rayo
+    rayo->efecto_sonido_ya_empezado = false;
+    rayo->efecto_sonido_ya_detenido = false;
 }
 
 
@@ -139,6 +141,7 @@ Natural detectar_rayos(Mapa mapa, Rayo rayos[], Natural max_rayos)
  */
 Procedure dibujar_rayo(Rayo rayo, ALLEGRO_COLOR color)
 {
+    /*
     ALLEGRO_VERTEX vertices[NRO_OSCILACIONES_RAYO];
     Natural i, nro_vertices;
     float delta_x, delta_y, distancia, t, offset;
@@ -177,6 +180,12 @@ Procedure dibujar_rayo(Rayo rayo, ALLEGRO_COLOR color)
     }
 
     al_draw_prim(vertices, NULL, NULL, 0, nro_vertices, ALLEGRO_PRIM_LINE_STRIP);
+    */
+
+    if (rayo.origen.x == rayo.objetivo.x)
+        al_draw_line(rayo.origen.x, rayo.origen.y, rayo.objetivo.x, rayo.origen.y + rayo.porcentaje_progreso/100 * (rayo.objetivo.y - rayo.origen.y), AMARILLO, 4);
+    else
+        al_draw_line(rayo.origen.x, rayo.origen.y, rayo.origen.x + rayo.porcentaje_progreso/100 * (rayo.objetivo.x - rayo.origen.x), rayo.objetivo.y, AMARILLO, 4);
 }
 
 
@@ -224,30 +233,36 @@ bool linea_de_vision_libre(Rayo rayo, Personaje personaje, Mapa mapa)
 }
 
 
-bool personaje_activa_rayo(Rayo rayo, Personaje personaje)
+bool personaje_activa_rayo(Rayo rayo, Personaje personaje, Mapa mapa)
 {
     float min_x = fmin(rayo.origen.x, rayo.objetivo.x);
     float max_x = fmax(rayo.origen.x, rayo.objetivo.x);
     float min_y = fmin(rayo.origen.y, rayo.objetivo.y);
     float max_y = fmax(rayo.origen.y, rayo.objetivo.y);
 
+    bool dentro_de_rango = false;
+
     // Si el rayo es vertical, revisamos si el personaje está en la misma zona vertical
     if (rayo.origen.x == rayo.objetivo.x)
     {
-        return (personaje.posicion.y + personaje.alto >= min_y && personaje.posicion.y <= max_y);
+        dentro_de_rango = personaje.posicion.y + personaje.alto >= min_y && personaje.posicion.y <= max_y;
     }
 
     
     else  // Si el rayo es horizontal, revisamos si el personaje está en la misma zona horizontal
     {
-        return (personaje.posicion.x + personaje.ancho >= min_x && personaje.posicion.x <= max_x);
+        dentro_de_rango = personaje.posicion.x + personaje.ancho >= min_x && personaje.posicion.x <= max_x;
     }
+
+    bool resultado = dentro_de_rango && linea_de_vision_libre(rayo, personaje, mapa);
+
+    return resultado; // dentro_de_rango && linea_de_vision_libre(rayo, personaje, mapa);
 }
 
 
-Procedure actualizar_rayo(Rayo* rayo, Personaje personaje)
+Procedure actualizar_rayo(Rayo* rayo, Personaje personaje, Mapa mapa)
 {
-    bool proximidad = personaje_activa_rayo(*rayo, personaje);
+    bool proximidad = personaje_activa_rayo(*rayo, personaje, mapa);
 
     rayo->tiempo_en_etapa += 1./FPS;
 
@@ -282,7 +297,7 @@ Procedure actualizar_rayo(Rayo* rayo, Personaje personaje)
         case EN_APARICION:
         {
             rayo->activo = true;
-            rayo->porcentaje_progreso = rayo->tiempo_en_etapa / TIEMPO_RAYO_EN_APARICION;
+            rayo->porcentaje_progreso = 100 * rayo->tiempo_en_etapa / TIEMPO_RAYO_EN_APARICION;
 
             if (rayo->porcentaje_progreso >= 100)
             {
@@ -322,6 +337,26 @@ Procedure actualizar_rayo(Rayo* rayo, Personaje personaje)
     if (rayo->activo)
     {
         dibujar_rayo(*rayo, AMARILLO);
+
+        if (!rayo->efecto_sonido_ya_empezado)
+        {
+            al_set_sample_instance_gain(rayo->efecto_sonido->instancia, 0.5);  // Volumen
+            al_set_sample_instance_pan(rayo->efecto_sonido->instancia, 0.0);  // Centro
+            al_set_sample_instance_speed(rayo->efecto_sonido->instancia, 2.0);  // Velocidad 
+            al_set_sample_instance_playmode(rayo->efecto_sonido->instancia, ALLEGRO_PLAYMODE_LOOP);  // Se repite si es que no se alcanza a reproducir completo
+            rayo->efecto_sonido_ya_empezado = true;
+            rayo->efecto_sonido_ya_detenido = false;
+        }
+    }
+
+    else
+    {
+        if (!rayo->efecto_sonido_ya_detenido)
+        {
+            al_stop_sample_instance(rayo->efecto_sonido->instancia);
+            rayo->efecto_sonido_ya_empezado = false;
+            rayo->efecto_sonido_ya_detenido = true;
+        }
     }
 
     if (!proximidad)

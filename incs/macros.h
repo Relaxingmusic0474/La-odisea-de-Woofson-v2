@@ -11,6 +11,7 @@
 #define ALTO_VENTANA 900
 #define ALTURA_PISO (ALTO_VENTANA * 5/6)  // Altura del piso en px
 #define NRO_NIVELES 5
+#define NRO_COLORES 5
 #define NRO_MENUS 2
 #define NRO_MUSICAS 2
 #define NRO_FUENTES 6
@@ -23,9 +24,9 @@
 #define NRO_OSCILACIONES_RAYO 10  // Número de oscilaciones que tendrá el rayo
 #define AMPLITUD_OSCILACION_RAYO 8  // Amplitud de la oscilación del rayo en px
 #define DANHO_RAYO 28  // Daño que causa el rayo al impactar al personaje
-#define TIEMPO_RAYO_EN_ESPERA 2.0  // Tiempo en segundos que el rayo estará inactivo antes de volver a activarse
-#define TIEMPO_RAYO_EN_APARICION 0.5  // Tiempo en segundos que el rayo demorará en aparecer por completo
-#define TIEMPO_RAYO_ACTIVO_AL_100 1.0  // Tiempo en segundos que el rayo estará activo al 100% de su longitud
+#define TIEMPO_RAYO_EN_ESPERA 0.5  // Tiempo en segundos que el rayo estará inactivo antes de volver a activarse
+#define TIEMPO_RAYO_EN_APARICION 0.2  // Tiempo en segundos que el rayo demorará en aparecer por completo
+#define TIEMPO_RAYO_ACTIVO_AL_100 0.3  // Tiempo en segundos que el rayo estará activo al 100% de su longitud
 #define TIEMPO_RAYO_EN_DESAPARICION (TIEMPO_RAYO_EN_APARICION)  // Tiempo en segundos que el rayo demorará en desaparecer por completo
 #define TIEMPO_CICLO_RAYO (TIEMPO_RAYO_EN_ESPERA + TIEMPO_RAYO_EN_APARICION + TIEMPO_RAYO_ACTIVO_AL_100 + TIEMPO_RAYO_EN_DESAPARICION) // Tiempo total del ciclo del rayo
 #define TOLERANCIA 1e-2  // Tolerancia para las comparaciones de punto flotante
@@ -72,6 +73,8 @@
 #define GRIS al_map_rgb(205, 205, 205)
 #define CAFE al_map_rgb(111, 78, 55)
 #define AMARILLO al_map_rgb(255, 255, 0)
+#define ROSADO al_map_rgb(216, 84, 180)
+#define MORADO al_map_rgb(128, 0, 128)
 
 // Macros de estilo personal de programacion (para hacerlo mas legible para mi)
 #define LOOP while (1)
