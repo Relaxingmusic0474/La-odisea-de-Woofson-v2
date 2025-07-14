@@ -52,7 +52,7 @@ struct rayo  // Tipo de trampa que se usa en el juego
     float porcentaje_progreso;  // Porcentaje de progreso del rayo en su ciclo de activación/desactivación
     EtapaRayo etapa;  // Etapa actual del rayo (en espera, aparición, activo al 100%, desaparición)
     float tiempo_en_etapa;  // Tiempo que lleva el rayo en una etapa determinada (en espera, aparición, activo al 100%, desaparición)
-    ALLEGRO_SAMPLE* efecto_sonido;  // Efecto de sonido del rayo
+    Musica* efecto_sonido;  // Efecto de sonido del rayo
 };
 
 struct mapa

@@ -15,11 +15,11 @@ Procedure inicializar_rayo(Rayo* rayo, Musica* sonido_rayo)
     rayo->posicion.y = 0;
     rayo->velocidad.x = 0;
     rayo->velocidad.y = 0;
-    rayo->etapa = INOPERATIVO;
-    rayo->tiempo_en_etapa = 0.0f;  // Inicializa el tiempo en etapa a 0
-    rayo->porcentaje_progreso = 0.0f;  // Inicializa el porcentaje de progreso a 0
     rayo->danho = DANHO_RAYO;  // Asigna el daño del rayo
     rayo->activo = false;  // Inicialmente el rayo no está activo
+    rayo->etapa = INOPERATIVO;
+    rayo->porcentaje_progreso = 0;  // Inicializa el porcentaje de progreso a 0
+    rayo->tiempo_en_etapa = 0;  // Inicializa el tiempo en etapa a 0
     rayo->efecto_sonido = sonido_rayo;  // Se asigna el efecto de sonido del rayo
 }
 
@@ -154,22 +154,22 @@ Procedure dibujar_rayo(Rayo rayo, ALLEGRO_COLOR color)
     distancia = sqrt(delta_x * delta_x + delta_y * delta_y);
     es_vertical = (fabs(delta_x) < TOLERANCIA);  // Verifica si el rayo es vertical
 
-    nro_vertices = fmax(2, (Natural)(rayo.porcentaje_progreso / 100 * (NRO_OSCILACIONES_RAYO - 1)) + 1);  // Mínimo 2 vértices
+    // Cantidad de vértices proporcionales al progreso del rayo
+    nro_vertices = fmax(2, (Natural)(rayo.porcentaje_progreso / 100.0f * (NRO_OSCILACIONES_RAYO - 1)) + 1);
 
     for (i=0; i<nro_vertices; i++)
     {
-        t = (float) i / (NRO_OSCILACIONES_RAYO - 1);
-        offset = AMPLITUD_OSCILACION_RAYO * sin(2*PI*t);  // Oscilación de 8 px
+        t = (float) i / (nro_vertices - 1);  // Normalizado a la cantidad de vértices realmente usados
+        offset = AMPLITUD_OSCILACION_RAYO * sin(2 * PI * t);
 
         if (es_vertical)
         {
             vertices[i].x = rayo.origen.x + offset;
-            vertices[i].y = rayo.origen.y + t * distancia * rayo.porcentaje_progreso / 100;
+            vertices[i].y = rayo.origen.y + ((delta_y >= 0) ? t * distancia : -t * distancia);
         }
-
         else
         {
-            vertices[i].x = rayo.origen.x + t * distancia * rayo.porcentaje_progreso / 100;
+            vertices[i].x = rayo.origen.x + ((delta_x >= 0) ? t * distancia : -t * distancia);
             vertices[i].y = rayo.origen.y + offset;
         }
 
@@ -177,6 +177,50 @@ Procedure dibujar_rayo(Rayo rayo, ALLEGRO_COLOR color)
     }
 
     al_draw_prim(vertices, NULL, NULL, 0, nro_vertices, ALLEGRO_PRIM_LINE_STRIP);
+}
+
+
+bool linea_de_vision_libre(Rayo rayo, Personaje personaje, Mapa mapa)
+{
+    Natural col_personaje, fil_personaje, col_rayo, fil_rayo, col_min, fil_min, col_max, fil_max, col, fil;
+
+    // Convertimos coordenadas reales a índices del mapa (para el personaje)
+    col_personaje = (personaje.posicion.x + personaje.ancho / 2) / mapa.ancho_bloque;
+    fil_personaje = (personaje.posicion.y + personaje.alto / 2) / mapa.alto_bloque;
+
+    // Convertimos coordenadas reales a índices del mapa (para el rayo)
+    col_rayo = (rayo.origen.x) / mapa.ancho_bloque;
+    fil_rayo = (rayo.origen.y) / mapa.alto_bloque;
+
+    if (rayo.origen.x == rayo.objetivo.x)  // Si la trayectoria del rayo no varía su posición en x, entonces es vertical
+    {
+        fil_min = fmin(fil_personaje, fil_rayo);
+        fil_max = fmax(fil_personaje, fil_rayo);
+
+        for (fil=fil_min+1; fil<fil_max; fil++)
+        {
+            if (mapa.mapa[fil][col_rayo] == BLOQUE) 
+            {
+                return false;
+            }
+        }
+    }
+
+    else  // Aquí sería horizontal
+    {
+        col_min = fmin(col_personaje, col_rayo);
+        col_max = fmax(col_personaje, col_rayo);
+
+        for (col=col_min+1; col<col_max; col++)
+        {
+            if (mapa.mapa[fil_rayo][col] == BLOQUE) 
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;  // No hay obstáculos
 }
 
 
@@ -188,7 +232,7 @@ bool personaje_activa_rayo(Rayo rayo, Personaje personaje)
     float max_y = fmax(rayo.origen.y, rayo.objetivo.y);
 
     // Si el rayo es vertical, revisamos si el personaje está en la misma zona vertical
-    if (fabs(rayo.origen.x - rayo.objetivo.x) < TOLERANCIA)
+    if (rayo.origen.x == rayo.objetivo.x)
     {
         return (personaje.posicion.y + personaje.alto >= min_y && personaje.posicion.y <= max_y);
     }
@@ -203,6 +247,8 @@ bool personaje_activa_rayo(Rayo rayo, Personaje personaje)
 
 Procedure actualizar_rayo(Rayo* rayo, Personaje personaje)
 {
+    bool proximidad = personaje_activa_rayo(*rayo, personaje);
+
     rayo->tiempo_en_etapa += 1./FPS;
 
     switch (rayo->etapa)
@@ -211,11 +257,14 @@ Procedure actualizar_rayo(Rayo* rayo, Personaje personaje)
 
             rayo->activo = false;
 
-            if (personaje_activa_rayo(*rayo, personaje))
+            if (proximidad)
             {
-                rayo->etapa = EN_ESPERA;
+                rayo->etapa = EN_APARICION;
                 rayo->tiempo_en_etapa = 0;
             }
+
+            break;
+
 
         case EN_ESPERA:
 
@@ -234,8 +283,6 @@ Procedure actualizar_rayo(Rayo* rayo, Personaje personaje)
         {
             rayo->activo = true;
             rayo->porcentaje_progreso = rayo->tiempo_en_etapa / TIEMPO_RAYO_EN_APARICION;
-
-            printf("Estoy listo para atacar.\n");
 
             if (rayo->porcentaje_progreso >= 100)
             {
@@ -275,5 +322,12 @@ Procedure actualizar_rayo(Rayo* rayo, Personaje personaje)
     if (rayo->activo)
     {
         dibujar_rayo(*rayo, AMARILLO);
+    }
+
+    if (!proximidad)
+    {
+        rayo->etapa = INOPERATIVO;
+        rayo->tiempo_en_etapa = 0;
+        rayo->porcentaje_progreso = 0;
     }
 }
