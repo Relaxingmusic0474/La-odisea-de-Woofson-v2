@@ -17,7 +17,19 @@
 #define NRO_FRAMES_MOVIMIENTO 10
 #define NRO_FRAMES_PELEA (NRO_FRAMES_MOVIMIENTO)
 #define NRO_FRAMES 20  // Número de frames que tendrá cada personaje
+
+// Macros para los rayos
 #define MAX_RAYOS 8  // Número máximo de rayos que se pueden detectar en el mapa
+#define NRO_OSCILACIONES_RAYO 10  // Número de oscilaciones que tendrá el rayo
+#define AMPLITUD_OSCILACION_RAYO 8  // Amplitud de la oscilación del rayo en px
+#define DANHO_RAYO 28  // Daño que causa el rayo al impactar al personaje
+#define TIEMPO_RAYO_EN_ESPERA 2.0  // Tiempo en segundos que el rayo estará inactivo antes de volver a activarse
+#define TIEMPO_RAYO_EN_APARICION 0.5  // Tiempo en segundos que el rayo demorará en aparecer por completo
+#define TIEMPO_RAYO_ACTIVO_AL_100 1.0  // Tiempo en segundos que el rayo estará activo al 100% de su longitud
+#define TIEMPO_RAYO_EN_DESAPARICION (TIEMPO_RAYO_EN_APARICION)  // Tiempo en segundos que el rayo demorará en desaparecer por completo
+#define TIEMPO_CICLO_RAYO (TIEMPO_RAYO_EN_ESPERA + TIEMPO_RAYO_EN_APARICION + TIEMPO_RAYO_ACTIVO_AL_100 + TIEMPO_RAYO_EN_DESAPARICION) // Tiempo total del ciclo del rayo
+#define TOLERANCIA 1e-2  // Tolerancia para las comparaciones de punto flotante
+#define PI 3.141593
 
 // Macros para los elementos del mapa
 #define NADA 0  // Representa un espacio vacío en el mapa
@@ -25,7 +37,7 @@
 #define TRAMPA 2  // Representa una trampa del mapa (un bloque del cual sale una trampa)
 
 // Macros para las velocidades de los personajes
-#define VELOCIDAD_MAXIMA_PERSONAJE 8
+#define VELOCIDAD_MAXIMA_PERSONAJE 6
 #define ACELERACION_PERSONAJE 0.2  // Aceleración del personaje al caminar
 #define VELOCIDAD_DRAGONES 4
 #define VELOCIDAD_HUMANOIDES 3

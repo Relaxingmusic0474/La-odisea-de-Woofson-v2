@@ -169,7 +169,6 @@ bool crear_recursos_allegro(Recursos* R)
         return false;
     }
 
-
     R->vida = al_load_bitmap("assets/images/corazon.png");
 
     if (!R->vida)
@@ -259,10 +258,20 @@ bool crear_recursos_allegro(Recursos* R)
 
     R->musica_actual = R->musicas[0];  // Música menú
 
+    R->sonido_rayo = cargar_musica(SONIDO_RAYO, R->mixer);
+
+    if (!R->sonido_rayo)
+    {
+        printf("Error al cargar el sonido del rayo.\n");
+        return false;
+    }
+
+    inicializar_rayos(R->rayos, R->sonido_rayo);  // Inicializa los rayos de todos los niveles
+
     // Configurar volumen, balance, velocidad de reproducción
     al_set_sample_instance_gain(R->musica_actual->instancia, 1.0);  // Volumen
     al_set_sample_instance_pan(R->musica_actual->instancia, 0.0);  // Centro
-    al_set_sample_instance_speed(R->musica_actual->instancia, 1.0);  // Velocidad normal
+    al_set_sample_instance_speed(R->musica_actual->instancia, 1.0);  // Velocidad 
     al_set_sample_instance_playmode(R->musica_actual->instancia, ALLEGRO_PLAYMODE_LOOP);  // Repetir
 
     // Reproducir
@@ -308,6 +317,21 @@ bool inicializar_todo(Recursos* R)
 Procedure finalizar_allegro(Recursos* R)
 {
     Natural i;
+
+    if (R->sonido_rayo != NULL)
+    {
+        al_destroy_sample_instance(R->sonido_rayo->instancia);
+        R->sonido_rayo->instancia = NULL;
+    }
+
+    if (R->sonido_rayo != NULL)
+    {
+        al_destroy_sample(R->sonido_rayo->musica);
+        R->sonido_rayo->musica = NULL;
+    }
+
+    free(R->sonido_rayo);
+    R->sonido_rayo = NULL;
 
     for (i=0; i<NRO_MUSICAS; i++)
     {

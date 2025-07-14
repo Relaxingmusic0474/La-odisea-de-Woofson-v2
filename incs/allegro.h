@@ -13,6 +13,7 @@
 #include "menu.h"
 #include "enums.h"
 #include "characters.h"
+#include "traps.h"
 
 bool inicializar_allegro();
 bool crear_recursos_allegro(Recursos*);

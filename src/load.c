@@ -50,19 +50,18 @@ Musica* cargar_musica(TipoAudio tipo, ALLEGRO_MIXER* mixer)
             break;
 
         case MUSICA_NIVEL_1:
-            musica->musica = al_load_sample("assets/music/Soundtrack-A.ogg");
-            break;
-
         case MUSICA_NIVEL_2:
-            break;
-
         case MUSICA_NIVEL_3:
+            musica->musica = al_load_sample("assets/music/Soundtrack-A.ogg");  // Se usa el mismo sample para los niveles 1, 2 y 3
             break;
 
         case MUSICA_NIVEL_4:
+        case MUSICA_NIVEL_5:
+            musica->musica = al_load_sample("assets/music/Soundtrack-B.ogg");  // Se usa el mismo sample para los niveles 4 y 5
             break;
 
-        case MUSICA_NIVEL_5:
+        case SONIDO_RAYO:
+            musica->musica = al_load_sample("assets/music/Rayo.ogg");
             break;
 
         default:
@@ -72,7 +71,26 @@ Musica* cargar_musica(TipoAudio tipo, ALLEGRO_MIXER* mixer)
 
     if (!musica->musica)
     {
-        printf("Error al cargar el sample %s.\n", tipo == MUSICA_MENU ? "Soundtrack-menu.ogg" : "Soundtrack-A.ogg");
+        if (tipo == MUSICA_MENU)
+        {
+            printf("Error al cargar el sample \"Soundtrack-menu.ogg\".\n");
+        }
+
+        else if (tipo == MUSICA_NIVEL_1 || tipo == MUSICA_NIVEL_2 || tipo == MUSICA_NIVEL_3)
+        {
+            printf("Error al cargar el sample \"Soundtrack-A.ogg\".\n");
+        }
+
+        else if (tipo == MUSICA_NIVEL_4 || tipo == MUSICA_NIVEL_5)
+        {
+            printf("Error al cargar el sample \"Soundtrack-B.ogg\".\n");
+        }
+
+        else
+        {
+            printf("Error al cargar el sample \"Rayo.ogg\".\n");
+        }
+        
         free(musica);
         musica = NULL;
         return NULL;

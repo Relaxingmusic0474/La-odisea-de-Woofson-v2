@@ -49,6 +49,10 @@ struct rayo  // Tipo de trampa que se usa en el juego
     Vector velocidad;  // Velocidad del rayo
     Natural danho;  // Daño que causa el rayo al impactar al personaje
     bool activo;  // Si el rayo está activo o no (si se ha disparado)
+    float porcentaje_progreso;  // Porcentaje de progreso del rayo en su ciclo de activación/desactivación
+    EtapaRayo etapa;  // Etapa actual del rayo (en espera, aparición, activo al 100%, desaparición)
+    float tiempo_en_etapa;  // Tiempo que lleva el rayo en una etapa determinada (en espera, aparición, activo al 100%, desaparición)
+    ALLEGRO_SAMPLE* efecto_sonido;  // Efecto de sonido del rayo
 };
 
 struct mapa
@@ -131,6 +135,8 @@ struct recursos
     ALLEGRO_MIXER* mixer;
     ALLEGRO_FONT* fuentes[NRO_FUENTES];
     ALLEGRO_BITMAP* vida;
+    Rayo rayos[NRO_NIVELES][MAX_RAYOS];  // Rayos por nivel
+    Musica* sonido_rayo;  // Efecto de sonido del rayo
     /* 
     Lista bitmaps;  // Bitmaps en una lista enlazada (para dinamismo) -> Se implementara la idea mas adelante
     */
