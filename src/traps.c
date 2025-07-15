@@ -191,46 +191,57 @@ Procedure dibujar_rayo(Rayo rayo, ALLEGRO_COLOR color)
 
 bool linea_de_vision_libre(Rayo rayo, Personaje personaje, Mapa mapa)
 {
-    Natural col_personaje, fil_personaje, col_rayo, fil_rayo, col_min, fil_min, col_max, fil_max, col, fil;
+    Natural col_personaje = (personaje.posicion.x + personaje.ancho / 2) / mapa.ancho_bloque;
+    Natural fil_personaje = (personaje.posicion.y + personaje.alto / 2) / mapa.alto_bloque;
+    Natural col_rayo = rayo.origen.x / mapa.ancho_bloque;
+    Natural fil_rayo = rayo.origen.y / mapa.alto_bloque;
 
-    // Convertimos coordenadas reales a índices del mapa (para el personaje)
-    col_personaje = (personaje.posicion.x + personaje.ancho / 2) / mapa.ancho_bloque;
-    fil_personaje = (personaje.posicion.y + personaje.alto / 2) / mapa.alto_bloque;
-
-    // Convertimos coordenadas reales a índices del mapa (para el rayo)
-    col_rayo = (rayo.origen.x) / mapa.ancho_bloque;
-    fil_rayo = (rayo.origen.y) / mapa.alto_bloque;
-
-    if (rayo.origen.x == rayo.objetivo.x)  // Si la trayectoria del rayo no varía su posición en x, entonces es vertical
+    if (rayo.origen.y == rayo.objetivo.y)  // Rayo horizontal
     {
-        fil_min = fmin(fil_personaje, fil_rayo);
-        fil_max = fmax(fil_personaje, fil_rayo);
+        // Verificamos si la columna del personaje está entre el origen y el objetivo
+        Natural col_min = fmin(rayo.origen.x, rayo.objetivo.x) / mapa.ancho_bloque;
+        Natural col_max = fmax(rayo.origen.x, rayo.objetivo.x) / mapa.ancho_bloque;
 
-        for (fil=fil_min+1; fil<fil_max; fil++)
+        if (col_personaje >= col_min && col_personaje <= col_max)
         {
-            if (mapa.mapa[fil][col_rayo] == BLOQUE) 
+            // Revisar si hay BLOQUE en la columna del personaje entre su fila y la del rayo
+            Natural fil_min = fmin(fil_personaje, fil_rayo);
+            Natural fil_max = fmax(fil_personaje, fil_rayo);
+
+            for (Natural fil = fil_min + 1; fil < fil_max; fil++)
             {
-                return false;
+                if (mapa.mapa[fil][col_personaje] == BLOQUE)
+                    return false;  // Hay un obstáculo verticalmente entre personaje y rayo
             }
+
+            return true;  // No hay obstáculos en la línea de visión vertical
+        }
+    }
+    else if (rayo.origen.x == rayo.objetivo.x)  // Rayo vertical
+    {
+        Natural fil_min = fmin(rayo.origen.y, rayo.objetivo.y) / mapa.alto_bloque;
+        Natural fil_max = fmax(rayo.origen.y, rayo.objetivo.y) / mapa.alto_bloque;
+
+        if (fil_personaje >= fil_min && fil_personaje <= fil_max)
+        {
+            // Revisar si hay BLOQUE en la fila del personaje entre su columna y la del rayo
+            Natural col_min = fmin(col_personaje, col_rayo);
+            Natural col_max = fmax(col_personaje, col_rayo);
+
+            for (Natural col = col_min + 1; col < col_max; col++)
+            {
+                if (mapa.mapa[fil_personaje][col] == BLOQUE)
+                    return false;  // Hay un obstáculo horizontalmente entre personaje y rayo
+            }
+
+            return true;  // No hay obstáculos en la línea de visión horizontal
         }
     }
 
-    else  // Aquí sería horizontal
-    {
-        col_min = fmin(col_personaje, col_rayo);
-        col_max = fmax(col_personaje, col_rayo);
-
-        for (col=col_min+1; col<col_max; col++)
-        {
-            if (mapa.mapa[fil_rayo][col] == BLOQUE) 
-            {
-                return false;
-            }
-        }
-    }
-
-    return true;  // No hay obstáculos
+    return false;  // No alineado o fuera del rango de trayectoria
 }
+
+
 
 
 bool personaje_activa_rayo(Rayo rayo, Personaje personaje, Mapa mapa)
@@ -241,6 +252,7 @@ bool personaje_activa_rayo(Rayo rayo, Personaje personaje, Mapa mapa)
     float max_y = fmax(rayo.origen.y, rayo.objetivo.y);
 
     bool dentro_de_rango = false;
+    bool resultado;
 
     // Si el rayo es vertical, revisamos si el personaje está en la misma zona vertical
     if (rayo.origen.x == rayo.objetivo.x)
@@ -254,7 +266,7 @@ bool personaje_activa_rayo(Rayo rayo, Personaje personaje, Mapa mapa)
         dentro_de_rango = personaje.posicion.x + personaje.ancho >= min_x && personaje.posicion.x <= max_x;
     }
 
-    bool resultado = dentro_de_rango && linea_de_vision_libre(rayo, personaje, mapa);
+    resultado = dentro_de_rango && linea_de_vision_libre(rayo, personaje, mapa);
 
     return resultado; // dentro_de_rango && linea_de_vision_libre(rayo, personaje, mapa);
 }
