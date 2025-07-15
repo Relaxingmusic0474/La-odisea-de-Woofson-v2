@@ -75,6 +75,7 @@ bool inicializar_allegro()
 bool crear_recursos_allegro(Recursos* R)
 {
     Natural i, j;
+    char ruta[30] = {'\0'};
     bool exito = false;
 
     /* Se crea la ventana */
@@ -175,6 +176,20 @@ bool crear_recursos_allegro(Recursos* R)
     {
         printf("Error al cargar la imagen de las vidas del personaje\n");
         return false;
+    }
+
+    for (i=0; i<NRO_BLOQUES; i++)
+    {
+        sprintf(ruta, "assets/images/bloque-%hu.png", i+1);
+        R->bloques[i] = al_load_bitmap(ruta);
+
+        if (!R->bloques[i])
+        {
+            printf("Error al cargar la imagen del %hu' bloque del juego\n", i);
+            return false;
+        }
+
+        memset(ruta, '\0', sizeof(ruta));
     }
 
     /* Se cargan las fuentes */
@@ -379,9 +394,19 @@ Procedure finalizar_allegro(Recursos* R)
         }
     }
 
+    for (i=0; i<NRO_BLOQUES; i++)
+    {
+        if (R->bloques[i] != NULL)
+        {
+            al_destroy_bitmap(R->bloques[i]);
+            R->bloques[i] = NULL;
+        }
+    }
+
     if (R->vida != NULL)
     {
         al_destroy_bitmap(R->vida);
+        R->vida = NULL;
     }
 
     for (i=0; i<NRO_FRAMES; i++)

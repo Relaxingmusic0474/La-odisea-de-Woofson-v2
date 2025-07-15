@@ -12,6 +12,7 @@
 #define ALTURA_PISO (ALTO_VENTANA * 5/6)  // Altura del piso en px
 #define NRO_NIVELES 5
 #define NRO_COLORES 5
+#define NRO_BLOQUES 2 // Tipos distintos de bloques que se cargarán
 #define NRO_MENUS 2
 #define NRO_MUSICAS 2
 #define NRO_INSTANCIAS 8
@@ -41,7 +42,7 @@
 
 // Macros para las caracteristicas del personaje
 #define VELOCIDAD_MAXIMA_PERSONAJE 6
-#define MAX_TIEMPO_INMUNE 2.5  // Máximo tiempo en que el personaje no puede recibir un daño adicional
+#define MAX_TIEMPO_INMUNE 1.5  // Máximo tiempo en que el personaje no puede recibir un daño adicional
 #define ACELERACION_PERSONAJE 0.2  // Aceleración del personaje al caminar
 #define VELOCIDAD_DRAGONES 4
 #define VELOCIDAD_HUMANOIDES 3

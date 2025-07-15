@@ -378,7 +378,7 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
  * Función que dibuja el mapa en la ventana.
  * @param mapa Es el mapa que se desea dibujar.
  */
-Procedure dibujar_mapa(Mapa mapa)
+Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES])
 {
     Natural i=0, j=0;
     
@@ -388,8 +388,9 @@ Procedure dibujar_mapa(Mapa mapa)
         {
             if (mapa.mapa[i][j] == BLOQUE || mapa.mapa[i][j] == TRAMPA)
             {
-                al_draw_filled_rectangle(j*ANCHO_VENTANA/mapa.nro_columnas, i*ALTURA_PISO/mapa.nro_filas, 
-                                        (j+1)*ANCHO_VENTANA/mapa.nro_columnas, (i+1)*ALTURA_PISO/mapa.nro_filas, CAFE);
+                al_draw_bitmap(bloques[1], j*ANCHO_VENTANA/mapa.nro_columnas, i*ALTURA_PISO/mapa.nro_filas, 0);
+                //al_draw_filled_rectangle(j*ANCHO_VENTANA/mapa.nro_columnas, i*ALTURA_PISO/mapa.nro_filas, 
+                                      //  (j+1)*ANCHO_VENTANA/mapa.nro_columnas, (i+1)*ALTURA_PISO/mapa.nro_filas, GRIS);
             }
 
             if (mapa.mapa[i][j] == TRAMPA)
@@ -397,6 +398,11 @@ Procedure dibujar_mapa(Mapa mapa)
                 al_draw_filled_circle((j+0.5)*ANCHO_VENTANA/mapa.nro_columnas, (i+0.5)*ALTURA_PISO/mapa.nro_filas, RADIO_CIRCULO_ROJO, ROJO);
             }
         }
+    }
+
+    for (i=0; i<mapa.nro_columnas; i++)
+    {
+        al_draw_bitmap(bloques[0], i*ANCHO_VENTANA/mapa.nro_columnas, ALTURA_PISO, 0);
     }
 
     return;

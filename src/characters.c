@@ -136,7 +136,7 @@ Procedure dibujar_personaje(Personaje personaje, Natural ultima_tecla_lateral, N
 
     if (personaje.danhado && personaje.tiempo_danho > 0)
     {
-        var = iteracion / (FPS/4);
+        var = iteracion / (FPS/6);
 
         if (var & 1)
         {
@@ -487,12 +487,5 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[
                 personaje->subvida_actual -= DANHO_RAYO;
             }
         }
-        
-        else
-        {
-
-        }
     }
-
-
 }  

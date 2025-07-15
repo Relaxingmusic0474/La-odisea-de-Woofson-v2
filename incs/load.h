@@ -15,7 +15,7 @@ FILE* cargar_mapa(Natural);
 Natural obtener_nro_filas(Natural);
 Natural obtener_nro_columnas(Natural);
 Mapa leer_mapa(Natural/*, Natural*/);
-Procedure dibujar_mapa(Mapa/*Natural* [], Natural, Natural*/);
+Procedure dibujar_mapa(Mapa, Imagen [NRO_BLOQUES]);
 Procedure liberar_mapa(Mapa*);
 Procedure liberar_mapas(Mapa[]);
 

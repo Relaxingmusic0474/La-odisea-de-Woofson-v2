@@ -101,10 +101,10 @@ int main()
 
                 case ALLEGRO_EVENT_TIMER:
                 
-                    determinar_color_pantalla(iteracion/*, &rojo, &verde, &azul*/);  // Determina el color de la pantalla según la iteración
-                    mover_personaje(&recursos.pje_principal, recursos.mapas[NIVEL1]);  /* Mueve al personaje según las teclas presionadas y considera lógica de salto */
+                    determinar_color_pantalla(iteracion);  // Determina el color de la pantalla según la iteración
+                    mover_personaje(&recursos.pje_principal, recursos.mapas[NIVEL1]);  // Mueve al personaje según las teclas presionadas y considera lógica de salto
                     dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
-                    dibujar_mapa(recursos.mapas[NIVEL1]);  // Dibujamos el mapa del primer nivel
+                    dibujar_mapa(recursos.mapas[NIVEL1], recursos.bloques);  // Dibujamos el mapa del primer nivel
                     actualizar_rayos(recursos.rayos[NIVEL1], nro_rayos, recursos.pje_principal, recursos.mapas[NIVEL1]);
                     detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[NIVEL1]);
                     mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[4], recursos.fuentes[1], etapa_juego);

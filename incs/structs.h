@@ -146,7 +146,8 @@ struct recursos
     ALLEGRO_VOICE* voz;
     ALLEGRO_MIXER* mixer;
     ALLEGRO_FONT* fuentes[NRO_FUENTES];
-    ALLEGRO_BITMAP* vida;
+    Imagen vida;
+    Imagen bloques[NRO_BLOQUES];
     Rayo rayos[NRO_NIVELES][MAX_RAYOS];  // Rayos por nivel
     EfectoSonido* sonido_rayo;  // Efecto de sonido del rayo
     /* 
