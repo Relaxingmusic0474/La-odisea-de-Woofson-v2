@@ -141,56 +141,25 @@ Natural detectar_rayos(Mapa mapa, Rayo rayos[], Natural max_rayos)
  */
 Procedure dibujar_rayo(Rayo rayo, ALLEGRO_COLOR color)
 {
-    /*
-    ALLEGRO_VERTEX vertices[NRO_OSCILACIONES_RAYO];
-    Natural i, nro_vertices;
-    float delta_x, delta_y, distancia, t, offset;
-    bool es_vertical;
-
-    if (!rayo.activo)
+    if (rayo.origen.x == rayo.objetivo.x)  // Caso de un rayo vertical
     {
-        return;  // Si el rayo no está activo, no se dibuja
+        rayo.posicion.x = rayo.origen.x;
+        rayo.posicion.y = rayo.origen.y + rayo.porcentaje_progreso/100 * (rayo.objetivo.y - rayo.origen.y);
+    }
+         
+    else  // Caso de un rayo horizontal (Solo hay dos tipos de rayos posibles)
+    {
+        rayo.posicion.x = rayo.origen.x + rayo.porcentaje_progreso/100 * (rayo.objetivo.x - rayo.origen.x);
+        rayo.posicion.y = rayo.origen.y;
     }
     
-    delta_x = rayo.objetivo.x - rayo.origen.x;
-    delta_y = rayo.objetivo.y - rayo.origen.y;
-    distancia = sqrt(delta_x * delta_x + delta_y * delta_y);
-    es_vertical = (fabs(delta_x) < TOLERANCIA);  // Verifica si el rayo es vertical
-
-    // Cantidad de vértices proporcionales al progreso del rayo
-    nro_vertices = fmax(2, (Natural)(rayo.porcentaje_progreso / 100.0f * (NRO_OSCILACIONES_RAYO - 1)) + 1);
-
-    for (i=0; i<nro_vertices; i++)
-    {
-        t = (float) i / (nro_vertices - 1);  // Normalizado a la cantidad de vértices realmente usados
-        offset = AMPLITUD_OSCILACION_RAYO * sin(2 * PI * t);
-
-        if (es_vertical)
-        {
-            vertices[i].x = rayo.origen.x + offset;
-            vertices[i].y = rayo.origen.y + ((delta_y >= 0) ? t * distancia : -t * distancia);
-        }
-        else
-        {
-            vertices[i].x = rayo.origen.x + ((delta_x >= 0) ? t * distancia : -t * distancia);
-            vertices[i].y = rayo.origen.y + offset;
-        }
-
-        vertices[i].color = color;
-    }
-
-    al_draw_prim(vertices, NULL, NULL, 0, nro_vertices, ALLEGRO_PRIM_LINE_STRIP);
-    */
-
-    if (rayo.origen.x == rayo.objetivo.x)
-        al_draw_line(rayo.origen.x, rayo.origen.y, rayo.objetivo.x, rayo.origen.y + rayo.porcentaje_progreso/100 * (rayo.objetivo.y - rayo.origen.y), color, 4);
-    else
-        al_draw_line(rayo.origen.x, rayo.origen.y, rayo.origen.x + rayo.porcentaje_progreso/100 * (rayo.objetivo.x - rayo.origen.x), rayo.objetivo.y, color, 4);
+    al_draw_line(rayo.origen.x, rayo.origen.y, rayo.posicion.x, rayo.posicion.y, color, 4);  // Se dibuja la línea
 }
 
 
 bool linea_de_vision_libre(Rayo rayo, Personaje personaje, Mapa mapa)
 {
+    Natural col_min, col_max, fil_min, fil_max, col, fil;
     Natural col_personaje = (personaje.posicion.x + personaje.ancho / 2) / mapa.ancho_bloque;
     Natural fil_personaje = (personaje.posicion.y + personaje.alto / 2) / mapa.alto_bloque;
     Natural col_rayo = rayo.origen.x / mapa.ancho_bloque;
@@ -199,39 +168,44 @@ bool linea_de_vision_libre(Rayo rayo, Personaje personaje, Mapa mapa)
     if (rayo.origen.y == rayo.objetivo.y)  // Rayo horizontal
     {
         // Verificamos si la columna del personaje está entre el origen y el objetivo
-        Natural col_min = fmin(rayo.origen.x, rayo.objetivo.x) / mapa.ancho_bloque;
-        Natural col_max = fmax(rayo.origen.x, rayo.objetivo.x) / mapa.ancho_bloque;
+        col_min = fmin(rayo.origen.x, rayo.objetivo.x) / mapa.ancho_bloque;
+        col_max = fmax(rayo.origen.x, rayo.objetivo.x) / mapa.ancho_bloque;
 
         if (col_personaje >= col_min && col_personaje <= col_max)
         {
             // Revisar si hay BLOQUE en la columna del personaje entre su fila y la del rayo
-            Natural fil_min = fmin(fil_personaje, fil_rayo);
-            Natural fil_max = fmax(fil_personaje, fil_rayo);
+            fil_min = fmin(fil_personaje, fil_rayo);
+            fil_max = fmax(fil_personaje, fil_rayo);
 
-            for (Natural fil = fil_min + 1; fil < fil_max; fil++)
+            for (fil=fil_min+1; fil<fil_max; fil++)
             {
                 if (mapa.mapa[fil][col_personaje] == BLOQUE)
+                {
                     return false;  // Hay un obstáculo verticalmente entre personaje y rayo
+                }
             }
 
             return true;  // No hay obstáculos en la línea de visión vertical
         }
     }
+
     else if (rayo.origen.x == rayo.objetivo.x)  // Rayo vertical
     {
-        Natural fil_min = fmin(rayo.origen.y, rayo.objetivo.y) / mapa.alto_bloque;
-        Natural fil_max = fmax(rayo.origen.y, rayo.objetivo.y) / mapa.alto_bloque;
+        fil_min = fmin(rayo.origen.y, rayo.objetivo.y) / mapa.alto_bloque;
+        fil_max = fmax(rayo.origen.y, rayo.objetivo.y) / mapa.alto_bloque;
 
         if (fil_personaje >= fil_min && fil_personaje <= fil_max)
         {
             // Revisar si hay BLOQUE en la fila del personaje entre su columna y la del rayo
-            Natural col_min = fmin(col_personaje, col_rayo);
-            Natural col_max = fmax(col_personaje, col_rayo);
+            col_min = fmin(col_personaje, col_rayo);
+            col_max = fmax(col_personaje, col_rayo);
 
-            for (Natural col = col_min + 1; col < col_max; col++)
+            for (col=col_min+1; col<col_max; col++)
             {
                 if (mapa.mapa[fil_personaje][col] == BLOQUE)
+                {
                     return false;  // Hay un obstáculo horizontalmente entre personaje y rayo
+                }
             }
 
             return true;  // No hay obstáculos en la línea de visión horizontal
@@ -352,7 +326,7 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
 
         if (!rayo->efecto_sonido_ya_empezado)
         {
-            al_set_sample_instance_gain(rayo->efecto_sonido->instancias[index], 1.5);  // Volumen
+            al_set_sample_instance_gain(rayo->efecto_sonido->instancias[index], 2.5);  // Volumen
             al_set_sample_instance_pan(rayo->efecto_sonido->instancias[index], 0.0);  // Centro
             al_set_sample_instance_speed(rayo->efecto_sonido->instancias[index], 2.0);  // Velocidad 
             al_set_sample_instance_playmode(rayo->efecto_sonido->instancias[index], ALLEGRO_PLAYMODE_LOOP);  // Se repite si es que no se alcanza a reproducir completo
