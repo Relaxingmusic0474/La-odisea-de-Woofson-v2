@@ -23,7 +23,7 @@
 // Macros para los rayos
 #define MAX_RAYOS 8  // Número máximo de rayos que se pueden detectar en el mapa
 #define NRO_OSCILACIONES_RAYO 10  // Número de oscilaciones que tendrá el rayo
-#define AMPLITUD_OSCILACION_RAYO 8  // Amplitud de la oscilación del rayo en px
+#define GROSOR_RAYO 4  // Grosor del rayo
 #define DANHO_RAYO 28  // Daño que causa el rayo al impactar al personaje
 #define TIEMPO_RAYO_EN_ESPERA 0.5  // Tiempo en segundos que el rayo estará inactivo antes de volver a activarse
 #define TIEMPO_RAYO_EN_APARICION 0.2  // Tiempo en segundos que el rayo demorará en aparecer por completo
@@ -50,7 +50,7 @@
 #define DANHO_RAYO 28
 
 // Macro que define la cantidad de vidas que tendrá el personaje inicialmente
-#define VIDAS_INICIALES 5
+#define VIDAS_INICIALES 3
 
 // Macros para manejar cosas relacionadas con el salto del personaje
 #define IMPULSO_PERSONAJE 700  // Impulso de salto del personaje en px/s

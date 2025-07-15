@@ -42,22 +42,6 @@ struct salto  // ANALIZAR SI SERÁ NECESARIO AGREGAR LA POSICIÓN FINAL DEL SALT
     Entero altura_choque;  // Este atributo cobra sentido si el salto es interrumpido por un techo
 };
 
-struct rayo  // Tipo de trampa que se usa en el juego
-{
-    Vector origen;  // Punto de origen del rayo
-    Vector objetivo;  // Posición a la que apunta el rayo
-    Vector posicion;  // Posición actual del rayo
-    Vector velocidad;  // Velocidad del rayo
-    Natural danho;  // Daño que causa el rayo al impactar al personaje
-    bool activo;  // Si el rayo está activo o no (si se ha disparado)
-    float porcentaje_progreso;  // Porcentaje de progreso del rayo en su ciclo de activación/desactivación
-    EtapaRayo etapa;  // Etapa actual del rayo (en espera, aparición, activo al 100%, desaparición)
-    float tiempo_en_etapa;  // Tiempo que lleva el rayo en una etapa determinada (en espera, aparición, activo al 100%, desaparición)
-    EfectoSonido* efecto_sonido;  // Efecto de sonido del rayo
-    bool efecto_sonido_ya_empezado;
-    bool efecto_sonido_ya_detenido;
-};
-
 struct mapa
 {
     Natural** mapa;
@@ -85,6 +69,7 @@ struct personaje
     unsigned int fps_en_caminata;  // Número de frames en caminata (para la animación)
     unsigned int fps_en_pelea; // Número de frames en pelea (para la animación)
     Salto salto;
+    bool danhado;
     // CREAR UN ARREGLO DE MUNICIONES
     
 };
@@ -118,6 +103,24 @@ struct efectoSonido
     Audio musica;
     InstanciaAudio instancias[NRO_INSTANCIAS];
     TipoEfecto tipo;
+};
+
+struct rayo  // Tipo de trampa que se usa en el juego
+{
+    Vector origen;  // Punto de origen del rayo
+    Vector objetivo;  // Posición a la que apunta el rayo
+    Vector posicion;  // Posición actual del rayo
+    Vector velocidad;  // Velocidad del rayo
+    float grosor;  // Grosor del rayo (qué tan gruesa será la línea que lo representará)
+    Natural danho;  // Daño que causa el rayo al impactar al personaje
+    bool activo;  // Si el rayo está activo o no (si se ha disparado)
+    float porcentaje_progreso;  // Porcentaje de progreso del rayo en su ciclo de activación/desactivación
+    EtapaRayo etapa;  // Etapa actual del rayo (en espera, aparición, activo al 100%, desaparición)
+    float tiempo_en_etapa;  // Tiempo que lleva el rayo en una etapa determinada (en espera, aparición, activo al 100%, desaparición)
+    EfectoSonido* efecto_sonido;  // Efecto de sonido del rayo
+    bool efecto_sonido_ya_empezado;
+    bool efecto_sonido_ya_detenido;
+    
 };
 
 struct eventos

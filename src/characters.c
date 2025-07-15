@@ -48,6 +48,7 @@ bool inicializar_personaje(Personaje* personaje, char tipo)
             personaje->posicion.y = ALTURA_PISO - personaje->alto;  // Se coloca en el piso
             personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
             personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
+            personaje->danhado = false;  // Inicialmente no recibe ningún tipo de danho
             inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
             break;
 
@@ -273,12 +274,6 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa)
         personaje->salto.altura_inicial = personaje->posicion.y;  /* Guarda la altura inicial del salto */
         personaje->salto.tiempo_en_salto = 0;  /* Reinicia el tiempo de salto */
     }
-    
-    if (teclas[ALLEGRO_KEY_DOWN] && !hay_colision_inferior(personaje, mapa) && !hay_bloque_debajo(personaje, mapa))
-    {
-        personaje->velocidad.y += ACELERACION_ADREDE;  /* Aumenta la velocidad vertical al presionar hacia abajo */
-        personaje->posicion.y += personaje->velocidad.y;
-    }   
 
     if (personaje->velocidad.x < 0 && !hay_colision_izquierda(personaje, mapa))
     {
@@ -402,5 +397,51 @@ Procedure patalear(Personaje* personaje, int direccion)
         {
             personaje->velocidad.x = personaje->velocidad.x - ACELERACION_PERSONAJE * direccion;  /* Disminuye la magnitud de la velocidad de pataleo */
         }
+    }
+}
+
+
+Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[MAX_RAYOS])
+{
+    Natural i;
+
+    for (i=0; i<MAX_RAYOS; i++)
+    {
+        if (rayo[i].activo && !personaje->danhado)
+        {
+            if (rayo->origen.x == rayo->objetivo.x)  // Rayo vertical
+            {
+                if (personaje->posicion.y < rayo[i].posicion.y && 
+                    personaje->posicion.y + personaje->alto < rayo[i].objetivo.y &&
+                    personaje->posicion.x + personaje->ancho > rayo[i].posicion.x - GROSOR_RAYO/2 &&
+                    personaje->posicion.x < rayo[i].posicion.x + GROSOR_RAYO/2)
+                {
+                    personaje->danhado = true;
+                }
+
+
+            }
+
+            else  // Rayo horizontal
+            {
+                if (personaje->posicion.x < rayo[i].posicion.x &&
+                    personaje->posicion.x + personaje->ancho < rayo[i].objetivo.x &&
+                    personaje->posicion.y + personaje->alto > rayo[i].posicion.y - GROSOR_RAYO/2 && 
+                    personaje->posicion.y < rayo[i].posicion.y + GROSOR_RAYO/2)
+                {
+                    personaje->danhado = true;
+                }
+            }
+        }
+    }
+    
+    if (personaje->subvida_actual <= DANHO_RAYO)
+    {
+        personaje->subvida_actual = 0;
+    }
+                
+    else
+    {
+        personaje->subvida_actual -= DANHO_RAYO;
     }
 }

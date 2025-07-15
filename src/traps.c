@@ -3,7 +3,7 @@
 /**
  * Función que inicializa un rayo con sus valores por defecto.
  * @param rayo Puntero al rayo a inicializar.
- * @param sonido_rayo Puntero al efecto de sonido del rayo.
+ * @param efecto Puntero al efecto de sonido del rayo.
  */
 Procedure inicializar_rayo(Rayo* rayo, EfectoSonido* efecto)
 {
@@ -15,6 +15,7 @@ Procedure inicializar_rayo(Rayo* rayo, EfectoSonido* efecto)
     rayo->posicion.y = 0;
     rayo->velocidad.x = 0;
     rayo->velocidad.y = 0;
+    rayo->grosor = 
     rayo->danho = DANHO_RAYO;  // Asigna el daño del rayo
     rayo->activo = false;  // Inicialmente el rayo no está activo
     rayo->etapa = INOPERATIVO;
@@ -29,7 +30,7 @@ Procedure inicializar_rayo(Rayo* rayo, EfectoSonido* efecto)
 /**
  * Función para inicializar los rayos de todos los niveles.
  * @param rayos La matriz con los rayos de los niveles.
- * @param sonido_rayo Estructura con el efecto de sonido del rayo.
+ * @param efecto El efecto de sonido del rayo.
  */
 Procedure inicializar_rayos(Rayo rayos[NRO_NIVELES][MAX_RAYOS], EfectoSonido* efecto)
 {
@@ -326,7 +327,7 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
 
         if (!rayo->efecto_sonido_ya_empezado)
         {
-            al_set_sample_instance_gain(rayo->efecto_sonido->instancias[index], 2.5);  // Volumen
+            al_set_sample_instance_gain(rayo->efecto_sonido->instancias[index], 3.5);  // Volumen
             al_set_sample_instance_pan(rayo->efecto_sonido->instancias[index], 0.0);  // Centro
             al_set_sample_instance_speed(rayo->efecto_sonido->instancias[index], 2.0);  // Velocidad 
             al_set_sample_instance_playmode(rayo->efecto_sonido->instancias[index], ALLEGRO_PLAYMODE_LOOP);  // Se repite si es que no se alcanza a reproducir completo
