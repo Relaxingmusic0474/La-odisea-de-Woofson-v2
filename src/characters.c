@@ -400,7 +400,7 @@ Procedure patalear(Personaje* personaje, int direccion)
         }
     }
 }
-
+/*
 
 Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayos[MAX_RAYOS])
 {
@@ -471,4 +471,74 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayos
         printf("Vida reducida a %d\n", personaje->subvida_actual);
     }
 }
+*/
 
+Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[MAX_RAYOS])
+{
+    Natural i;
+
+    if (personaje->danhado)  // Si el personaje ya habia sido dañado, solo se aumenta el tiempo que dura el daño (parpadeo)
+    {
+        if (personaje->tiempo_danho <= MAX_TIEMPO_INMUNE)
+        {
+            personaje->tiempo_danho += 1./FPS;
+        }
+
+        else
+        {
+            personaje->danhado = false;
+            personaje->tiempo_danho = 0;
+        }
+
+        return;
+    }
+
+    for (i=0; i<MAX_RAYOS; i++)
+    {
+        if (rayo[i].activo && !personaje->danhado)
+        {
+            if (rayo[i].origen.x == rayo[i].objetivo.x)  // Rayo vertical
+            {
+                if (personaje->posicion.y < rayo[i].posicion.y && 
+                    personaje->posicion.y + personaje->alto < rayo[i].objetivo.y &&
+                    personaje->posicion.x + personaje->ancho > rayo[i].posicion.x - GROSOR_RAYO/2 &&
+                    personaje->posicion.x < rayo[i].posicion.x + GROSOR_RAYO/2)
+                {
+                    if (!personaje->danhado)
+                    {
+                        personaje->danhado = true;
+                        personaje->tiempo_danho = 0;
+                    }
+
+                    break;
+                }
+            }
+
+            else  // Rayo horizontal
+            {
+                if (personaje->posicion.x < rayo[i].posicion.x &&
+                    personaje->posicion.x + personaje->ancho < rayo[i].objetivo.x &&
+                    personaje->posicion.y + personaje->alto > rayo[i].posicion.y - GROSOR_RAYO/2 && 
+                    personaje->posicion.y < rayo[i].posicion.y + GROSOR_RAYO/2)
+                {
+                    personaje->danhado = true;
+                    personaje->tiempo_danho = 0;
+                    break;
+                }
+            }
+        }
+    }
+    
+    if (personaje->danhado && personaje->tiempo_danho == 0)  // Si el daño causado por el rayo fue reciente, entonces se le quita vida
+    {
+        if (personaje->subvida_actual <= DANHO_RAYO)
+        {
+            personaje->subvida_actual = 0;
+        }
+                
+        else
+        {
+            personaje->subvida_actual -= DANHO_RAYO;
+        }
+    }
+}  

@@ -21,6 +21,8 @@ int main()
 
     nro_rayos = detectar_rayos(recursos.mapas[NIVEL1], recursos.rayos[NIVEL1], MAX_RAYOS);
     printf("%hu\n", nro_rayos);
+
+    
     
     LOOP
     {

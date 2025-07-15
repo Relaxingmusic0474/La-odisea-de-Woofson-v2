@@ -142,6 +142,7 @@ Natural detectar_rayos(Mapa mapa, Rayo rayos[], Natural max_rayos)
  */
 Procedure dibujar_rayo(Rayo* rayo, ALLEGRO_COLOR color)
 {
+    /*
     if (rayo->origen.x == rayo->objetivo.x)  // Caso de un rayo vertical
     {
         rayo->posicion.x = rayo->origen.x;
@@ -153,6 +154,7 @@ Procedure dibujar_rayo(Rayo* rayo, ALLEGRO_COLOR color)
         rayo->posicion.x = rayo->origen.x + rayo->porcentaje_progreso/100 * (rayo->objetivo.x - rayo->origen.x);
         rayo->posicion.y = rayo->origen.y;
     }
+        */
     
     al_draw_line(rayo->origen.x, rayo->origen.y, rayo->posicion.x, rayo->posicion.y, color, rayo->grosor);  // Se dibuja la línea
 }
@@ -267,20 +269,6 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
 
             break;
 
-
-        case EN_ESPERA:
-
-            rayo->activo = false;
-
-            if (rayo->tiempo_en_etapa >= TIEMPO_RAYO_EN_ESPERA)
-            {
-                rayo->etapa = EN_APARICION;
-                rayo->tiempo_en_etapa = 0;
-            }
-
-            break;
-
-
         case EN_APARICION:
         {
             rayo->activo = true;
@@ -319,6 +307,30 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
 
             break;
         }
+
+        case EN_ESPERA:
+
+            rayo->activo = false;
+
+            if (rayo->tiempo_en_etapa >= TIEMPO_RAYO_EN_ESPERA)
+            {
+                rayo->etapa = EN_APARICION;
+                rayo->tiempo_en_etapa = 0;
+            }
+
+            break;
+    }
+
+    if (rayo->origen.x == rayo->objetivo.x)  // Rayo vertical
+    {
+        rayo->posicion.x = rayo->origen.x;
+        rayo->posicion.y = rayo->origen.y + rayo->porcentaje_progreso / 100 * (rayo->objetivo.y - rayo->origen.y);
+    }
+
+    else  // Rayo horizontal
+    {
+        rayo->posicion.x = rayo->origen.x + rayo->porcentaje_progreso / 100 * (rayo->objetivo.x - rayo->origen.x);
+        rayo->posicion.y = rayo->origen.y;
     }
 
     if (rayo->activo)
