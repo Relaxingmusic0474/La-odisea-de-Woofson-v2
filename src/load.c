@@ -170,7 +170,7 @@ EfectoSonido* cargar_efecto_sonido(TipoEfecto tipo, ALLEGRO_MIXER* mixer)
     }
 
     return efecto;
-};
+}
 
 
 

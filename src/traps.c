@@ -183,9 +183,9 @@ Procedure dibujar_rayo(Rayo rayo, ALLEGRO_COLOR color)
     */
 
     if (rayo.origen.x == rayo.objetivo.x)
-        al_draw_line(rayo.origen.x, rayo.origen.y, rayo.objetivo.x, rayo.origen.y + rayo.porcentaje_progreso/100 * (rayo.objetivo.y - rayo.origen.y), AMARILLO, 4);
+        al_draw_line(rayo.origen.x, rayo.origen.y, rayo.objetivo.x, rayo.origen.y + rayo.porcentaje_progreso/100 * (rayo.objetivo.y - rayo.origen.y), color, 4);
     else
-        al_draw_line(rayo.origen.x, rayo.origen.y, rayo.origen.x + rayo.porcentaje_progreso/100 * (rayo.objetivo.x - rayo.origen.x), rayo.objetivo.y, AMARILLO, 4);
+        al_draw_line(rayo.origen.x, rayo.origen.y, rayo.origen.x + rayo.porcentaje_progreso/100 * (rayo.objetivo.x - rayo.origen.x), rayo.objetivo.y, color, 4);
 }
 
 
@@ -340,7 +340,7 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
 
         if (!rayo->efecto_sonido_ya_empezado)
         {
-            al_set_sample_instance_gain(rayo->efecto_sonido->instancias[index], 0.5);  // Volumen
+            al_set_sample_instance_gain(rayo->efecto_sonido->instancias[index], 1.5);  // Volumen
             al_set_sample_instance_pan(rayo->efecto_sonido->instancias[index], 0.0);  // Centro
             al_set_sample_instance_speed(rayo->efecto_sonido->instancias[index], 2.0);  // Velocidad 
             al_set_sample_instance_playmode(rayo->efecto_sonido->instancias[index], ALLEGRO_PLAYMODE_LOOP);  // Se repite si es que no se alcanza a reproducir completo
