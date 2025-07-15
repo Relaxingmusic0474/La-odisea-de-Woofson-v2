@@ -17,5 +17,6 @@ bool verificar_colision_rayo(Personaje* personaje, Rayo* rayo);
 bool linea_de_vision_libre(Rayo, Personaje, Mapa);
 bool personaje_activa_rayo(Rayo rayo, Personaje personaje, Mapa);
 Procedure actualizar_rayo(Rayo*, Natural, Personaje, Mapa);
+Procedure actualizar_rayos(Rayo [MAX_RAYOS], Personaje, Mapa);
 
 #endif // TRAPS_H

@@ -12,7 +12,7 @@ int main()
     Natural ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;  /* Para que el personaje parta mirando a la derecha */
     Natural iteracion = 0;  /* Para controlar las iteraciones del juego */
     extern bool teclas[ALLEGRO_KEY_MAX]; /* Para manejar las teclas que se presionan */
-    Natural i, nro_rayos;
+    Natural nro_rayos;
 
     if (!inicializar_todo(&recursos))  /* Se inicializan todos los recursos de Allegro */
     {
@@ -103,12 +103,7 @@ int main()
                     mover_personaje(&recursos.pje_principal, recursos.mapas[NIVEL1]);  /* Mueve al personaje según las teclas presionadas y considera lógica de salto */
                     dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral);  // Dibuja el personaje en su posición actual
                     dibujar_mapa(recursos.mapas[NIVEL1]);  // Dibujamos el mapa del primer nivel
-
-                    for (i=0; i<nro_rayos; i++)
-                    {
-                        actualizar_rayo(&recursos.rayos[NIVEL1][i], i, recursos.pje_principal, recursos.mapas[NIVEL1]);
-                    }
-
+                    actualizar_rayos(recursos.rayos[NIVEL1], recursos.pje_principal, recursos.mapas[NIVEL1]);
                     detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[NIVEL1]);
                     mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[4], recursos.fuentes[1], etapa_juego);
                     al_flip_display();

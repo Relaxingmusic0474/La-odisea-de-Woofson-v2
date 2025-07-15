@@ -404,6 +404,8 @@ Procedure patalear(Personaje* personaje, int direccion)
 
 Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayos[MAX_RAYOS])
 {
+    Natural i;
+
     if (personaje->danhado)
     {
         personaje->tiempo_danho += 1.0 / FPS;
@@ -416,6 +418,7 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayos
 
         return;
     }
+    
 
     for (Natural i = 0; i < MAX_RAYOS; i++)
     {

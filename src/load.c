@@ -394,7 +394,7 @@ Procedure dibujar_mapa(Mapa mapa)
 
             if (mapa.mapa[i][j] == TRAMPA)
             {
-                al_draw_filled_circle((j+0.5)*ANCHO_VENTANA/mapa.nro_columnas, (i+0.5)*ALTURA_PISO/mapa.nro_filas, 5, ROJO);
+                al_draw_filled_circle((j+0.5)*ANCHO_VENTANA/mapa.nro_columnas, (i+0.5)*ALTURA_PISO/mapa.nro_filas, RADIO_CIRCULO_ROJO, ROJO);
             }
         }
     }

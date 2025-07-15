@@ -15,7 +15,7 @@ Procedure inicializar_rayo(Rayo* rayo, EfectoSonido* efecto)
     rayo->posicion.y = 0;
     rayo->velocidad.x = 0;
     rayo->velocidad.y = 0;
-    rayo->grosor = 
+    rayo->grosor = GROSOR_RAYO;
     rayo->danho = DANHO_RAYO;  // Asigna el daño del rayo
     rayo->activo = false;  // Inicialmente el rayo no está activo
     rayo->etapa = INOPERATIVO;
@@ -154,7 +154,7 @@ Procedure dibujar_rayo(Rayo rayo, ALLEGRO_COLOR color)
         rayo.posicion.y = rayo.origen.y;
     }
     
-    al_draw_line(rayo.origen.x, rayo.origen.y, rayo.posicion.x, rayo.posicion.y, color, 4);  // Se dibuja la línea
+    al_draw_line(rayo.origen.x, rayo.origen.y, rayo.posicion.x, rayo.posicion.y, color, rayo.grosor);  // Se dibuja la línea
 }
 
 
@@ -352,5 +352,16 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
         rayo->etapa = INOPERATIVO;
         rayo->tiempo_en_etapa = 0;
         rayo->porcentaje_progreso = 0;
+    }
+}
+
+
+Procedure actualizar_rayos(Rayo rayos[MAX_RAYOS], Personaje personaje, Mapa mapa)
+{
+    Natural i;
+
+    for (i=0; i<MAX_RAYOS; i++)
+    {
+        actualizar_rayo(&rayos[i], i, personaje, mapa);
     }
 }

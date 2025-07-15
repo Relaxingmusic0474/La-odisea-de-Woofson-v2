@@ -23,7 +23,8 @@
 // Macros para los rayos
 #define MAX_RAYOS 8  // Número máximo de rayos que se pueden detectar en el mapa
 #define NRO_OSCILACIONES_RAYO 10  // Número de oscilaciones que tendrá el rayo
-#define GROSOR_RAYO 4  // Grosor del rayo
+#define RADIO_CIRCULO_ROJO 5  // Radio del círculo que representará el radio de los círculos de donde se originan los rayos
+#define GROSOR_RAYO 6  // Grosor del rayo
 #define DANHO_RAYO 28  // Daño que causa el rayo al impactar al personaje
 #define TIEMPO_RAYO_EN_ESPERA 0.6  // Tiempo en segundos que el rayo estará inactivo antes de volver a activarse
 #define TIEMPO_RAYO_EN_APARICION 0.2  // Tiempo en segundos que el rayo demorará en aparecer por completo
