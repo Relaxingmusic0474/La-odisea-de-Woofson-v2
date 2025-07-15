@@ -140,21 +140,21 @@ Natural detectar_rayos(Mapa mapa, Rayo rayos[], Natural max_rayos)
  * @param rayo El rayo que se quiere dibujar.
  * @param color Color del cual se desea pintar el 
  */
-Procedure dibujar_rayo(Rayo rayo, ALLEGRO_COLOR color)
+Procedure dibujar_rayo(Rayo* rayo, ALLEGRO_COLOR color)
 {
-    if (rayo.origen.x == rayo.objetivo.x)  // Caso de un rayo vertical
+    if (rayo->origen.x == rayo->objetivo.x)  // Caso de un rayo vertical
     {
-        rayo.posicion.x = rayo.origen.x;
-        rayo.posicion.y = rayo.origen.y + rayo.porcentaje_progreso/100 * (rayo.objetivo.y - rayo.origen.y);
+        rayo->posicion.x = rayo->origen.x;
+        rayo->posicion.y = rayo->origen.y + rayo->porcentaje_progreso/100 * (rayo->objetivo.y - rayo->origen.y);
     }
          
     else  // Caso de un rayo horizontal (Solo hay dos tipos de rayos posibles)
     {
-        rayo.posicion.x = rayo.origen.x + rayo.porcentaje_progreso/100 * (rayo.objetivo.x - rayo.origen.x);
-        rayo.posicion.y = rayo.origen.y;
+        rayo->posicion.x = rayo->origen.x + rayo->porcentaje_progreso/100 * (rayo->objetivo.x - rayo->origen.x);
+        rayo->posicion.y = rayo->origen.y;
     }
     
-    al_draw_line(rayo.origen.x, rayo.origen.y, rayo.posicion.x, rayo.posicion.y, color, rayo.grosor);  // Se dibuja la línea
+    al_draw_line(rayo->origen.x, rayo->origen.y, rayo->posicion.x, rayo->posicion.y, color, rayo->grosor);  // Se dibuja la línea
 }
 
 
@@ -323,7 +323,7 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
 
     if (rayo->activo)
     {
-        dibujar_rayo(*rayo, AMARILLO);
+        dibujar_rayo(rayo, AMARILLO);
 
         if (!rayo->efecto_sonido_ya_empezado)
         {

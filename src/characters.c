@@ -404,8 +404,6 @@ Procedure patalear(Personaje* personaje, int direccion)
 
 Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayos[MAX_RAYOS])
 {
-    Natural i;
-
     if (personaje->danhado)
     {
         personaje->tiempo_danho += 1.0 / FPS;
@@ -415,36 +413,33 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayos
             personaje->danhado = false;
             personaje->tiempo_danho = 0;
         }
-
         return;
     }
-    
+
+    float px1 = personaje->posicion.x;
+    float py1 = personaje->posicion.y;
+    float px2 = px1 + personaje->ancho;
+    float py2 = py1 + personaje->alto;
 
     for (Natural i = 0; i < MAX_RAYOS; i++)
     {
         Rayo* rayo = &rayos[i];
-
         if (!rayo->activo)
             continue;
 
-        float px1 = personaje->posicion.x;
-        float py1 = personaje->posicion.y;
-        float px2 = px1 + personaje->ancho;
-        float py2 = py1 + personaje->alto;
+        debug_rayo_personaje(rayo, personaje);  // Imprime valores para debug
 
         if (rayo->origen.x == rayo->objetivo.x)  // Rayo vertical
         {
             float rx = rayo->origen.x;
-            float ry1 = fmin(rayo->origen.y, rayo->objetivo.y);
-            float ry2 = fmax(rayo->origen.y, rayo->objetivo.y);
-
+            float y1 = fmin(rayo->origen.y, rayo->posicion.y);
+            float y2 = fmax(rayo->origen.y, rayo->posicion.y);
             float rx1 = rx - GROSOR_RAYO / 2.0;
             float rx2 = rx + GROSOR_RAYO / 2.0;
 
-            bool colision = (px2 > rx1 && px1 < rx2 && py2 > ry1 && py1 < ry2);
-
-            if (colision)
+            if (px2 > rx1 && px1 < rx2 && py2 > y1 && py1 < y2)
             {
+                printf("¡Colisión vertical detectada!\n");
                 personaje->danhado = true;
                 personaje->tiempo_danho = 0;
                 break;
@@ -453,16 +448,14 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayos
         else  // Rayo horizontal
         {
             float ry = rayo->origen.y;
-            float rx1 = fmin(rayo->origen.x, rayo->objetivo.x);
-            float rx2 = fmax(rayo->origen.x, rayo->objetivo.x);
-
+            float x1 = fmin(rayo->origen.x, rayo->posicion.x);
+            float x2 = fmax(rayo->origen.x, rayo->posicion.x);
             float ry1 = ry - GROSOR_RAYO / 2.0;
             float ry2 = ry + GROSOR_RAYO / 2.0;
 
-            bool colision = (py2 > ry1 && py1 < ry2 && px2 > rx1 && px1 < rx2);
-
-            if (colision)
+            if (py2 > ry1 && py1 < ry2 && px2 > x1 && px1 < x2)
             {
+                printf("¡Colisión horizontal detectada!\n");
                 personaje->danhado = true;
                 personaje->tiempo_danho = 0;
                 break;
@@ -472,14 +465,10 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayos
 
     if (personaje->danhado && personaje->tiempo_danho == 0)
     {
-        if (personaje->subvida_actual <= DANHO_RAYO)
-        {
-            personaje->subvida_actual = 0;
-        }
-
-        else
-        {
-            personaje->subvida_actual -= DANHO_RAYO;
-        }
+        personaje->subvida_actual = (personaje->subvida_actual <= DANHO_RAYO)
+            ? 0
+            : personaje->subvida_actual - DANHO_RAYO;
+        printf("Vida reducida a %d\n", personaje->subvida_actual);
     }
 }
+

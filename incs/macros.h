@@ -27,7 +27,7 @@
 #define GROSOR_RAYO 6  // Grosor del rayo
 #define DANHO_RAYO 28  // Daño que causa el rayo al impactar al personaje
 #define TIEMPO_RAYO_EN_ESPERA 0.6  // Tiempo en segundos que el rayo estará inactivo antes de volver a activarse
-#define TIEMPO_RAYO_EN_APARICION 0.2  // Tiempo en segundos que el rayo demorará en aparecer por completo
+#define TIEMPO_RAYO_EN_APARICION 2  // Tiempo en segundos que el rayo demorará en aparecer por completo
 #define TIEMPO_RAYO_ACTIVO_AL_100 0.3  // Tiempo en segundos que el rayo estará activo al 100% de su longitud
 #define TIEMPO_RAYO_EN_DESAPARICION (TIEMPO_RAYO_EN_APARICION)  // Tiempo en segundos que el rayo demorará en desaparecer por completo
 #define TIEMPO_CICLO_RAYO (TIEMPO_RAYO_EN_ESPERA + TIEMPO_RAYO_EN_APARICION + TIEMPO_RAYO_ACTIVO_AL_100 + TIEMPO_RAYO_EN_DESAPARICION) // Tiempo total del ciclo del rayo

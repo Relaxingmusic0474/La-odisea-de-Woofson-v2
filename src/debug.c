@@ -51,3 +51,11 @@ Procedure caida_libre_activada(Personaje p)
 {
     p.velocidad.y > 0 ? printf("Estoy en caida libre\n") : printf("No estoy en caida libre\n");
 }
+
+Procedure debug_rayo_personaje(Rayo* rayo, Personaje* personaje)
+{
+    printf("Rayo activo: %d\n", rayo->activo);
+    printf("Rayo origen: (%.2f, %.2f)\n", rayo->origen.x, rayo->origen.y);
+    printf("Rayo posicion actual: (%.2f, %.2f)\n", rayo->posicion.x, rayo->posicion.y);
+    printf("Personaje rect: (%.2f, %.2f) a (%.2f, %.2f)\n", personaje->posicion.x, personaje->posicion.y, personaje->posicion.x + personaje->ancho, personaje->posicion.y + personaje->alto);
+}
