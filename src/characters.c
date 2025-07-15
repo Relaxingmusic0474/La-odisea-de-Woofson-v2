@@ -439,12 +439,20 @@ Procedure patalear(Personaje* personaje, int direccion)
 Procedure morir(Personaje* personaje, Tecla* ultima_lateral)
 {
     Imagen bitmap = personaje->imagen_modo_muerte;
+    float ancho = al_get_bitmap_width(personaje->imagen_modo_muerte);
+    float alto = al_get_bitmap_height(personaje->imagen_modo_muerte);
+    float factor_escala, dx, dy;
+
+    factor_escala = 1.5;
 
     if (personaje->muerto)
     {
         personaje->tiempo_muerte += 1./FPS;
 
-        al_draw_bitmap(bitmap, personaje->posicion.x + personaje->ancho/2 - al_get_bitmap_width(bitmap)/2, personaje->posicion.y + personaje->alto/2 - al_get_bitmap_height(bitmap)/2, 0);
+        dx = personaje->posicion.x + personaje->ancho / 2 - ancho*factor_escala / 2;
+        dy = personaje->posicion.y + personaje->alto / 2 - alto*factor_escala / 2;
+
+        al_draw_scaled_bitmap(bitmap, 0, 0, ancho, alto, dx, dy, ancho*factor_escala, alto*factor_escala, 0);
 
         if (personaje->tiempo_muerte >= TIEMPO_MUERTE)
         {
