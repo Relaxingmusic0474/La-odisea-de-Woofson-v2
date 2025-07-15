@@ -111,7 +111,6 @@ struct rayo  // Tipo de trampa que se usa en el juego
     Vector origen;  // Punto de origen del rayo
     Vector objetivo;  // Posición a la que apunta el rayo
     Vector posicion;  // Posición actual del rayo
-    Vector velocidad;  // Velocidad del rayo
     float grosor;  // Grosor del rayo (qué tan gruesa será la línea que lo representará)
     Natural danho;  // Daño que causa el rayo al impactar al personaje
     bool activo;  // Si el rayo está activo o no (si se ha disparado)

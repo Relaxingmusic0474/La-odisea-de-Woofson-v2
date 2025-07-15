@@ -13,7 +13,7 @@
 bool inicializar_personaje(Personaje*, char);
 Procedure inicializar_salto(Personaje*);
 Procedure determinar_como_dibujar_personaje(Personaje*, Natural);
-Procedure dibujar_personaje(Personaje, Natural);
+Procedure dibujar_personaje(Personaje, Natural, Natural);
 Procedure actualizar_frame(Personaje*, char);
 bool es_posible_mover_personaje_lateralmente(Personaje*, Mapa);
 Procedure mover_personaje(Personaje*, Mapa);

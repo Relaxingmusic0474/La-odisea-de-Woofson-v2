@@ -59,3 +59,19 @@ Procedure debug_rayo_personaje(Rayo* rayo, Personaje* personaje)
     printf("Rayo posicion actual: (%.2f, %.2f)\n", rayo->posicion.x, rayo->posicion.y);
     printf("Personaje rect: (%.2f, %.2f) a (%.2f, %.2f)\n", personaje->posicion.x, personaje->posicion.y, personaje->posicion.x + personaje->ancho, personaje->posicion.y + personaje->alto);
 }
+
+Procedure imprimir_datos_rayos(Rayo rayos[MAX_RAYOS], Natural cantidad)
+{
+    Natural i;
+
+    if (cantidad > MAX_RAYOS)
+    {
+        return;
+    }
+
+    for (i=0; i<cantidad; i++)
+    {
+        printf("Origen: (%.1f, %.1f)\n", rayos[i].origen.x, rayos[i].origen.y);
+        printf("Destino: (%.1f, %.1f)\n", rayos[i].objetivo.x, rayos[i].objetivo.y);
+    }
+}

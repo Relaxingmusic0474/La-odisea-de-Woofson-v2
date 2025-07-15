@@ -127,11 +127,27 @@ Procedure determinar_como_dibujar_personaje(Personaje* personaje, Natural ultima
  * @param teclas Un arreglo de booleanos que indica qué teclas están presionadas.
  * @param ultima_tecla_lateral La última tecla lateral presionada (para determinar la dirección de dibujo).
  */
-Procedure dibujar_personaje(Personaje personaje, Natural ultima_tecla_lateral)
+Procedure dibujar_personaje(Personaje personaje, Natural ultima_tecla_lateral, Natural iteracion)
 {
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
+    Natural var;
+    
     determinar_como_dibujar_personaje(&personaje, ultima_tecla_lateral);
-    al_draw_bitmap(personaje.imagen, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);
+
+    if (personaje.danhado && personaje.tiempo_danho > 0)
+    {
+        var = iteracion / (FPS/4);
+
+        if (var & 1)
+        {
+            al_draw_bitmap(personaje.imagen, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);
+        }
+    }
+
+    else
+    {
+        al_draw_bitmap(personaje.imagen, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);   
+    }
 }
 
 
@@ -400,78 +416,6 @@ Procedure patalear(Personaje* personaje, int direccion)
         }
     }
 }
-/*
-
-Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayos[MAX_RAYOS])
-{
-    if (personaje->danhado)
-    {
-        personaje->tiempo_danho += 1.0 / FPS;
-
-        if (personaje->tiempo_danho >= MAX_TIEMPO_INMUNE)
-        {
-            personaje->danhado = false;
-            personaje->tiempo_danho = 0;
-        }
-        return;
-    }
-
-    float px1 = personaje->posicion.x;
-    float py1 = personaje->posicion.y;
-    float px2 = px1 + personaje->ancho;
-    float py2 = py1 + personaje->alto;
-
-    for (Natural i = 0; i < MAX_RAYOS; i++)
-    {
-        Rayo* rayo = &rayos[i];
-        if (!rayo->activo)
-            continue;
-
-        debug_rayo_personaje(rayo, personaje);  // Imprime valores para debug
-
-        if (rayo->origen.x == rayo->objetivo.x)  // Rayo vertical
-        {
-            float rx = rayo->origen.x;
-            float y1 = fmin(rayo->origen.y, rayo->posicion.y);
-            float y2 = fmax(rayo->origen.y, rayo->posicion.y);
-            float rx1 = rx - GROSOR_RAYO / 2.0;
-            float rx2 = rx + GROSOR_RAYO / 2.0;
-
-            if (px2 > rx1 && px1 < rx2 && py2 > y1 && py1 < y2)
-            {
-                printf("¡Colisión vertical detectada!\n");
-                personaje->danhado = true;
-                personaje->tiempo_danho = 0;
-                break;
-            }
-        }
-        else  // Rayo horizontal
-        {
-            float ry = rayo->origen.y;
-            float x1 = fmin(rayo->origen.x, rayo->posicion.x);
-            float x2 = fmax(rayo->origen.x, rayo->posicion.x);
-            float ry1 = ry - GROSOR_RAYO / 2.0;
-            float ry2 = ry + GROSOR_RAYO / 2.0;
-
-            if (py2 > ry1 && py1 < ry2 && px2 > x1 && px1 < x2)
-            {
-                printf("¡Colisión horizontal detectada!\n");
-                personaje->danhado = true;
-                personaje->tiempo_danho = 0;
-                break;
-            }
-        }
-    }
-
-    if (personaje->danhado && personaje->tiempo_danho == 0)
-    {
-        personaje->subvida_actual = (personaje->subvida_actual <= DANHO_RAYO)
-            ? 0
-            : personaje->subvida_actual - DANHO_RAYO;
-        printf("Vida reducida a %d\n", personaje->subvida_actual);
-    }
-}
-*/
 
 Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[MAX_RAYOS])
 {
@@ -529,16 +473,26 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[
         }
     }
     
-    if (personaje->danhado && personaje->tiempo_danho == 0)  // Si el daño causado por el rayo fue reciente, entonces se le quita vida
+    if (personaje->danhado)  // Si el daño causado por el rayo fue reciente, entonces se le quita vida
     {
-        if (personaje->subvida_actual <= DANHO_RAYO)
+        if (personaje->tiempo_danho == 0)
         {
-            personaje->subvida_actual = 0;
-        }
+            if (personaje->subvida_actual <= DANHO_RAYO)
+            {
+                personaje->subvida_actual = 0;
+            }
                 
+            else
+            {
+                personaje->subvida_actual -= DANHO_RAYO;
+            }
+        }
+        
         else
         {
-            personaje->subvida_actual -= DANHO_RAYO;
+
         }
     }
+
+
 }  

@@ -24,10 +24,10 @@
 #define MAX_RAYOS 8  // Número máximo de rayos que se pueden detectar en el mapa
 #define NRO_OSCILACIONES_RAYO 10  // Número de oscilaciones que tendrá el rayo
 #define RADIO_CIRCULO_ROJO 5  // Radio del círculo que representará el radio de los círculos de donde se originan los rayos
-#define GROSOR_RAYO 6  // Grosor del rayo
+#define GROSOR_RAYO 4  // Grosor del rayo
 #define DANHO_RAYO 28  // Daño que causa el rayo al impactar al personaje
 #define TIEMPO_RAYO_EN_ESPERA 0.6  // Tiempo en segundos que el rayo estará inactivo antes de volver a activarse
-#define TIEMPO_RAYO_EN_APARICION 2  // Tiempo en segundos que el rayo demorará en aparecer por completo
+#define TIEMPO_RAYO_EN_APARICION 0.5  // Tiempo en segundos que el rayo demorará en aparecer por completo
 #define TIEMPO_RAYO_ACTIVO_AL_100 0.3  // Tiempo en segundos que el rayo estará activo al 100% de su longitud
 #define TIEMPO_RAYO_EN_DESAPARICION (TIEMPO_RAYO_EN_APARICION)  // Tiempo en segundos que el rayo demorará en desaparecer por completo
 #define TIEMPO_CICLO_RAYO (TIEMPO_RAYO_EN_ESPERA + TIEMPO_RAYO_EN_APARICION + TIEMPO_RAYO_ACTIVO_AL_100 + TIEMPO_RAYO_EN_DESAPARICION) // Tiempo total del ciclo del rayo
@@ -41,7 +41,7 @@
 
 // Macros para las caracteristicas del personaje
 #define VELOCIDAD_MAXIMA_PERSONAJE 6
-#define MAX_TIEMPO_INMUNE 2  // Máximo tiempo en que el personaje no puede recibir un daño adicional
+#define MAX_TIEMPO_INMUNE 2.5  // Máximo tiempo en que el personaje no puede recibir un daño adicional
 #define ACELERACION_PERSONAJE 0.2  // Aceleración del personaje al caminar
 #define VELOCIDAD_DRAGONES 4
 #define VELOCIDAD_HUMANOIDES 3

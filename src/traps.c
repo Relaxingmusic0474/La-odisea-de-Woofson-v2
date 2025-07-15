@@ -13,8 +13,6 @@ Procedure inicializar_rayo(Rayo* rayo, EfectoSonido* efecto)
     rayo->objetivo.y = 0;
     rayo->posicion.x = 0;
     rayo->posicion.y = 0;
-    rayo->velocidad.x = 0;
-    rayo->velocidad.y = 0;
     rayo->grosor = GROSOR_RAYO;
     rayo->danho = DANHO_RAYO;  // Asigna el daño del rayo
     rayo->activo = false;  // Inicialmente el rayo no está activo
@@ -86,11 +84,11 @@ Natural detectar_rayos(Mapa mapa, Rayo rayos[], Natural max_rayos)
 
                         if (es_valido && cantidad < max_rayos)
                         {
-                            rayos[cantidad].origen.x = (j + 0.5f) * mapa.ancho_bloque;
+                            rayos[cantidad].origen.x = (j + 0.5f) * mapa.ancho_bloque + RADIO_CIRCULO_ROJO;
                             rayos[cantidad].origen.y = (i + 0.5f) * mapa.alto_bloque;
-                            rayos[cantidad].objetivo.x = (k + 0.5f) * mapa.ancho_bloque;
+                            rayos[cantidad].objetivo.x = (k + 0.5f) * mapa.ancho_bloque - RADIO_CIRCULO_ROJO;
                             rayos[cantidad].objetivo.y = (i + 0.5f) * mapa.alto_bloque;
-                            rayos[cantidad].velocidad.x = (rayos[cantidad].objetivo.x - rayos[cantidad].origen.x) / TIEMPO_RAYO_EN_APARICION;  // Velocidad horizontal del rayo
+                            rayos[cantidad].posicion = rayos[cantidad].origen;
                             cantidad++;
                         }
 
@@ -117,10 +115,10 @@ Natural detectar_rayos(Mapa mapa, Rayo rayos[], Natural max_rayos)
                         if (es_valido && cantidad < max_rayos)
                         {
                             rayos[cantidad].origen.x = (j + 0.5f) * mapa.ancho_bloque;
-                            rayos[cantidad].origen.y = (i + 0.5f) * mapa.alto_bloque;
+                            rayos[cantidad].origen.y = (i + 0.5f) * mapa.alto_bloque + RADIO_CIRCULO_ROJO;
                             rayos[cantidad].objetivo.x = (j + 0.5f) * mapa.ancho_bloque;
-                            rayos[cantidad].objetivo.y = (k + 0.5f) * mapa.alto_bloque;
-                            rayos[cantidad].velocidad.y = (rayos[cantidad].objetivo.y - rayos[cantidad].origen.y) / TIEMPO_RAYO_EN_APARICION;  // Velocidad vertical del rayo
+                            rayos[cantidad].objetivo.y = (k + 0.5f) * mapa.alto_bloque - RADIO_CIRCULO_ROJO;
+                            rayos[cantidad].posicion = rayos[cantidad].origen;
                             cantidad++;
                         }
 
@@ -138,25 +136,11 @@ Natural detectar_rayos(Mapa mapa, Rayo rayos[], Natural max_rayos)
 /**
  * Función que dibuja un rayo.
  * @param rayo El rayo que se quiere dibujar.
- * @param color Color del cual se desea pintar el 
+ * @param color Color del cual se desea pintar el rayo.
  */
-Procedure dibujar_rayo(Rayo* rayo, ALLEGRO_COLOR color)
+Procedure dibujar_rayo(Rayo rayo, ALLEGRO_COLOR color)
 {
-    /*
-    if (rayo->origen.x == rayo->objetivo.x)  // Caso de un rayo vertical
-    {
-        rayo->posicion.x = rayo->origen.x;
-        rayo->posicion.y = rayo->origen.y + rayo->porcentaje_progreso/100 * (rayo->objetivo.y - rayo->origen.y);
-    }
-         
-    else  // Caso de un rayo horizontal (Solo hay dos tipos de rayos posibles)
-    {
-        rayo->posicion.x = rayo->origen.x + rayo->porcentaje_progreso/100 * (rayo->objetivo.x - rayo->origen.x);
-        rayo->posicion.y = rayo->origen.y;
-    }
-        */
-    
-    al_draw_line(rayo->origen.x, rayo->origen.y, rayo->posicion.x, rayo->posicion.y, color, rayo->grosor);  // Se dibuja la línea
+    al_draw_line(rayo.origen.x, rayo.origen.y, rayo.posicion.x, rayo.posicion.y, color, rayo.grosor);  // Se dibuja la línea
 }
 
 
@@ -219,8 +203,6 @@ bool linea_de_vision_libre(Rayo rayo, Personaje personaje, Mapa mapa)
 }
 
 
-
-
 bool personaje_activa_rayo(Rayo rayo, Personaje personaje, Mapa mapa)
 {
     float min_x = fmin(rayo.origen.x, rayo.objetivo.x);
@@ -251,7 +233,9 @@ bool personaje_activa_rayo(Rayo rayo, Personaje personaje, Mapa mapa)
 
 Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa mapa)
 {
-    bool proximidad = personaje_activa_rayo(*rayo, personaje, mapa);
+    ALLEGRO_COLOR color_rayo;
+    float tiempo_total = 0, parametro;
+    bool proximidad = personaje_activa_rayo(*rayo, personaje, mapa);    
 
     rayo->tiempo_en_etapa += 1./FPS;
 
@@ -273,6 +257,7 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
         {
             rayo->activo = true;
             rayo->porcentaje_progreso = 100 * rayo->tiempo_en_etapa / TIEMPO_RAYO_EN_APARICION;
+            tiempo_total = rayo->tiempo_en_etapa;
 
             if (rayo->porcentaje_progreso >= 100)
             {
@@ -286,6 +271,8 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
 
         case ACTIVO_AL_100:
 
+            tiempo_total = TIEMPO_RAYO_EN_APARICION + rayo->tiempo_en_etapa;
+
             if (rayo->tiempo_en_etapa >= TIEMPO_RAYO_ACTIVO_AL_100)
             {
                 rayo->etapa = EN_DESAPARICION;
@@ -297,6 +284,7 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
         case EN_DESAPARICION:
         {
             rayo->porcentaje_progreso = 100 * (1 - rayo->tiempo_en_etapa / TIEMPO_RAYO_EN_DESAPARICION);
+            tiempo_total = TIEMPO_RAYO_EN_APARICION + TIEMPO_RAYO_ACTIVO_AL_100 + rayo->tiempo_en_etapa;
 
             if (rayo->porcentaje_progreso <= 0)
             {
@@ -311,6 +299,7 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
         case EN_ESPERA:
 
             rayo->activo = false;
+            tiempo_total = 0;
 
             if (rayo->tiempo_en_etapa >= TIEMPO_RAYO_EN_ESPERA)
             {
@@ -323,25 +312,26 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
 
     if (rayo->origen.x == rayo->objetivo.x)  // Rayo vertical
     {
-        rayo->posicion.x = rayo->origen.x;
         rayo->posicion.y = rayo->origen.y + rayo->porcentaje_progreso / 100 * (rayo->objetivo.y - rayo->origen.y);
     }
 
     else  // Rayo horizontal
     {
         rayo->posicion.x = rayo->origen.x + rayo->porcentaje_progreso / 100 * (rayo->objetivo.x - rayo->origen.x);
-        rayo->posicion.y = rayo->origen.y;
     }
 
     if (rayo->activo)
     {
-        dibujar_rayo(rayo, AMARILLO);
+        parametro = 0.5 * (1 + sin(20*tiempo_total));
+        rayo->grosor = GROSOR_RAYO + 0.75 * GROSOR_RAYO * parametro * pow(-1, rand() % 2);
+        color_rayo = al_map_rgb((1-parametro)*255, 255, parametro*255);
+        dibujar_rayo(*rayo, color_rayo);
 
         if (!rayo->efecto_sonido_ya_empezado)
         {
             al_set_sample_instance_gain(rayo->efecto_sonido->instancias[index], 3.5);  // Volumen
             al_set_sample_instance_pan(rayo->efecto_sonido->instancias[index], 0.0);  // Centro
-            al_set_sample_instance_speed(rayo->efecto_sonido->instancias[index], 2.0);  // Velocidad 
+            al_set_sample_instance_speed(rayo->efecto_sonido->instancias[index], 1.15);  // Velocidad 
             al_set_sample_instance_playmode(rayo->efecto_sonido->instancias[index], ALLEGRO_PLAYMODE_LOOP);  // Se repite si es que no se alcanza a reproducir completo
             al_play_sample_instance(rayo->efecto_sonido->instancias[index]);
             rayo->efecto_sonido_ya_empezado = true;
@@ -368,11 +358,16 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
 }
 
 
-Procedure actualizar_rayos(Rayo rayos[MAX_RAYOS], Personaje personaje, Mapa mapa)
+Procedure actualizar_rayos(Rayo rayos[MAX_RAYOS], Natural cantidad, Personaje personaje, Mapa mapa)
 {
     Natural i;
 
-    for (i=0; i<MAX_RAYOS; i++)
+    if (cantidad > MAX_RAYOS)
+    {
+        return;
+    }
+
+    for (i=0; i<cantidad; i++)
     {
         actualizar_rayo(&rayos[i], i, personaje, mapa);
     }
