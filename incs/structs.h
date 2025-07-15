@@ -71,6 +71,9 @@ struct personaje
     Salto salto;
     bool danhado;
     float tiempo_danho;
+    bool muerto;
+    float tiempo_muerte;
+    Imagen imagen_modo_muerte;
     // CREAR UN ARREGLO DE MUNICIONES
     
 };

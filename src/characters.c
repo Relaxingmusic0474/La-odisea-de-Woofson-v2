@@ -37,6 +37,14 @@ bool inicializar_personaje(Personaje* personaje, char tipo)
                 }
             }
 
+            personaje->imagen_modo_muerte = al_load_bitmap("assets/images/muerte.png");
+
+            if (!personaje->imagen_modo_muerte)
+            {
+                printf("Error al cargar la imagen de muerte del personaje Woofson.\n");
+                return false;
+            }
+
             personaje->imagen = personaje->frames[0];
             personaje->id_nro_frame = 0;  // Inicializa el número de frame actual a 0
             personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Ancho del personaje
@@ -50,6 +58,8 @@ bool inicializar_personaje(Personaje* personaje, char tipo)
             personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
             personaje->danhado = false;  // Inicialmente no recibe ningún tipo de danho
             personaje->tiempo_danho = 0;
+            personaje->muerto = false;
+            personaje->tiempo_muerte = 0;
             inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
             break;
 
@@ -215,108 +225,116 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa)
 {
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
 
-    personaje->caminata = teclas[ALLEGRO_KEY_LEFT] ^ teclas[ALLEGRO_KEY_RIGHT];  // Actualiza el estado de caminata según las teclas presionadas
-    
-    if (teclas[ALLEGRO_KEY_SPACE])
+    if (personaje->muerto)  // En caso de que el personaje esté muerto, no se podrá mover
     {
-        personaje->fps_en_pelea++;
-
-        if (personaje->fps_en_pelea % 8 == 0)  // Actualiza el frame de pelea cada 8 frames
-        {
-            actualizar_frame(personaje, 'P');  // Actualiza el frame del personaje si está en pelea
-        }
+        return;
     }
-    
-    if (personaje->caminata)
-    {
-        personaje->fps_en_caminata++;
 
-        if (!teclas[ALLEGRO_KEY_SPACE])  // Si no está en pelea, actualiza el frame de caminata
+    else  
+    {
+        personaje->caminata = teclas[ALLEGRO_KEY_LEFT] ^ teclas[ALLEGRO_KEY_RIGHT];  // Actualiza el estado de caminata según las teclas presionadas
+    
+        if (teclas[ALLEGRO_KEY_SPACE])
         {
-            if (personaje->velocidad.x != 0 && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)  // Actualiza el frame cada cierto numero de iteraciones que depende de la velocidad
+            personaje->fps_en_pelea++;
+
+            if (personaje->fps_en_pelea % 8 == 0)  // Actualiza el frame de pelea cada 8 frames
             {
-                actualizar_frame(personaje, 'M');  // Actualiza el frame del personaje si está caminando
+                actualizar_frame(personaje, 'P');  // Actualiza el frame del personaje si está en pelea
             }
         }
-
-        if (es_posible_mover_personaje_lateralmente(personaje, mapa))
+    
+        if (personaje->caminata)
         {
-            if (fabs(personaje->velocidad.x) < VELOCIDAD_MAXIMA_PERSONAJE)
+            personaje->fps_en_caminata++;
+
+            if (!teclas[ALLEGRO_KEY_SPACE])  // Si no está en pelea, actualiza el frame de caminata
             {
-                personaje->velocidad.x = teclas[ALLEGRO_KEY_LEFT] ? personaje->velocidad.x - ACELERACION_PERSONAJE 
+                if (personaje->velocidad.x != 0 && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)  // Actualiza el frame cada cierto numero de iteraciones que depende de la velocidad
+                {
+                    actualizar_frame(personaje, 'M');  // Actualiza el frame del personaje si está caminando
+                }
+            }
+
+            if (es_posible_mover_personaje_lateralmente(personaje, mapa))
+            {
+                if (fabs(personaje->velocidad.x) < VELOCIDAD_MAXIMA_PERSONAJE)
+                {
+                    personaje->velocidad.x = teclas[ALLEGRO_KEY_LEFT] ? personaje->velocidad.x - ACELERACION_PERSONAJE 
                                                                   : personaje->velocidad.x + ACELERACION_PERSONAJE;   // Acelera el personaje al caminar dependiendo del sentido
-            }
+                }
 
-            else
-            {
-                personaje->velocidad.x = teclas[ALLEGRO_KEY_LEFT] ? -VELOCIDAD_MAXIMA_PERSONAJE 
-                                                                  : VELOCIDAD_MAXIMA_PERSONAJE;  // Si el módulo de la velocidad es mayor a la máxima, la limita
-            }
-        }
-    }
-
-    else
-    {
-        if (fabs(personaje->velocidad.x) < ACELERACION_PERSONAJE)  // Si la velocidad es menor a la aceleración, se detiene
-        {
-            personaje->velocidad.x = 0;
-            personaje->fps_en_caminata = 0;  // Reinicia el tiempo de caminata al detenerse
-            
-            if (!teclas[ALLEGRO_KEY_SPACE])
-            {
-                personaje->id_nro_frame = 0;  // Reinicia el frame del personaje al detenerse
-                personaje->imagen = personaje->frames[0];  // Vuelve al primer frame de la animación
+                else
+                {
+                    personaje->velocidad.x = teclas[ALLEGRO_KEY_LEFT] ? -VELOCIDAD_MAXIMA_PERSONAJE 
+                                                                      : VELOCIDAD_MAXIMA_PERSONAJE;  // Si el módulo de la velocidad es mayor a la máxima, la limita
+                }
             }
         }
 
         else
         {
-            personaje->fps_en_caminata++;
-            
-            if (!teclas[ALLEGRO_KEY_SPACE] && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)
+            if (fabs(personaje->velocidad.x) < ACELERACION_PERSONAJE)  // Si la velocidad es menor a la aceleración, se detiene
             {
-                actualizar_frame(personaje, 'M');  // Actualiza el frame del personaje si está caminando
-            }
+                personaje->velocidad.x = 0;
+                personaje->fps_en_caminata = 0;  // Reinicia el tiempo de caminata al detenerse
             
-            personaje->velocidad.x = personaje->velocidad.x < 0 ? personaje->velocidad.x + ACELERACION_PERSONAJE 
+                if (!teclas[ALLEGRO_KEY_SPACE])
+                {
+                    personaje->id_nro_frame = 0;  // Reinicia el frame del personaje al detenerse
+                    personaje->imagen = personaje->frames[0];  // Vuelve al primer frame de la animación
+                }
+            }
+
+            else
+            {
+                personaje->fps_en_caminata++;
+            
+                if (!teclas[ALLEGRO_KEY_SPACE] && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)
+                {
+                    actualizar_frame(personaje, 'M');  // Actualiza el frame del personaje si está caminando
+                }
+            
+                personaje->velocidad.x = personaje->velocidad.x < 0 ? personaje->velocidad.x + ACELERACION_PERSONAJE 
                                                                 : personaje->velocidad.x - ACELERACION_PERSONAJE;  // Disminuye la velocidad de movimiento del personaje al dejar de caminar
+            }
         }
-    }
 
-    personaje->posicion.x += personaje->velocidad.x;  // Actualiza la posición del personaje en el eje x
+        personaje->posicion.x += personaje->velocidad.x;  // Actualiza la posición del personaje en el eje x
 
-    if (teclas[ALLEGRO_KEY_UP] && !personaje->salto.en_salto && !hay_colision_superior(personaje, mapa))
-    {
-        personaje->salto.en_salto = true;  /* Activa el salto */
-        personaje->salto.altura_inicial = personaje->posicion.y;  /* Guarda la altura inicial del salto */
-        personaje->salto.tiempo_en_salto = 0;  /* Reinicia el tiempo de salto */
-    }
-
-    if (personaje->velocidad.x < 0 && !hay_colision_izquierda(personaje, mapa))
-    {
-        if (!personaje->salto.en_salto && personaje->posicion.y + personaje->alto < ALTURA_PISO && !hay_bloque_debajo(personaje, mapa))
+        if (teclas[ALLEGRO_KEY_UP] && !personaje->salto.en_salto && !hay_colision_superior(personaje, mapa))
         {
-            activar_caida_libre(personaje);  /* Activa la caída libre si el personaje no está en el suelo */
+            personaje->salto.en_salto = true;  /* Activa el salto */
+            personaje->salto.altura_inicial = personaje->posicion.y;  /* Guarda la altura inicial del salto */
+            personaje->salto.tiempo_en_salto = 0;  /* Reinicia el tiempo de salto */
         }
-    }
 
-    if (personaje->velocidad.x > 0 && !hay_colision_derecha(personaje, mapa))
-    {
-        if (!personaje->salto.en_salto && personaje->posicion.y + personaje->alto < ALTURA_PISO && !hay_bloque_debajo(personaje, mapa))
+        if (personaje->velocidad.x < 0 && !hay_colision_izquierda(personaje, mapa))
         {
-            activar_caida_libre(personaje);  /* Activa la caída libre si el personaje no está en el suelo */
+            if (!personaje->salto.en_salto && personaje->posicion.y + personaje->alto < ALTURA_PISO && !hay_bloque_debajo(personaje, mapa))
+            {
+                activar_caida_libre(personaje);  /* Activa la caída libre si el personaje no está en el suelo */
+            }
         }
-    }
+
+        if (personaje->velocidad.x > 0 && !hay_colision_derecha(personaje, mapa))
+        {
+            if (!personaje->salto.en_salto && personaje->posicion.y + personaje->alto < ALTURA_PISO && !hay_bloque_debajo(personaje, mapa))
+            {
+                activar_caida_libre(personaje);  /* Activa la caída libre si el personaje no está en el suelo */
+            }
+        }
     
-    if (personaje->salto.en_salto)  /* Si el personaje ya está en salto, se continúa el salto */
-    {
-        personaje->salto.tiempo_en_salto += 1.0 / FPS;
-        continuar_salto(personaje, personaje->salto.tiempo_en_salto, mapa);
-    }
+        if (personaje->salto.en_salto)  /* Si el personaje ya está en salto, se continúa el salto */
+        {
+            personaje->salto.tiempo_en_salto += 1.0 / FPS;
+            continuar_salto(personaje, personaje->salto.tiempo_en_salto, mapa);
+        }
     
-    if (hay_colision_con_bordes(personaje, mapa))
-    {
-        efectuar_colision(personaje, mapa);
+        if (hay_colision_con_bordes(personaje, mapa))
+        {
+            efectuar_colision(personaje, mapa);
+        }
     }
 }
 
@@ -417,9 +435,50 @@ Procedure patalear(Personaje* personaje, int direccion)
     }
 }
 
+
+Procedure morir(Personaje* personaje, Tecla* ultima_lateral)
+{
+    Imagen bitmap = personaje->imagen_modo_muerte;
+
+    if (personaje->muerto)
+    {
+        personaje->tiempo_muerte += 1./FPS;
+
+        al_draw_bitmap(bitmap, personaje->posicion.x + personaje->ancho/2 - al_get_bitmap_width(bitmap)/2, personaje->posicion.y + personaje->alto/2 - al_get_bitmap_height(bitmap)/2, 0);
+
+        if (personaje->tiempo_muerte >= TIEMPO_MUERTE)
+        {
+            personaje->nro_vidas--;
+            personaje->subvida_actual = 100;
+            personaje->muerto = false;
+            personaje->tiempo_muerte = 0;
+            personaje->imagen = personaje->frames[0];
+            personaje->id_nro_frame = 0;  // Se resetea el número de frame actual a 0
+            personaje->posicion.x = ANCHO_VENTANA * 0.1;  // Se restablece su posición inicial
+            personaje->posicion.y = ALTURA_PISO - personaje->alto;  // Se coloca en el piso
+            personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
+            personaje->en_plataforma = false;  
+            personaje->danhado = false;  
+            personaje->tiempo_danho = 0;
+            personaje->velocidad.x = 0;
+            personaje->velocidad.y = 0;  
+            personaje->caminata = false;
+            personaje->fps_en_caminata = 0; 
+            inicializar_salto(personaje);
+            *ultima_lateral = ALLEGRO_KEY_RIGHT;  // Para garantizar que el personaje además de partir en la posición deseada (la inicial), parta mirando hacia la derecha
+        }
+    }
+}
+
+
 Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[MAX_RAYOS])
 {
     Natural i;
+
+    if (personaje->muerto)
+    {
+        return;
+    }
 
     if (personaje->danhado)  // Si el personaje ya habia sido dañado, solo se aumenta el tiempo que dura el daño (parpadeo)
     {
@@ -480,6 +539,7 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[
             if (personaje->subvida_actual <= DANHO_RAYO)
             {
                 personaje->subvida_actual = 0;
+                personaje->muerto = true;
             }
                 
             else

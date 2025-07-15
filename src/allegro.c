@@ -415,6 +415,12 @@ Procedure finalizar_allegro(Recursos* R)
         R->vida = NULL;
     }
 
+    if (R->pje_principal.imagen_modo_muerte != NULL)
+    {
+        al_destroy_bitmap(R->pje_principal.imagen_modo_muerte);
+        R->pje_principal.imagen_modo_muerte = NULL;
+    }
+
     for (i=0; i<NRO_FRAMES; i++)
     {
         if (R->pje_principal.frames[i] != NULL)
