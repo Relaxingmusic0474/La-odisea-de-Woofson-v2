@@ -257,17 +257,7 @@ bool crear_recursos_allegro(Recursos* R)
     }
 
     R->musica_actual = R->musicas[0];  // Música menú
-
-    R->sonido_rayo = cargar_musica(SONIDO_RAYO, R->mixer);
-
-    if (!R->sonido_rayo)
-    {
-        printf("Error al cargar el sonido del rayo.\n");
-        return false;
-    }
-
-    inicializar_rayos(R->rayos, R->sonido_rayo);  // Inicializa los rayos de todos los niveles
-
+    
     // Configurar volumen, balance, velocidad de reproducción
     al_set_sample_instance_gain(R->musica_actual->instancia, 1.0);  // Volumen
     al_set_sample_instance_pan(R->musica_actual->instancia, 0.0);  // Centro
@@ -276,6 +266,16 @@ bool crear_recursos_allegro(Recursos* R)
 
     // Reproducir
     al_play_sample_instance(R->musica_actual->instancia);
+
+    R->sonido_rayo = cargar_efecto_sonido(SONIDO_RAYO, R->mixer);
+
+    if (!R->sonido_rayo)
+    {
+        printf("Error al cargar el sonido del rayo.\n");
+        return false;
+    }
+
+    inicializar_rayos(R->rayos, R->sonido_rayo);  // Inicializa los rayos de todos los niveles
 
     return true;
 }
@@ -320,8 +320,11 @@ Procedure finalizar_allegro(Recursos* R)
 
     if (R->sonido_rayo != NULL)
     {
-        al_destroy_sample_instance(R->sonido_rayo->instancia);
-        R->sonido_rayo->instancia = NULL;
+        for (i=0; i<NRO_INSTANCIAS; i++)
+        {
+            al_destroy_sample_instance(R->sonido_rayo->instancias[i]);
+            R->sonido_rayo->instancias[i] = NULL;
+        }
     }
 
     if (R->sonido_rayo != NULL)

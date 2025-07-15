@@ -16,6 +16,7 @@ typedef struct colision Colision;
 typedef struct boton Boton; 
 typedef struct menu Menu; 
 typedef struct musica Musica;
+typedef struct efectoSonido EfectoSonido;
 typedef struct eventos Eventos;
 typedef struct recursos Recursos;
 
@@ -52,7 +53,7 @@ struct rayo  // Tipo de trampa que se usa en el juego
     float porcentaje_progreso;  // Porcentaje de progreso del rayo en su ciclo de activación/desactivación
     EtapaRayo etapa;  // Etapa actual del rayo (en espera, aparición, activo al 100%, desaparición)
     float tiempo_en_etapa;  // Tiempo que lleva el rayo en una etapa determinada (en espera, aparición, activo al 100%, desaparición)
-    Musica* efecto_sonido;  // Efecto de sonido del rayo
+    EfectoSonido* efecto_sonido;  // Efecto de sonido del rayo
     bool efecto_sonido_ya_empezado;
     bool efecto_sonido_ya_detenido;
 };
@@ -110,7 +111,13 @@ struct musica
     Audio musica;
     InstanciaAudio instancia;
     TipoAudio tipo;
-    // ALLEGRO_VOICE* voz;
+};
+
+struct efectoSonido
+{
+    Audio musica;
+    InstanciaAudio instancias[NRO_INSTANCIAS];
+    TipoEfecto tipo;
 };
 
 struct eventos
@@ -138,7 +145,7 @@ struct recursos
     ALLEGRO_FONT* fuentes[NRO_FUENTES];
     ALLEGRO_BITMAP* vida;
     Rayo rayos[NRO_NIVELES][MAX_RAYOS];  // Rayos por nivel
-    Musica* sonido_rayo;  // Efecto de sonido del rayo
+    EfectoSonido* sonido_rayo;  // Efecto de sonido del rayo
     /* 
     Lista bitmaps;  // Bitmaps en una lista enlazada (para dinamismo) -> Se implementara la idea mas adelante
     */

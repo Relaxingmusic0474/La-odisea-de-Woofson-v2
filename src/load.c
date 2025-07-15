@@ -60,10 +60,6 @@ Musica* cargar_musica(TipoAudio tipo, ALLEGRO_MIXER* mixer)
             musica->musica = al_load_sample("assets/music/Soundtrack-B.ogg");  // Se usa el mismo sample para los niveles 4 y 5
             break;
 
-        case SONIDO_RAYO:
-            musica->musica = al_load_sample("assets/music/Rayo.ogg");
-            break;
-
         default:
             printf("Tipo de audio no valido.\n");
             return NULL;
@@ -108,18 +104,74 @@ Musica* cargar_musica(TipoAudio tipo, ALLEGRO_MIXER* mixer)
         return NULL;
     }
 
-    if (!al_attach_sample_instance_to_mixer(musica->instancia, mixer))
-    {
-        printf("Error al adjuntar al mixer la instancia de la música %s.\n", tipo == MUSICA_MENU ? "Soundtrack-menu.ogg" : "Soundtrack-A.ogg");
-        al_destroy_sample_instance(musica->instancia);
-        musica->instancia = NULL;
-        al_destroy_sample(musica->musica);
-        musica->musica = NULL;
-        return NULL;
-    }
+    al_attach_sample_instance_to_mixer(musica->instancia, mixer);
 
     return musica;
 }
+
+
+EfectoSonido* cargar_efecto_sonido(TipoEfecto tipo, ALLEGRO_MIXER* mixer)
+{
+    Natural i, j;
+    Audio audio;
+    EfectoSonido* efecto = (EfectoSonido*) malloc(sizeof(EfectoSonido));
+
+    if (!efecto)
+    {
+        printf("Error de asignacion de memoria al cargar la musica.\n");
+        return NULL;
+    }
+
+    efecto->tipo = tipo;
+
+    switch (tipo)
+    {
+        case SONIDO_RAYO:
+            audio = al_load_sample("assets/music/Rayo.ogg");
+            break;
+
+        default:
+            printf("Tipo de efecto no válido\n");
+            return NULL;
+    }
+
+    if (!audio)
+    {
+        printf("Error al cargar el sample de efecto \"Rayo.ogg\"\n");
+        free(efecto);
+        return NULL;
+    }
+
+    efecto->musica = audio;
+
+    for (i=0; i<NRO_INSTANCIAS; i++)
+    {
+        efecto->instancias[i] = al_create_sample_instance(audio);
+
+        if (!efecto->instancias[i])
+        {
+            printf("Error al crear una de las instancias del efecto.\n");
+
+            for (j=0; j<i; j++)
+            {    
+                al_destroy_sample_instance(efecto->instancias[i]);
+                efecto->instancias[i] = NULL;
+            }
+
+            al_destroy_sample(audio);
+            audio = NULL;
+            efecto->musica = NULL;
+            free(efecto);
+            efecto = NULL;
+            return NULL;
+        }
+
+        al_attach_sample_instance_to_mixer(efecto->instancias[i], mixer);
+    }
+
+    return efecto;
+};
+
 
 
 /**

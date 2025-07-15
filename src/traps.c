@@ -5,7 +5,7 @@
  * @param rayo Puntero al rayo a inicializar.
  * @param sonido_rayo Puntero al efecto de sonido del rayo.
  */
-Procedure inicializar_rayo(Rayo* rayo, Musica* sonido_rayo)
+Procedure inicializar_rayo(Rayo* rayo, EfectoSonido* efecto)
 {
     rayo->origen.x = 0;
     rayo->origen.y = 0;
@@ -20,7 +20,7 @@ Procedure inicializar_rayo(Rayo* rayo, Musica* sonido_rayo)
     rayo->etapa = INOPERATIVO;
     rayo->porcentaje_progreso = 0;  // Inicializa el porcentaje de progreso a 0
     rayo->tiempo_en_etapa = 0;  // Inicializa el tiempo en etapa a 0
-    rayo->efecto_sonido = sonido_rayo;  // Se asigna el efecto de sonido del rayo
+    rayo->efecto_sonido = efecto;  // Se asigna el efecto de sonido del rayo
     rayo->efecto_sonido_ya_empezado = false;
     rayo->efecto_sonido_ya_detenido = false;
 }
@@ -31,7 +31,7 @@ Procedure inicializar_rayo(Rayo* rayo, Musica* sonido_rayo)
  * @param rayos La matriz con los rayos de los niveles.
  * @param sonido_rayo Estructura con el efecto de sonido del rayo.
  */
-Procedure inicializar_rayos(Rayo rayos[NRO_NIVELES][MAX_RAYOS], Musica* sonido_rayo)
+Procedure inicializar_rayos(Rayo rayos[NRO_NIVELES][MAX_RAYOS], EfectoSonido* efecto)
 {
     Natural i, j;
 
@@ -39,7 +39,7 @@ Procedure inicializar_rayos(Rayo rayos[NRO_NIVELES][MAX_RAYOS], Musica* sonido_r
     {
         for (j=0; j<MAX_RAYOS; j++)
         {
-            inicializar_rayo(&rayos[i][j], sonido_rayo);
+            inicializar_rayo(&rayos[i][j], efecto);
         }
     }
 }
@@ -260,7 +260,7 @@ bool personaje_activa_rayo(Rayo rayo, Personaje personaje, Mapa mapa)
 }
 
 
-Procedure actualizar_rayo(Rayo* rayo, Personaje personaje, Mapa mapa)
+Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa mapa)
 {
     bool proximidad = personaje_activa_rayo(*rayo, personaje, mapa);
 
@@ -340,11 +340,11 @@ Procedure actualizar_rayo(Rayo* rayo, Personaje personaje, Mapa mapa)
 
         if (!rayo->efecto_sonido_ya_empezado)
         {
-            al_set_sample_instance_gain(rayo->efecto_sonido->instancia, 0.5);  // Volumen
-            al_set_sample_instance_pan(rayo->efecto_sonido->instancia, 0.0);  // Centro
-            al_set_sample_instance_speed(rayo->efecto_sonido->instancia, 2.0);  // Velocidad 
-            al_set_sample_instance_playmode(rayo->efecto_sonido->instancia, ALLEGRO_PLAYMODE_LOOP);  // Se repite si es que no se alcanza a reproducir completo
-            al_play_sample_instance(rayo->efecto_sonido->instancia);
+            al_set_sample_instance_gain(rayo->efecto_sonido->instancias[index], 0.5);  // Volumen
+            al_set_sample_instance_pan(rayo->efecto_sonido->instancias[index], 0.0);  // Centro
+            al_set_sample_instance_speed(rayo->efecto_sonido->instancias[index], 2.0);  // Velocidad 
+            al_set_sample_instance_playmode(rayo->efecto_sonido->instancias[index], ALLEGRO_PLAYMODE_LOOP);  // Se repite si es que no se alcanza a reproducir completo
+            al_play_sample_instance(rayo->efecto_sonido->instancias[index]);
             rayo->efecto_sonido_ya_empezado = true;
             rayo->efecto_sonido_ya_detenido = false;
         }
@@ -354,7 +354,7 @@ Procedure actualizar_rayo(Rayo* rayo, Personaje personaje, Mapa mapa)
     {
         if (!rayo->efecto_sonido_ya_detenido)
         {
-            al_stop_sample_instance(rayo->efecto_sonido->instancia);
+            al_stop_sample_instance(rayo->efecto_sonido->instancias[index]);
             rayo->efecto_sonido_ya_empezado = false;
             rayo->efecto_sonido_ya_detenido = true;
         }

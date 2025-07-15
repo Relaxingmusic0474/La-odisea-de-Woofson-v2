@@ -32,10 +32,16 @@ enum tipoAudio
     MUSICA_NIVEL_3,
     MUSICA_NIVEL_4,
     MUSICA_NIVEL_5, 
-    SONIDO_RAYO,
 };
 
 typedef enum tipoAudio TipoAudio;
+
+enum tipoEfecto
+{
+    SONIDO_RAYO,
+};
+
+typedef enum tipoEfecto TipoEfecto;
 
 enum etapaRayo
 {
