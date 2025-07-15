@@ -70,6 +70,7 @@ struct personaje
     unsigned int fps_en_pelea; // Número de frames en pelea (para la animación)
     Salto salto;
     bool danhado;
+    float tiempo_danho;
     // CREAR UN ARREGLO DE MUNICIONES
     
 };

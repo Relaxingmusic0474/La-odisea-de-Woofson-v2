@@ -38,8 +38,9 @@
 #define BLOQUE 1  // Representa un bloque del mapa (un bloque sólido)
 #define TRAMPA 2  // Representa una trampa del mapa (un bloque del cual sale una trampa)
 
-// Macros para las velocidades de los personajes
+// Macros para las caracteristicas del personaje
 #define VELOCIDAD_MAXIMA_PERSONAJE 6
+#define MAX_TIEMPO_INMUNE 0.8  // Máximo tiempo en que el personaje no puede recibir un daño adicional
 #define ACELERACION_PERSONAJE 0.2  // Aceleración del personaje al caminar
 #define VELOCIDAD_DRAGONES 4
 #define VELOCIDAD_HUMANOIDES 3

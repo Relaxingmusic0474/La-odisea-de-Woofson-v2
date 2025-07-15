@@ -109,6 +109,7 @@ int main()
                         actualizar_rayo(&recursos.rayos[NIVEL1][i], i, recursos.pje_principal, recursos.mapas[NIVEL1]);
                     }
 
+                    detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[NIVEL1]);
                     mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[4], recursos.fuentes[1], etapa_juego);
                     al_flip_display();
 

@@ -22,5 +22,6 @@ Procedure activar_caida_libre(Personaje*);
 Entero velocidad_instantanea(Personaje, float);
 bool es_tecla_lateral(Tecla);
 Procedure patalear(Personaje*, int);
+Procedure detectar_si_personaje_en_zona_de_rayo(Personaje*, Rayo [MAX_RAYOS]);
 
 #endif  // CHARACTERS_H

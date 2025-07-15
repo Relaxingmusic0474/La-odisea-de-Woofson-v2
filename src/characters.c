@@ -49,6 +49,7 @@ bool inicializar_personaje(Personaje* personaje, char tipo)
             personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
             personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
             personaje->danhado = false;  // Inicialmente no recibe ningún tipo de danho
+            personaje->tiempo_danho = 0;
             inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
             break;
 
@@ -405,21 +406,41 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[
 {
     Natural i;
 
+    if (personaje->danhado)  // Si el personaje ya habia sido dañado, solo se aumenta el tiempo que dura el daño (parpadeo)
+    {
+        if (personaje->tiempo_danho <= MAX_TIEMPO_INMUNE)
+        {
+            personaje->tiempo_danho += 1./FPS;
+        }
+
+        else
+        {
+            personaje->danhado = false;
+            personaje->tiempo_danho = 0;
+        }
+
+        return;
+    }
+
     for (i=0; i<MAX_RAYOS; i++)
     {
         if (rayo[i].activo && !personaje->danhado)
         {
-            if (rayo->origen.x == rayo->objetivo.x)  // Rayo vertical
+            if (rayo[i].origen.x == rayo[i].objetivo.x)  // Rayo vertical
             {
                 if (personaje->posicion.y < rayo[i].posicion.y && 
                     personaje->posicion.y + personaje->alto < rayo[i].objetivo.y &&
                     personaje->posicion.x + personaje->ancho > rayo[i].posicion.x - GROSOR_RAYO/2 &&
                     personaje->posicion.x < rayo[i].posicion.x + GROSOR_RAYO/2)
                 {
-                    personaje->danhado = true;
+                    if (!personaje->danhado)
+                    {
+                        personaje->danhado = true;
+                        personaje->tiempo_danho = 0;
+                    }
+
+                    break;
                 }
-
-
             }
 
             else  // Rayo horizontal
@@ -430,18 +451,22 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[
                     personaje->posicion.y < rayo[i].posicion.y + GROSOR_RAYO/2)
                 {
                     personaje->danhado = true;
+                    break;
                 }
             }
         }
     }
     
-    if (personaje->subvida_actual <= DANHO_RAYO)
+    if (personaje->danhado && personaje->tiempo_danho == 0)  // Si el daño causado por el rayo fue reciente, entonces se le quita vida
     {
-        personaje->subvida_actual = 0;
-    }
+        if (personaje->subvida_actual <= DANHO_RAYO)
+        {
+            personaje->subvida_actual = 0;
+        }
                 
-    else
-    {
-        personaje->subvida_actual -= DANHO_RAYO;
+        else
+        {
+            personaje->subvida_actual -= DANHO_RAYO;
+        }
     }
 }
