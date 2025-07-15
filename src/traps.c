@@ -344,6 +344,7 @@ Procedure actualizar_rayo(Rayo* rayo, Personaje personaje, Mapa mapa)
             al_set_sample_instance_pan(rayo->efecto_sonido->instancia, 0.0);  // Centro
             al_set_sample_instance_speed(rayo->efecto_sonido->instancia, 2.0);  // Velocidad 
             al_set_sample_instance_playmode(rayo->efecto_sonido->instancia, ALLEGRO_PLAYMODE_LOOP);  // Se repite si es que no se alcanza a reproducir completo
+            al_play_sample_instance(rayo->efecto_sonido->instancia);
             rayo->efecto_sonido_ya_empezado = true;
             rayo->efecto_sonido_ya_detenido = false;
         }
