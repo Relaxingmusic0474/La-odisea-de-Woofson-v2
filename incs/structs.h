@@ -149,6 +149,7 @@ struct recursos
     Imagen vida;
     Imagen bloques[NRO_BLOQUES];
     Rayo rayos[NRO_NIVELES][MAX_RAYOS];  // Rayos por nivel
+    Natural cantidad_rayos[NRO_NIVELES];
     EfectoSonido* sonido_rayo;  // Efecto de sonido del rayo
     /* 
     Lista bitmaps;  // Bitmaps en una lista enlazada (para dinamismo) -> Se implementara la idea mas adelante

@@ -291,6 +291,12 @@ bool crear_recursos_allegro(Recursos* R)
     }
 
     inicializar_rayos(R->rayos, R->sonido_rayo);  // Inicializa los rayos de todos los niveles
+    
+    for (i=0; i<NRO_NIVELES; i++)
+    {
+        R->cantidad_rayos[i] = detectar_rayos(R->mapas[i], R->rayos[i], MAX_RAYOS);
+
+    }
 
     return true;
 }
