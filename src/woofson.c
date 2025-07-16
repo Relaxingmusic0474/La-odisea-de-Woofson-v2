@@ -97,7 +97,7 @@ int main()
                 
                     determinar_color_pantalla(iteracion);  // Determina el color de la pantalla según la iteración
                     mover_personaje(&recursos.pje_principal, recursos.mapas[NIVEL1]);  // Mueve al personaje según las teclas presionadas y considera lógica de salto
-                    dibujar_mapa(recursos.mapas[NIVEL1], recursos.bloques);  // Dibujamos el mapa del primer nivel
+                    dibujar_mapa(recursos.mapas[NIVEL1], recursos.bloques, recursos.espina);  // Dibujamos el mapa del primer nivel
                     dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
                     morir(&recursos.pje_principal, &ultima_tecla_lateral);  // Esta función se ejecuta solamente si el personaje figura como muerto
                     actualizar_rayos(recursos.rayos[NIVEL1], recursos.cantidad_rayos[NIVEL1], recursos.pje_principal, recursos.mapas[NIVEL1]);

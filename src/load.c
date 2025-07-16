@@ -378,24 +378,82 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
  * Función que dibuja el mapa en la ventana.
  * @param mapa Es el mapa que se desea dibujar.
  */
-Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES])
+Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina)
 {
     Natural i=0, j=0;
+    Entero flag = 0;
+    bool aux = false;
+    float ancho_espina, alto_espina, x, y;
+    float factor_espina, ancho_esc, alto_esc;
+
+    ancho_espina = al_get_bitmap_width(espina);
+    alto_espina = al_get_bitmap_height(espina);
+
+    factor_espina = 0.5;
+
+    ancho_esc = ancho_espina * factor_espina;
+    alto_esc = alto_espina * factor_espina;
+
+    printf("Ancho espina: %.1f\n", ancho_espina);
+    printf("Alto espina: %.1f\n", alto_espina);
+    printf("Ancho escalado espina: %.1f\n", ancho_esc);
+    printf("Alto escalado espina: %.1f\n", alto_esc);
     
     for (i=0; i<mapa.nro_filas; i++)
     {
         for (j=0; j<mapa.nro_columnas; j++)
         {
+            x = j*ANCHO_VENTANA/mapa.nro_columnas;
+            y = i*ALTURA_PISO/mapa.nro_filas;
+
             if (mapa.mapa[i][j] == BLOQUE || mapa.mapa[i][j] == TRAMPA)
             {
-                al_draw_bitmap(bloques[1], j*ANCHO_VENTANA/mapa.nro_columnas, i*ALTURA_PISO/mapa.nro_filas, 0);
-                //al_draw_filled_rectangle(j*ANCHO_VENTANA/mapa.nro_columnas, i*ALTURA_PISO/mapa.nro_filas, 
-                                      //  (j+1)*ANCHO_VENTANA/mapa.nro_columnas, (i+1)*ALTURA_PISO/mapa.nro_filas, GRIS);
+                al_draw_bitmap(bloques[1], x, y, 0);
             }
 
             if (mapa.mapa[i][j] == TRAMPA)
             {
                 al_draw_filled_circle((j+0.5)*ANCHO_VENTANA/mapa.nro_columnas, (i+0.5)*ALTURA_PISO/mapa.nro_filas, RADIO_CIRCULO_ROJO, ROJO);
+            }
+
+            if (mapa.mapa[i][j] == ESPINA)
+            {
+                if (i == mapa.nro_filas-1 || (i < mapa.nro_filas-1 && mapa.mapa[i+1][j] == BLOQUE))
+                {
+                    flag = 0;
+                    aux = true;
+                }
+
+                else if (i == 0 || (i > 0 && mapa.mapa[i-1][j] == BLOQUE))
+                {
+                    flag = ALLEGRO_FLIP_VERTICAL;
+                    aux = true;
+                }
+
+                else
+                {
+                    if (j == 0 || (j > 0 && mapa.mapa[i][j-1] == BLOQUE))
+                    {
+                        al_draw_tinted_scaled_rotated_bitmap(espina, ROJO, ancho_espina/2, alto_espina/2, x+alto_esc/2/*+(mapa.ancho_bloque-alto_esc)/2*/, y+mapa.alto_bloque/2, factor_espina, factor_espina, ALLEGRO_PI/2, 0);
+                    }
+
+                    else
+                    {
+                        if (j == mapa.nro_columnas-1 || (j < mapa.nro_columnas-1 && mapa.mapa[i][j+1] == BLOQUE))
+                        {
+                            al_draw_tinted_scaled_rotated_bitmap(espina, ROJO, ancho_espina/2, alto_espina/2, x+mapa.ancho_bloque-alto_esc/2/*+alto_esc)/2*/, y+mapa.alto_bloque/2, factor_espina, factor_espina, -ALLEGRO_PI/2, 0);
+                        }
+                    }
+
+                    aux = false;
+                }
+
+                if (aux)
+                {
+                    al_draw_tinted_scaled_bitmap(espina, ROJO, 0, 0, ancho_espina, alto_espina, 
+                                                 x+(mapa.ancho_bloque-ancho_esc)/2, y+(mapa.alto_bloque-alto_esc)*(ALLEGRO_FLIP_VERTICAL-flag)/ALLEGRO_FLIP_VERTICAL, 
+                                                 ancho_esc, alto_esc, flag);
+                }
             }
         }
     }

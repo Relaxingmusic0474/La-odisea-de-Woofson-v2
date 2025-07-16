@@ -151,6 +151,7 @@ struct recursos
     ALLEGRO_FONT* fuentes[NRO_FUENTES];
     Imagen vida;
     Imagen bloques[NRO_BLOQUES];
+    Imagen espina;
     Rayo rayos[NRO_NIVELES][MAX_RAYOS];  // Rayos por nivel
     Natural cantidad_rayos[NRO_NIVELES];
     EfectoSonido* sonido_rayo;  // Efecto de sonido del rayo

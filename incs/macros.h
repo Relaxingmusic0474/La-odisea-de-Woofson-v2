@@ -33,15 +33,16 @@
 #define TIEMPO_RAYO_EN_DESAPARICION (TIEMPO_RAYO_EN_APARICION)  // Tiempo en segundos que el rayo demorará en desaparecer por completo
 #define TIEMPO_CICLO_RAYO (TIEMPO_RAYO_EN_ESPERA + TIEMPO_RAYO_EN_APARICION + TIEMPO_RAYO_ACTIVO_AL_100 + TIEMPO_RAYO_EN_DESAPARICION) // Tiempo total del ciclo del rayo
 #define TOLERANCIA 1e-2  // Tolerancia para las comparaciones de punto flotante
-#define PI 3.141593
+// #define PI 3.141593
 
 // Macros para los elementos del mapa
 #define NADA 0  // Representa un espacio vacío en el mapa
 #define BLOQUE 1  // Representa un bloque del mapa (un bloque sólido)
 #define TRAMPA 2  // Representa una trampa del mapa (un bloque del cual sale una trampa)
+#define ESPINA 3  // Una espina que dañará al personaje
 
 // Macros para las caracteristicas del personaje
-#define VELOCIDAD_MAXIMA_PERSONAJE 6
+#define VELOCIDAD_MAXIMA_PERSONAJE 13
 #define MAX_TIEMPO_INMUNE 1.5  // Máximo tiempo en que el personaje no puede recibir un daño adicional
 #define TIEMPO_MUERTE 2.0  // Tiempo que se tomará el personaje en morir, para volver a comenzar desde su posicion inicial
 #define ACELERACION_PERSONAJE 0.2  // Aceleración del personaje al caminar

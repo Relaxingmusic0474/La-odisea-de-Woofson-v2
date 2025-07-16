@@ -165,6 +165,14 @@ bool crear_recursos_allegro(Recursos* R)
         }
     }
 
+    R->espina = al_load_bitmap("assets/images/espina.png");
+
+    if (!R->espina)
+    {
+        printf("Error al cargar la imagen de la espina.\n");
+        return false;
+    }
+
     if (!inicializar_personaje(&R->pje_principal, 'W'))
     {
         return false;
@@ -174,7 +182,7 @@ bool crear_recursos_allegro(Recursos* R)
 
     if (!R->vida)
     {
-        printf("Error al cargar la imagen de las vidas del personaje\n");
+        printf("Error al cargar la imagen de las vidas del personaje.\n");
         return false;
     }
 
@@ -185,7 +193,7 @@ bool crear_recursos_allegro(Recursos* R)
 
         if (!R->bloques[i])
         {
-            printf("Error al cargar la imagen del %hu' bloque del juego\n", i);
+            printf("Error al cargar la imagen del %hu' bloque del juego.\n", i);
             return false;
         }
 
@@ -428,6 +436,12 @@ Procedure finalizar_allegro(Recursos* R)
             al_destroy_bitmap(R->pje_principal.frames[i]);
             R->pje_principal.frames[i] = NULL;
         }
+    }
+
+    if (R->espina != NULL)
+    {
+        al_destroy_bitmap(R->espina);
+        R->espina = NULL;
     }
 
     liberar_mapas(R->mapas);
