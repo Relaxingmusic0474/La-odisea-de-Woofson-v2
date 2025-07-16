@@ -384,20 +384,13 @@ Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina)
     Entero flag = 0;
     bool aux = false;
     float ancho_espina, alto_espina, x, y;
-    float factor_espina, ancho_esc, alto_esc;
+    float ancho_esc, alto_esc;
 
     ancho_espina = al_get_bitmap_width(espina);
     alto_espina = al_get_bitmap_height(espina);
 
-    factor_espina = 0.5;
-
-    ancho_esc = ancho_espina * factor_espina;
-    alto_esc = alto_espina * factor_espina;
-
-    printf("Ancho espina: %.1f\n", ancho_espina);
-    printf("Alto espina: %.1f\n", alto_espina);
-    printf("Ancho escalado espina: %.1f\n", ancho_esc);
-    printf("Alto escalado espina: %.1f\n", alto_esc);
+    ancho_esc = ancho_espina * FACTOR_ESPINA;
+    alto_esc = alto_espina * FACTOR_ESPINA;
     
     for (i=0; i<mapa.nro_filas; i++)
     {
@@ -406,12 +399,12 @@ Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina)
             x = j*ANCHO_VENTANA/mapa.nro_columnas;
             y = i*ALTURA_PISO/mapa.nro_filas;
 
-            if (mapa.mapa[i][j] == BLOQUE || mapa.mapa[i][j] == TRAMPA)
+            if (mapa.mapa[i][j] == BLOQUE || mapa.mapa[i][j] == BLOQUE_RAYO)
             {
                 al_draw_bitmap(bloques[1], x, y, 0);
             }
 
-            if (mapa.mapa[i][j] == TRAMPA)
+            if (mapa.mapa[i][j] == BLOQUE_RAYO)
             {
                 al_draw_filled_circle((j+0.5)*ANCHO_VENTANA/mapa.nro_columnas, (i+0.5)*ALTURA_PISO/mapa.nro_filas, RADIO_CIRCULO_ROJO, ROJO);
             }
@@ -434,14 +427,16 @@ Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina)
                 {
                     if (j == 0 || (j > 0 && mapa.mapa[i][j-1] == BLOQUE))
                     {
-                        al_draw_tinted_scaled_rotated_bitmap(espina, ROJO, ancho_espina/2, alto_espina/2, x+alto_esc/2/*+(mapa.ancho_bloque-alto_esc)/2*/, y+mapa.alto_bloque/2, factor_espina, factor_espina, ALLEGRO_PI/2, 0);
+                        al_draw_tinted_scaled_rotated_bitmap(espina, ROJO, ancho_espina/2, alto_espina/2, x+alto_esc/2, y+mapa.alto_bloque/2, 
+                                                             FACTOR_ESPINA, FACTOR_ESPINA, ALLEGRO_PI/2, 0);
                     }
 
                     else
                     {
                         if (j == mapa.nro_columnas-1 || (j < mapa.nro_columnas-1 && mapa.mapa[i][j+1] == BLOQUE))
                         {
-                            al_draw_tinted_scaled_rotated_bitmap(espina, ROJO, ancho_espina/2, alto_espina/2, x+mapa.ancho_bloque-alto_esc/2/*+alto_esc)/2*/, y+mapa.alto_bloque/2, factor_espina, factor_espina, -ALLEGRO_PI/2, 0);
+                            al_draw_tinted_scaled_rotated_bitmap(espina, ROJO, ancho_espina/2, alto_espina/2, x+mapa.ancho_bloque-alto_esc/2, 
+                                                                 y+mapa.alto_bloque/2, FACTOR_ESPINA, FACTOR_ESPINA, -ALLEGRO_PI/2, 0);
                         }
                     }
 

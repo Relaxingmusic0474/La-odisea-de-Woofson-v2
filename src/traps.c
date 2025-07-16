@@ -63,12 +63,12 @@ Natural detectar_rayos(Mapa mapa, Rayo rayos[], Natural max_rayos)
     {
         for (j=0; j<mapa.nro_columnas; j++)
         {
-            if (mapa.mapa[i][j] == TRAMPA)
+            if (mapa.mapa[i][j] == BLOQUE_RAYO)
             {
                 // Buscar en dirección horizontal
                 for (k=j+1; k<mapa.nro_columnas; k++)
                 {
-                    if (mapa.mapa[i][k] == TRAMPA)
+                    if (mapa.mapa[i][k] == BLOQUE_RAYO)
                     {
                         // Se verifica que no haya bloques entre las dos trampas (porque el rayo no puede atravesar bloques)
                         es_valido = true;
@@ -99,7 +99,7 @@ Natural detectar_rayos(Mapa mapa, Rayo rayos[], Natural max_rayos)
                 // Buscar en dirección vertical
                 for (k=i+1; k<mapa.nro_filas; k++)
                 {
-                    if (mapa.mapa[k][j] == TRAMPA)
+                    if (mapa.mapa[k][j] == BLOQUE_RAYO)
                     {
                         es_valido = true;
 
@@ -370,5 +370,216 @@ Procedure actualizar_rayos(Rayo rayos[MAX_RAYOS], Natural cantidad, Personaje pe
     for (i=0; i<cantidad; i++)
     {
         actualizar_rayo(&rayos[i], i, personaje, mapa);
+    }
+}
+
+Procedure detectar_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detectada)
+{
+    float x1, y1, x2, y2, m, n, pos;
+    Natural bloque_x1, bloque_y1, bloque_x2, bloque_y2;
+    Vector pos_inicial_espina, pos_final_espina;
+    bool espina_valida, colision;
+    Natural i, j;
+
+    x1 = personaje->posicion.x;
+    x2 = personaje->posicion.x + personaje->ancho - 1;
+
+    y1 = personaje->posicion.y;
+    y2 = personaje->posicion.y + personaje->alto - 1;
+
+    bloque_x1 = x1 / mapa.ancho_bloque;
+    bloque_x2 = x2 / mapa.ancho_bloque;
+
+    bloque_y1 = y1 / mapa.alto_bloque;
+    bloque_y2 = y2 / mapa.alto_bloque;
+
+    colision = false;
+
+    for (i=bloque_x1; i<=bloque_x2; i++)
+    {
+        for (j=bloque_y1; j<=bloque_y2; j++)
+        {
+            if (mapa.mapa[i][j] == ESPINA)
+            {
+                espina_valida = true;
+
+                if (j == mapa.nro_filas-1 || (j < mapa.nro_filas-1 && mapa.mapa[j+1][i] == BLOQUE))
+                {
+                    espina_detectada->direccion_espina = 'I';  // Inferior
+                    espina_detectada->posicion_vertice.x = (i + 0.5f) * mapa.ancho_bloque;
+                    espina_detectada->posicion_vertice.y = (j + 1) * mapa.alto_bloque - espina_detectada->alto;
+                    pos_inicial_espina.x = espina_detectada->posicion_vertice.x - espina_detectada->ancho / 2;
+                    pos_inicial_espina.y = (j + 1) * mapa.alto_bloque;
+                    pos_final_espina.x = espina_detectada->posicion_vertice.x + espina_detectada->ancho / 2;
+                    pos_final_espina.y = (j + 1) * mapa.alto_bloque;
+                }
+                
+
+                else if (j == 0 || (j > 0 && mapa.mapa[j-1][i] == BLOQUE))
+                {
+                    espina_detectada->direccion_espina = 'S';  // Superior
+                    espina_detectada->posicion_vertice.x = (i + 0.5f) * mapa.ancho_bloque;
+                    espina_detectada->posicion_vertice.y = j * mapa.alto_bloque + espina_detectada->alto;
+                    pos_inicial_espina.x = espina_detectada->posicion_vertice.x - espina_detectada->ancho / 2;
+                    pos_inicial_espina.y = j * mapa.alto_bloque;
+                    pos_final_espina.x = espina_detectada->posicion_vertice.x + espina_detectada->ancho / 2;
+                    pos_final_espina.y = j * mapa.alto_bloque;
+                }
+
+                else if (i == 0 || (i > 0 && mapa.mapa[j][i-1] == BLOQUE))
+                {
+                    espina_detectada->direccion_espina = 'L';  // Izquierda
+                    espina_detectada->posicion_vertice.x = i * mapa.ancho_bloque + espina_detectada->alto;
+                    espina_detectada->posicion_vertice.y = (j + 0.5f) * mapa.alto_bloque;
+                    pos_inicial_espina.x = i * mapa.ancho_bloque;
+                    pos_inicial_espina.y = espina_detectada->posicion_vertice.y - espina_detectada->ancho / 2;
+                    pos_final_espina.x = i * mapa.ancho_bloque;
+                    pos_final_espina.y = espina_detectada->posicion_vertice.y + espina_detectada->ancho / 2;
+                }
+
+                else
+                {
+                    if (i == mapa.nro_columnas-1 || (i < mapa.nro_columnas-1 && mapa.mapa[j][i+1]))
+                    {
+                        espina_detectada->direccion_espina = 'L';
+                        espina_detectada->posicion_vertice.x = (i+1) * mapa.ancho_bloque - espina_detectada->alto;
+                        espina_detectada->posicion_vertice.y = (j + 0.5f) * mapa.alto_bloque;
+                        pos_inicial_espina.x = (i+1) * mapa.ancho_bloque;
+                        pos_inicial_espina.y = espina_detectada->posicion_vertice.y - espina_detectada->ancho/2;
+                        pos_final_espina.x = (i+1) * mapa.ancho_bloque;
+                        pos_final_espina.y = espina_detectada->posicion_vertice.y + espina_detectada->ancho/2;
+                    }
+
+                    else
+                    {
+                        espina_valida = false;
+                    }
+                }
+
+                if (espina_valida)
+                {
+                    espina_detectada->regresiones[0].m = (espina_detectada->posicion_vertice.y - pos_inicial_espina.y) / (espina_detectada->posicion_vertice.x - pos_inicial_espina.x);
+                    espina_detectada->regresiones[0].n = espina_detectada->posicion_vertice.y - espina_detectada->regresiones[0].m * espina_detectada->posicion_vertice.x;
+                    espina_detectada->regresiones[1].m = (pos_final_espina.y - espina_detectada->posicion_vertice.y) / (pos_final_espina.x - espina_detectada->posicion_vertice.x);
+                    espina_detectada->regresiones[1].n = espina_detectada->posicion_vertice.y - espina_detectada->regresiones[1].m * espina_detectada->posicion_vertice.x;
+
+                    switch (espina_detectada->direccion_espina)
+                    {
+                        case 'I':  // Inferior
+
+                            if ((x1 > pos_inicial_espina.x && x1 < pos_final_espina.x) || (x2 >= pos_inicial_espina.x && x2 <= pos_final_espina.x))
+                            {
+                                for (pos=x1; !colision && pos<x2; pos++)
+                                {
+                                    if (pos <= espina_detectada->posicion_vertice.x)
+                                    {
+                                        m = espina_detectada->regresiones[0].m;
+                                        n = espina_detectada->regresiones[0].n;
+                                    }
+
+                                    else
+                                    {
+                                        m = espina_detectada->regresiones[1].m;
+                                        n = espina_detectada->regresiones[1].n;
+                                    }
+                                    
+                                    if (y2 >= m*pos + n && y2 <= pos_inicial_espina.y)
+                                    {
+                                        colision = true;
+                                    }
+                                }
+                            }
+
+                            break;
+
+                        case 'S':  // Superior
+                        
+                            if ((x1 > pos_inicial_espina.x && x1 < pos_final_espina.x) || (x2 >= pos_inicial_espina.x && x2 <= pos_final_espina.x))
+                            {
+                                for (pos=x1; !colision && pos<x2; pos++)
+                                {
+                                    if (pos <= espina_detectada->posicion_vertice.x)
+                                    {
+                                        m = espina_detectada->regresiones[0].m;
+                                        n = espina_detectada->regresiones[0].n;
+                                    }
+
+                                    else
+                                    {
+                                        m = espina_detectada->regresiones[1].m;
+                                        n = espina_detectada->regresiones[1].n;
+                                    }
+                                    
+                                    if (y1 < m*pos + n && y1 >= pos_inicial_espina.y)
+                                    {
+                                        colision = true;
+                                    }
+                                }
+                            }
+
+                            break;
+
+                        case 'L':  // Izquierda (left)
+                            
+                            if ((y1 > pos_inicial_espina.y && y1 < pos_final_espina.y) || (y2 >= pos_inicial_espina.y && y2 <= pos_final_espina.y))
+                            {
+                                for (pos=y1; !colision && pos<y2; pos++)
+                                {
+                                    if (pos <= espina_detectada->posicion_vertice.y)
+                                    {
+                                        m = espina_detectada->regresiones[0].m;
+                                        n = espina_detectada->regresiones[0].n;
+                                    }
+
+                                    else
+                                    {
+                                        m = espina_detectada->regresiones[1].m;
+                                        n = espina_detectada->regresiones[1].n;
+                                    }
+                                    
+                                    if (x1 < (1./m)*pos - n/m && x1 >= pos_inicial_espina.x)
+                                    {
+                                        colision = true;
+                                    }
+                                }
+                            }
+
+                            break;
+
+                        default:  // Caso derecho (right = 'R')
+                            
+                            if ((y1 > pos_inicial_espina.y && y1 < pos_final_espina.y) || (y2 >= pos_inicial_espina.y && y2 <= pos_final_espina.y))
+                            {
+                                for (pos=y1; !colision && pos<y2; pos++)
+                                {
+                                    if (pos <= espina_detectada->posicion_vertice.y)
+                                    {
+                                        m = espina_detectada->regresiones[0].m;
+                                        n = espina_detectada->regresiones[0].n;
+                                    }
+
+                                    else
+                                    {
+                                        m = espina_detectada->regresiones[1].m;
+                                        n = espina_detectada->regresiones[1].n;
+                                    }
+                                    
+                                    if (x2 >= (1./m)*pos - n/m && x2 <= pos_final_espina.x)
+                                    {
+                                        colision = true;
+                                    }
+                                }
+                            }
+
+                            break;
+                    }
+
+                    if (colision)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

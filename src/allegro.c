@@ -173,6 +173,12 @@ bool crear_recursos_allegro(Recursos* R)
         return false;
     }
 
+    R->espina_actual = (Espina) {0};
+
+    R->espina_actual.imagen_espina = R->espina;
+    R->espina_actual.ancho = al_get_bitmap_width(R->espina);
+    R->espina_actual.alto = al_get_bitmap_height(R->espina);
+
     if (!inicializar_personaje(&R->pje_principal, 'W'))
     {
         return false;
@@ -303,7 +309,6 @@ bool crear_recursos_allegro(Recursos* R)
     for (i=0; i<NRO_NIVELES; i++)
     {
         R->cantidad_rayos[i] = detectar_rayos(R->mapas[i], R->rayos[i], MAX_RAYOS);
-
     }
 
     return true;

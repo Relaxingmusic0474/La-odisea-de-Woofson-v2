@@ -9,7 +9,6 @@
 typedef struct vector Vector;
 typedef struct rectangulo Rectangulo;
 typedef struct salto Salto;
-typedef struct rayo Rayo;
 typedef struct mapa Mapa;
 typedef struct personaje Personaje;
 typedef struct colision Colision;
@@ -17,6 +16,9 @@ typedef struct boton Boton;
 typedef struct menu Menu; 
 typedef struct musica Musica;
 typedef struct efectoSonido EfectoSonido;
+typedef struct rayo Rayo;
+typedef struct regresionLineal RegresionLineal;
+typedef struct espina Espina;
 typedef struct eventos Eventos;
 typedef struct recursos Recursos;
 
@@ -123,7 +125,22 @@ struct rayo  // Tipo de trampa que se usa en el juego
     EfectoSonido* efecto_sonido;  // Efecto de sonido del rayo
     bool efecto_sonido_ya_empezado;
     bool efecto_sonido_ya_detenido;
-    
+};
+
+struct regresionLineal
+{
+    float m;  // Pendiente
+    float n;  // Ordenada al origen
+};
+
+struct espina
+{
+    Imagen imagen_espina;
+    float ancho;
+    float alto;
+    RegresionLineal regresiones[NRO_REGRESIONES];  // Las espinas son triangulares, así que se pueden representar mediante dos regresiones lineales
+    Vector posicion_vertice;
+    char direccion_espina;  // Si la espina es 'I' (inferior: está abajo y hay que saltarla), 'S' (superior), 'L' (izquierda: left) o 'R' (derecha: right)
 };
 
 struct eventos
@@ -155,6 +172,7 @@ struct recursos
     Rayo rayos[NRO_NIVELES][MAX_RAYOS];  // Rayos por nivel
     Natural cantidad_rayos[NRO_NIVELES];
     EfectoSonido* sonido_rayo;  // Efecto de sonido del rayo
+    Espina espina_actual;
     /* 
     Lista bitmaps;  // Bitmaps en una lista enlazada (para dinamismo) -> Se implementara la idea mas adelante
     */

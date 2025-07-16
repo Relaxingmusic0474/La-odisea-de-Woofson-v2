@@ -21,6 +21,12 @@
 #define NRO_FRAMES_PELEA (NRO_FRAMES_MOVIMIENTO)
 #define NRO_FRAMES 20  // Número de frames que tendrá cada personaje
 
+// Macros para los elementos del mapa
+#define NADA 0  // Representa un espacio vacío en el mapa
+#define BLOQUE 1  // Representa un bloque del mapa (un bloque sólido)
+#define BLOQUE_RAYO 2  // Representa una trampa del mapa (un bloque del cual sale una trampa)
+#define ESPINA 3  // Una espina que dañará al personaje
+
 // Macros para los rayos
 #define MAX_RAYOS 8  // Número máximo de rayos que se pueden detectar en el mapa
 #define NRO_OSCILACIONES_RAYO 10  // Número de oscilaciones que tendrá el rayo
@@ -33,13 +39,10 @@
 #define TIEMPO_RAYO_EN_DESAPARICION (TIEMPO_RAYO_EN_APARICION)  // Tiempo en segundos que el rayo demorará en desaparecer por completo
 #define TIEMPO_CICLO_RAYO (TIEMPO_RAYO_EN_ESPERA + TIEMPO_RAYO_EN_APARICION + TIEMPO_RAYO_ACTIVO_AL_100 + TIEMPO_RAYO_EN_DESAPARICION) // Tiempo total del ciclo del rayo
 #define TOLERANCIA 1e-2  // Tolerancia para las comparaciones de punto flotante
-// #define PI 3.141593
 
-// Macros para los elementos del mapa
-#define NADA 0  // Representa un espacio vacío en el mapa
-#define BLOQUE 1  // Representa un bloque del mapa (un bloque sólido)
-#define TRAMPA 2  // Representa una trampa del mapa (un bloque del cual sale una trampa)
-#define ESPINA 3  // Una espina que dañará al personaje
+// Macros para las espinas
+#define NRO_REGRESIONES 2
+#define FACTOR_ESPINA 0.5
 
 // Macros para las caracteristicas del personaje
 #define VELOCIDAD_MAXIMA_PERSONAJE 13
