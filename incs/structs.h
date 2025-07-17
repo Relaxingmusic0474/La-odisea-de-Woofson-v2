@@ -76,6 +76,9 @@ struct personaje
     bool muerto;
     float tiempo_muerte;
     Imagen imagen_modo_muerte;
+    bool mov_izq_habilitado;
+    bool mov_der_habilitado;
+    bool mov_sup_habilitado;
     // CREAR UN ARREGLO DE MUNICIONES
     
 };

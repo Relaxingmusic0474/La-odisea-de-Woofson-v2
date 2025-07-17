@@ -56,10 +56,13 @@ bool inicializar_personaje(Personaje* personaje, char tipo)
             personaje->posicion.y = ALTURA_PISO - personaje->alto;  // Se coloca en el piso
             personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
             personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
-            personaje->danhado = false;  // Inicialmente no recibe ningún tipo de danho
+            personaje->danhado = true;  // Para que parta con cierta inmunidad antes de comenzar (parpadeo)
             personaje->tiempo_danho = 0;
             personaje->muerto = false;
             personaje->tiempo_muerte = 0;
+            personaje->mov_izq_habilitado = true;
+            personaje->mov_der_habilitado = true;
+            personaje->mov_sup_habilitado = true;
             inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
             break;
 
@@ -142,7 +145,10 @@ Procedure dibujar_personaje(Personaje personaje, Natural ultima_tecla_lateral, N
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
     Natural var;
     
-    determinar_como_dibujar_personaje(&personaje, ultima_tecla_lateral);
+    if (!personaje.muerto)
+    {
+        determinar_como_dibujar_personaje(&personaje, ultima_tecla_lateral);
+    }
 
     if (personaje.danhado && personaje.tiempo_danho > 0)
     {
@@ -466,7 +472,7 @@ Procedure morir(Personaje* personaje, Tecla* ultima_lateral)
             personaje->posicion.y = ALTURA_PISO - personaje->alto;  // Se coloca en el piso
             personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
             personaje->en_plataforma = false;  
-            personaje->danhado = false;  
+            personaje->danhado = true;  // Para que parta con cierto tiempo de inmunidad luego de morir (en caso de que haya un enemigo demasiado cerca por ejemplo)
             personaje->tiempo_danho = 0;
             personaje->velocidad.x = 0;
             personaje->velocidad.y = 0;  

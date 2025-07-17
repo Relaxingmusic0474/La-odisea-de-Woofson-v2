@@ -30,6 +30,7 @@ bool hay_colision_superior(Personaje* personaje, Mapa mapa)
     {
         personaje->salto.altura_choque = 0;
         personaje->salto.es_interrumpido = true;
+        personaje->mov_sup_habilitado = false;
         return true;
     }
     
@@ -70,11 +71,13 @@ bool hay_bloque_arriba(Personaje* personaje, Mapa mapa)
             {
                 personaje->salto.altura_choque = (fil+1) * mapa.alto_bloque;
                 personaje->salto.es_interrumpido = true;
+                personaje->mov_sup_habilitado = false;
                 return true;
             }
         }
     }
 
+    personaje->mov_sup_habilitado = true;
     return false;
 }
 
@@ -152,6 +155,7 @@ bool hay_colision_izquierda(Personaje* personaje, Mapa mapa)
     if (personaje->posicion.x < 0)
     {
         personaje->posicion.x = 0;  // Ajusta la posición del personaje al borde izquierdo de la ventana
+        personaje->mov_izq_habilitado = false;
         return true;
     }
 
@@ -191,11 +195,13 @@ bool hay_bloque_izquierda(Personaje* personaje, Mapa mapa)
             if (mapa.mapa[fil][col] != NADA)
             {
                 personaje->posicion.x = (col + 1) * mapa.ancho_bloque;  // Ajusta la posición del personaje al borde izquierdo del bloque
+                personaje->mov_izq_habilitado = false;
                 return true;
             }
         }
     }
 
+    personaje->mov_izq_habilitado = true;
     return false;
 }
 
@@ -211,6 +217,7 @@ bool hay_colision_derecha(Personaje* personaje, Mapa mapa)
     if (personaje->posicion.x + personaje->ancho - 1 > ANCHO_VENTANA)
     {
         personaje->posicion.x = ANCHO_VENTANA - personaje->ancho;  // Ajusta la posición del personaje al borde derecho de la ventana
+        personaje->mov_der_habilitado = false;
         return true;
     }
 
@@ -250,11 +257,13 @@ bool hay_bloque_derecha(Personaje* personaje, Mapa mapa)
             if (mapa.mapa[fil][col] != NADA)
             {
                 personaje->posicion.x = col * mapa.ancho_bloque - personaje->ancho;  // Ajusta la posición del personaje al borde derecho del bloque
+                personaje->mov_der_habilitado = false;
                 return true;
             }
         }
     }
 
+    personaje->mov_der_habilitado = true;
     return false;
 }
 

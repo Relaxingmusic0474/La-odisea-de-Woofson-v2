@@ -373,7 +373,7 @@ Procedure actualizar_rayos(Rayo rayos[MAX_RAYOS], Natural cantidad, Personaje pe
     }
 }
 
-Procedure detectar_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detectada)
+bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detectada)
 {
     float x1, y1, x2, y2, m, n, pos;
     Natural bloque_x1, bloque_y1, bloque_x2, bloque_y2;
@@ -513,6 +513,7 @@ Procedure detectar_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* es
                                     if (y1 < m*pos + n && y1 >= pos_inicial_espina.y)
                                     {
                                         colision = true;
+                                        personaje->mov_sup_habilitado = false;
                                     }
                                 }
                             }
@@ -540,6 +541,7 @@ Procedure detectar_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* es
                                     if (x1 < (1./m)*pos - n/m && x1 >= pos_inicial_espina.x)
                                     {
                                         colision = true;
+                                        personaje->mov_izq_habilitado = false;
                                     }
                                 }
                             }
@@ -567,6 +569,7 @@ Procedure detectar_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* es
                                     if (x2 >= (1./m)*pos - n/m && x2 <= pos_final_espina.x)
                                     {
                                         colision = true;
+                                        personaje->mov_der_habilitado = false;
                                     }
                                 }
                             }
@@ -576,10 +579,12 @@ Procedure detectar_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* es
 
                     if (colision)
                     {
-                        break;
+                        return true;
                     }
                 }
             }
         }
     }
+
+    return false;
 }
