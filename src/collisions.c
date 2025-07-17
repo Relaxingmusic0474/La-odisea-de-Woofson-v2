@@ -30,7 +30,6 @@ bool hay_colision_superior(Personaje* personaje, Mapa mapa)
     {
         personaje->salto.altura_choque = 0;
         personaje->salto.es_interrumpido = true;
-        personaje->mov_sup_habilitado = false;
         return true;
     }
     
@@ -67,17 +66,15 @@ bool hay_bloque_arriba(Personaje* personaje, Mapa mapa)
 
         if (col >= 0 && col < mapa.nro_columnas)
         {
-            if (mapa.mapa[fil][col] != NADA)
+            if (mapa.mapa[fil][col] != NADA && mapa.mapa[fil][col] != ESPINA)  // Las espinas se tratarán aparte
             {
                 personaje->salto.altura_choque = (fil+1) * mapa.alto_bloque;
                 personaje->salto.es_interrumpido = true;
-                personaje->mov_sup_habilitado = false;
                 return true;
             }
         }
     }
 
-    personaje->mov_sup_habilitado = true;
     return false;
 }
 
@@ -131,7 +128,7 @@ bool hay_bloque_debajo(Personaje* personaje, Mapa mapa)
 
         if (col >= 0 && col < mapa.nro_columnas)
         {
-            if (mapa.mapa[fil][col] != NADA)
+            if (mapa.mapa[fil][col] != NADA && mapa.mapa[fil][col] != ESPINA)
             {
                 personaje->en_plataforma = true;
                 personaje->salto.altura_choque =  fil * mapa.alto_bloque - personaje->alto;
@@ -155,7 +152,6 @@ bool hay_colision_izquierda(Personaje* personaje, Mapa mapa)
     if (personaje->posicion.x < 0)
     {
         personaje->posicion.x = 0;  // Ajusta la posición del personaje al borde izquierdo de la ventana
-        personaje->mov_izq_habilitado = false;
         return true;
     }
 
@@ -195,13 +191,11 @@ bool hay_bloque_izquierda(Personaje* personaje, Mapa mapa)
             if (mapa.mapa[fil][col] != NADA)
             {
                 personaje->posicion.x = (col + 1) * mapa.ancho_bloque;  // Ajusta la posición del personaje al borde izquierdo del bloque
-                personaje->mov_izq_habilitado = false;
                 return true;
             }
         }
     }
 
-    personaje->mov_izq_habilitado = true;
     return false;
 }
 
@@ -217,7 +211,6 @@ bool hay_colision_derecha(Personaje* personaje, Mapa mapa)
     if (personaje->posicion.x + personaje->ancho - 1 > ANCHO_VENTANA)
     {
         personaje->posicion.x = ANCHO_VENTANA - personaje->ancho;  // Ajusta la posición del personaje al borde derecho de la ventana
-        personaje->mov_der_habilitado = false;
         return true;
     }
 
@@ -257,13 +250,11 @@ bool hay_bloque_derecha(Personaje* personaje, Mapa mapa)
             if (mapa.mapa[fil][col] != NADA)
             {
                 personaje->posicion.x = col * mapa.ancho_bloque - personaje->ancho;  // Ajusta la posición del personaje al borde derecho del bloque
-                personaje->mov_der_habilitado = false;
                 return true;
             }
         }
     }
 
-    personaje->mov_der_habilitado = true;
     return false;
 }
 
@@ -319,4 +310,45 @@ Procedure efectuar_colision(Personaje* personaje, Mapa mapa)
     }
 
     return;
+}
+
+bool personaje_colisiona_con_espina_pixeles(Personaje* personaje, Imagen espina_bitmap, float esp_x, float esp_y, float alto_bloque, float ancho_bloque) 
+{
+    Natural i, j;
+    Natural local_x, local_y;
+    float x, y;
+    ALLEGRO_COLOR color;
+    unsigned char red, green, blue, alpha;
+
+    al_lock_bitmap(espina_bitmap, ALLEGRO_PIXEL_FORMAT_ANY, ALLEGRO_LOCK_READONLY);
+
+    for (i=0; i<personaje->ancho; i++) 
+    {
+        for (j=0; j<personaje->alto; j++) 
+        {
+            x = personaje->posicion.x + i;
+            y = personaje->posicion.y + j;
+
+            // ¿Está dentro del bloque de la espina?
+            if (x >= esp_x && x < esp_x + ancho_bloque &&
+                y >= esp_y && y < esp_y + alto_bloque) 
+            {
+                local_x = (Natural) (x - esp_x);
+                local_y = (Natural)(y - esp_y);
+
+                color = al_get_pixel(espina_bitmap, local_x, local_y);
+
+                al_unmap_rgba(color, &red, &green, &blue, &alpha);
+
+                if (alpha > 10) // el pixel tiene tinta, no es transparente
+                { 
+                    al_unlock_bitmap(espina_bitmap);
+                    return true;  // hay colisión con la espina
+                }
+            }
+        }
+    }
+
+    al_unlock_bitmap(espina_bitmap);
+    return false;  // no hay colisión
 }

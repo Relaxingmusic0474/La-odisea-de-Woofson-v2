@@ -387,24 +387,28 @@ bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detec
     y1 = personaje->posicion.y;
     y2 = personaje->posicion.y + personaje->alto - 1;
 
-    bloque_x1 = x1 / mapa.ancho_bloque;
-    bloque_x2 = x2 / mapa.ancho_bloque;
+    bloque_x1 = (Natural) x1 / mapa.ancho_bloque;
+    bloque_x2 = (Natural) x2 / mapa.ancho_bloque;
 
-    bloque_y1 = y1 / mapa.alto_bloque;
-    bloque_y2 = y2 / mapa.alto_bloque;
+    bloque_y1 = (Natural) y1 / mapa.alto_bloque;
+    bloque_y2 = (Natural) y2 / mapa.alto_bloque;
 
     colision = false;
+
+    printf("Hola\n");
 
     for (i=bloque_x1; i<=bloque_x2; i++)
     {
         for (j=bloque_y1; j<=bloque_y2; j++)
         {
+            printf("Hole\n");
             if (mapa.mapa[i][j] == ESPINA)
             {
                 espina_valida = true;
-
+                printf("SOSSSSSSSSSSSSSSSSSSSSS\n");
                 if (j == mapa.nro_filas-1 || (j < mapa.nro_filas-1 && mapa.mapa[j+1][i] == BLOQUE))
                 {
+                    
                     espina_detectada->direccion_espina = 'I';  // Inferior
                     espina_detectada->posicion_vertice.x = (i + 0.5f) * mapa.ancho_bloque;
                     espina_detectada->posicion_vertice.y = (j + 1) * mapa.alto_bloque - espina_detectada->alto;
@@ -417,6 +421,7 @@ bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detec
 
                 else if (j == 0 || (j > 0 && mapa.mapa[j-1][i] == BLOQUE))
                 {
+                    
                     espina_detectada->direccion_espina = 'S';  // Superior
                     espina_detectada->posicion_vertice.x = (i + 0.5f) * mapa.ancho_bloque;
                     espina_detectada->posicion_vertice.y = j * mapa.alto_bloque + espina_detectada->alto;
@@ -428,6 +433,7 @@ bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detec
 
                 else if (i == 0 || (i > 0 && mapa.mapa[j][i-1] == BLOQUE))
                 {
+                    
                     espina_detectada->direccion_espina = 'L';  // Izquierda
                     espina_detectada->posicion_vertice.x = i * mapa.ancho_bloque + espina_detectada->alto;
                     espina_detectada->posicion_vertice.y = (j + 0.5f) * mapa.alto_bloque;
@@ -441,6 +447,7 @@ bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detec
                 {
                     if (i == mapa.nro_columnas-1 || (i < mapa.nro_columnas-1 && mapa.mapa[j][i+1]))
                     {
+                        
                         espina_detectada->direccion_espina = 'L';
                         espina_detectada->posicion_vertice.x = (i+1) * mapa.ancho_bloque - espina_detectada->alto;
                         espina_detectada->posicion_vertice.y = (j + 0.5f) * mapa.alto_bloque;
@@ -458,6 +465,7 @@ bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detec
 
                 if (espina_valida)
                 {
+                    printf("Holi\n");
                     espina_detectada->regresiones[0].m = (espina_detectada->posicion_vertice.y - pos_inicial_espina.y) / (espina_detectada->posicion_vertice.x - pos_inicial_espina.x);
                     espina_detectada->regresiones[0].n = espina_detectada->posicion_vertice.y - espina_detectada->regresiones[0].m * espina_detectada->posicion_vertice.x;
                     espina_detectada->regresiones[1].m = (pos_final_espina.y - espina_detectada->posicion_vertice.y) / (pos_final_espina.x - espina_detectada->posicion_vertice.x);
@@ -513,7 +521,6 @@ bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detec
                                     if (y1 < m*pos + n && y1 >= pos_inicial_espina.y)
                                     {
                                         colision = true;
-                                        personaje->mov_sup_habilitado = false;
                                     }
                                 }
                             }
@@ -540,8 +547,7 @@ bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detec
                                     
                                     if (x1 < (1./m)*pos - n/m && x1 >= pos_inicial_espina.x)
                                     {
-                                        colision = true;
-                                        personaje->mov_izq_habilitado = false;
+                                        colision = true;                
                                     }
                                 }
                             }
@@ -550,6 +556,7 @@ bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detec
 
                         default:  // Caso derecho (right = 'R')
                             
+                            printf("Holo\n");
                             if ((y1 > pos_inicial_espina.y && y1 < pos_final_espina.y) || (y2 >= pos_inicial_espina.y && y2 <= pos_final_espina.y))
                             {
                                 for (pos=y1; !colision && pos<y2; pos++)
@@ -569,7 +576,7 @@ bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detec
                                     if (x2 >= (1./m)*pos - n/m && x2 <= pos_final_espina.x)
                                     {
                                         colision = true;
-                                        personaje->mov_der_habilitado = false;
+                                        personaje->hay_obj_der = true;
                                     }
                                 }
                             }
@@ -579,12 +586,17 @@ bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detec
 
                     if (colision)
                     {
+                        printf("Holu\n");
                         return true;
                     }
                 }
             }
         }
     }
+
+    personaje->hay_obj_izq = false;
+    personaje->hay_obj_der = false;
+    personaje->hay_obj_sup = false;
 
     return false;
 }

@@ -60,9 +60,9 @@ bool inicializar_personaje(Personaje* personaje, char tipo)
             personaje->tiempo_danho = 0;
             personaje->muerto = false;
             personaje->tiempo_muerte = 0;
-            personaje->mov_izq_habilitado = true;
-            personaje->mov_der_habilitado = true;
-            personaje->mov_sup_habilitado = true;
+            personaje->hay_obj_izq = false;
+            personaje->hay_obj_der = false;
+            personaje->hay_obj_sup = false;
             inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
             break;
 
@@ -206,12 +206,12 @@ bool es_posible_mover_personaje_lateralmente(Personaje *personaje, Mapa mapa)
 {
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
 
-    if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(personaje, mapa))
+    if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(personaje, mapa) && !personaje->hay_obj_izq)
     {
         return true;  // Puede moverse a la izquierda
     }
 
-    else if (teclas[ALLEGRO_KEY_RIGHT] && !hay_colision_derecha(personaje, mapa))
+    else if (teclas[ALLEGRO_KEY_RIGHT] && !hay_colision_derecha(personaje, mapa) && !personaje->hay_obj_der)
     {
         return true;  // Puede moverse a la derecha
     }
@@ -484,6 +484,32 @@ Procedure morir(Personaje* personaje, Tecla* ultima_lateral)
     }
 }
 
+Procedure aplicar_danho(Personaje* personaje, Natural cantidad_danho)
+{
+    if (personaje->subvida_actual <= cantidad_danho)
+    {
+        personaje->subvida_actual = 0;
+        personaje->muerto = true;
+    }
+
+    else
+    {
+        personaje->subvida_actual -= DANHO_RAYO;
+    }
+}
+
+Procedure aumentar_subvida(Personaje* personaje, Natural cantidad_aumento)
+{
+    if (cantidad_aumento >= 100 - personaje->subvida_actual)
+    {
+        personaje->subvida_actual = 100;
+    }
+
+    else
+    {
+        personaje->subvida_actual += cantidad_aumento;
+    }
+}
 
 Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[MAX_RAYOS])
 {
@@ -550,16 +576,8 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[
     {
         if (personaje->tiempo_danho == 0)
         {
-            if (personaje->subvida_actual <= DANHO_RAYO)
-            {
-                personaje->subvida_actual = 0;
-                personaje->muerto = true;
-            }
-                
-            else
-            {
-                personaje->subvida_actual -= DANHO_RAYO;
-            }
+            aplicar_danho(personaje, DANHO_RAYO);
         }
     }
 }  
+

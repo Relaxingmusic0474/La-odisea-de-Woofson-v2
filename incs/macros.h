@@ -14,7 +14,7 @@
 #define NRO_COLORES 5
 #define NRO_BLOQUES 2 // Tipos distintos de bloques que se cargarán
 #define NRO_MENUS 2
-#define NRO_MUSICAS 2
+#define NRO_MUSICAS 3
 #define NRO_INSTANCIAS 8
 #define NRO_FUENTES 6
 #define NRO_FRAMES_MOVIMIENTO 10
@@ -26,6 +26,17 @@
 #define BLOQUE 1  // Representa un bloque del mapa (un bloque sólido)
 #define BLOQUE_RAYO 2  // Representa una trampa del mapa (un bloque del cual sale una trampa)
 #define ESPINA 3  // Una espina que dañará al personaje
+
+// Macros para las caracteristicas del personaje
+#define VELOCIDAD_MAXIMA_PERSONAJE 8
+#define MAX_TIEMPO_INMUNE 1.5  // Máximo tiempo en que el personaje no puede recibir un daño adicional
+#define TIEMPO_MUERTE 2.0  // Tiempo que se tomará el personaje en morir, para volver a comenzar desde su posicion inicial
+#define ACELERACION_PERSONAJE 0.2  // Aceleración del personaje al caminar
+#define VELOCIDAD_DRAGONES 4
+#define VELOCIDAD_HUMANOIDES 3
+#define VELOCIDAD_JEFE 7
+#define ACELERACION_ADREDE 5 // Aceleración adicional que se genera al presionar la tecla de abajo estando en caida libre
+#define IMPULSO_PERSONAJE 700  // Impulso de salto del personaje en px/s
 
 // Macros para los rayos
 #define MAX_RAYOS 8  // Número máximo de rayos que se pueden detectar en el mapa
@@ -44,24 +55,11 @@
 #define NRO_REGRESIONES 2
 #define FACTOR_ESPINA 0.5
 
-// Macros para las caracteristicas del personaje
-#define VELOCIDAD_MAXIMA_PERSONAJE 13
-#define MAX_TIEMPO_INMUNE 1.5  // Máximo tiempo en que el personaje no puede recibir un daño adicional
-#define TIEMPO_MUERTE 2.0  // Tiempo que se tomará el personaje en morir, para volver a comenzar desde su posicion inicial
-#define ACELERACION_PERSONAJE 0.2  // Aceleración del personaje al caminar
-#define VELOCIDAD_DRAGONES 4
-#define VELOCIDAD_HUMANOIDES 3
-#define VELOCIDAD_JEFE 7
-#define ACELERACION_ADREDE 5 // Aceleración adicional que se genera al presionar la tecla de abajo estando en caida libre
-
 // Macro para definir los daños que causan las trampas o los enemigos al personaje
 #define DANHO_RAYO 28
 
 // Macro que define la cantidad de vidas que tendrá el personaje inicialmente
 #define VIDAS_INICIALES 3
-
-// Macros para manejar cosas relacionadas con el salto del personaje
-#define IMPULSO_PERSONAJE 700  // Impulso de salto del personaje en px/s
 
 // Macros para cargar fuentes de distinto tamaño
 #define NORMAL 20

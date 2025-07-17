@@ -65,7 +65,7 @@ int main()
             }
         }
 
-        else if (etapa_juego == NIVEL1)
+        else
         {
             switch (evento.type)
             {
@@ -94,14 +94,45 @@ int main()
 
 
                 case ALLEGRO_EVENT_TIMER:
-                
-                    determinar_color_pantalla(iteracion);  // Determina el color de la pantalla según la iteración
-                    mover_personaje(&recursos.pje_principal, recursos.mapas[NIVEL1]);  // Mueve al personaje según las teclas presionadas y considera lógica de salto
-                    dibujar_mapa(recursos.mapas[NIVEL1], recursos.bloques, recursos.espina);  // Dibujamos el mapa del primer nivel
+
+                    al_clear_to_color(NEGRO);
+
+                    if (etapa_juego  == NIVEL1)
+                    {
+                        determinar_color_pantalla(iteracion);  // Determina el color de la pantalla según la iteración
+                    }
+
+                    else if (etapa_juego == NIVEL2)
+                    {
+                        al_draw_scaled_bitmap(recursos.fondos[NIVEL2], 0, 0, al_get_bitmap_width(recursos.fondos[NIVEL2]), al_get_bitmap_height(recursos.fondos[NIVEL2]), 
+                                              0, 0, ANCHO_VENTANA, 8./9 * ALTO_VENTANA, 0);
+                    }
+
+                    else if (etapa_juego == NIVEL3)
+                    {
+                        al_draw_scaled_bitmap(recursos.fondos[NIVEL3], 0, 0, ANCHO_VENTANA, 8./9*ALTO_VENTANA, 0, 0, 
+                                              al_get_bitmap_width(recursos.fondos[NIVEL3]), al_get_bitmap_height(recursos.fondos[NIVEL3]), 0);
+
+                    }
+
+                    else if (etapa_juego == NIVEL4)
+                    {
+                        al_draw_scaled_bitmap(recursos.fondos[NIVEL4], 0, 0, al_get_bitmap_width(recursos.fondos[NIVEL4]), al_get_bitmap_height(recursos.fondos[NIVEL4]), 
+                                              0, 0, ANCHO_VENTANA, 8./9 * ALTO_VENTANA, 0);
+                    }
+
+                    else  // NIVEL 5
+                    {
+                        al_draw_scaled_bitmap(recursos.fondos[NIVEL5], 0, 0, al_get_bitmap_width(recursos.fondos[NIVEL5]), al_get_bitmap_height(recursos.fondos[NIVEL5]), 
+                                              0, 0, ANCHO_VENTANA, 8./9 * ALTO_VENTANA, 0);
+                    }
+
+                    mover_personaje(&recursos.pje_principal, recursos.mapas[etapa_juego]);  // Mueve al personaje según las teclas presionadas y considera lógica de salto
+                    dibujar_mapa(recursos.mapas[etapa_juego], recursos.bloques, recursos.espina);  // Dibujamos el mapa del primer nivel
                     dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
                     morir(&recursos.pje_principal, &ultima_tecla_lateral);  // Esta función se ejecuta solamente si el personaje figura como muerto
-                    actualizar_rayos(recursos.rayos[NIVEL1], recursos.cantidad_rayos[NIVEL1], recursos.pje_principal, recursos.mapas[NIVEL1]);
-                    detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[NIVEL1]);
+                    actualizar_rayos(recursos.rayos[etapa_juego], recursos.cantidad_rayos[etapa_juego], recursos.pje_principal, recursos.mapas[etapa_juego]);
+                    detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[etapa_juego]);
                     mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[4], recursos.fuentes[1], etapa_juego);
                     al_flip_display();
 

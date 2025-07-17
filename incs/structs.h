@@ -76,9 +76,9 @@ struct personaje
     bool muerto;
     float tiempo_muerte;
     Imagen imagen_modo_muerte;
-    bool mov_izq_habilitado;
-    bool mov_der_habilitado;
-    bool mov_sup_habilitado;
+    bool hay_obj_izq;
+    bool hay_obj_der;
+    bool hay_obj_sup;
     // CREAR UN ARREGLO DE MUNICIONES
     
 };
@@ -175,7 +175,8 @@ struct recursos
     Rayo rayos[NRO_NIVELES][MAX_RAYOS];  // Rayos por nivel
     Natural cantidad_rayos[NRO_NIVELES];
     EfectoSonido* sonido_rayo;  // Efecto de sonido del rayo
-    Espina espina_actual;
+    Espina espina_actual;  // POSIBLEMENTE QUITE LAS ESPINAS
+    Imagen fondos[NRO_NIVELES];
     /* 
     Lista bitmaps;  // Bitmaps en una lista enlazada (para dinamismo) -> Se implementara la idea mas adelante
     */

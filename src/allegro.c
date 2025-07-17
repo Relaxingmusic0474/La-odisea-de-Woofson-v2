@@ -75,7 +75,7 @@ bool inicializar_allegro()
 bool crear_recursos_allegro(Recursos* R)
 {
     Natural i, j;
-    char ruta[30] = {'\0'};
+    char ruta[40] = {'\0'};
     bool exito = false;
 
     /* Se crea la ventana */
@@ -149,12 +149,28 @@ bool crear_recursos_allegro(Recursos* R)
         return false;
     }
 
-    /* Se registran los eventos del mouse en la cola de eventos */
+    // Se registran los eventos del mouse en la cola de eventos
     al_register_event_source(R->cola_eventos, al_get_mouse_event_source());
 
-    /* Se leen los mapas de todos los niveles */
-    for (i=0; i<NRO_NIVELES; i++)
+    for (i=0; i<NRO_NIVELES; i++)  // Se cargan los fondos y se leen los mapas de todos los niveles 
     {
+        if (i==0)  // El primer nivel no tendrá fondo (solo será una pantalla que cambiará de colores)
+        {
+            R->fondos[i] = NULL;
+        }
+
+        else 
+        {
+            sprintf(ruta, "assets/images/landscapes/fondo-%hu.png", i+1);
+            R->fondos[i] = al_load_bitmap(ruta);
+
+            if (!R->fondos[i])
+            {
+                printf("Error al cargar el fondo del nivel %hu.\n", i+1);
+                return false;
+            }
+        }
+
         R->mapas[i] = leer_mapa(i+1);  // Se leen los mapas de los niveles, comenzando desde el nivel 1 (índice 0)
 
         /* Si el mapa es NULL, se imprime un mensaje de error y se liberan los mapas ya leidos antes de retornar false */
@@ -272,7 +288,7 @@ bool crear_recursos_allegro(Recursos* R)
 
     for (i=0; i<NRO_MUSICAS; i++)
     {
-        R->musicas[i] = i==0 ? cargar_musica(MUSICA_MENU, R->mixer) : cargar_musica(MUSICA_NIVEL_1, R->mixer);
+        R->musicas[i] = i==0 ? cargar_musica(MUSICA_MENU, R->mixer) : (i==1 ? cargar_musica(MUSICA_NIVEL_1, R->mixer) : cargar_musica(MUSICA_NIVEL_4, R->mixer));
         
         if (!R->musicas[i])
         {
@@ -450,6 +466,15 @@ Procedure finalizar_allegro(Recursos* R)
     }
 
     liberar_mapas(R->mapas);
+
+    for (i=0; i<NRO_NIVELES; i++)
+    {
+        if (R->fondos[i] != NULL)
+        {
+            al_destroy_bitmap(R->fondos[i]);
+            R->fondos[i] = NULL;
+        }
+    }
 
     if (R->cola_eventos != NULL)
     {

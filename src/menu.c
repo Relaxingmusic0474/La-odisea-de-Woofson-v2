@@ -233,27 +233,26 @@ Procedure redirigir_menu(Recursos* recursos, ALLEGRO_FONT* fuente, Natural opcio
                 case 0:
                     *etapa_actual = NIVEL1;
                     cambiar_musica(recursos, recursos->musicas[1]);
-                    al_clear_to_color(ROJO);
                     break;
 
                 case 1:
                     *etapa_actual = NIVEL2;
-                    al_clear_to_color(VERDE);
+                    cambiar_musica(recursos, recursos->musicas[1]);
                     break;
 
                 case 2:
                     *etapa_actual = NIVEL3;
-                    al_clear_to_color(AZUL);
+                    cambiar_musica(recursos, recursos->musicas[1]);
                     break;
 
                 case 3:
                     *etapa_actual = NIVEL4;
-                    al_clear_to_color(BLANCO);
+                    cambiar_musica(recursos, recursos->musicas[2]);
                     break;
 
                 case 4:
                     *etapa_actual = NIVEL5;
-                    al_clear_to_color(GRIS);
+                    cambiar_musica(recursos, recursos->musicas[2]);
                     break;
             }
             
