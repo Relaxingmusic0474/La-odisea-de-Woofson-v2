@@ -11,7 +11,9 @@ int main()
     Etapa etapa_juego = MENU_PRINCIPAL;  /* Para capturar el estado actual del juego */
     Tecla ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;  /* Para que el personaje parta mirando a la derecha */
     Natural iteracion = 0, nivel_actual = 0;  /* Para controlar las iteraciones del juego */
+    Rectangulo rectangulo_derrota;
     extern bool teclas[ALLEGRO_KEY_MAX]; /* Para manejar las teclas que se presionan */
+
 
     if (!inicializar_todo(&recursos))  /* Se inicializan todos los recursos de Allegro */
     {
@@ -35,7 +37,7 @@ int main()
 
                 if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
                 {
-                    redirigir_menu(&recursos, recursos.fuentes[2], recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
+                    redirigir_menu(&recursos, recursos.fuentes[COMFORTAA_LIGHT_GRANDE], recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
                 }
             }
 
@@ -54,7 +56,7 @@ int main()
         
                 if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
                 {
-                    redirigir_menu(&recursos, recursos.fuentes[3], recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
+                    redirigir_menu(&recursos, recursos.fuentes[TIMES_NEW_ROMAN_GRANDE], recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
                 }
             }
 
@@ -103,7 +105,9 @@ int main()
                         dibujar_mapa(recursos.mapas[nivel_actual-1], recursos.bloques, recursos.espina);  // Dibujamos el mapa del primer nivel
                         dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
                         actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                        dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, 500, 1200, 50, 50, true, CAFE);
+                        rectangulo_derrota = dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, 500, 1200, 50.0, 50.0, true, CAFE);
+                        dibujar_rectangulo_en_rectangulo(rectangulo_derrota, 500, 1200, 50.0, 50.0, false, AMARILLO);  // Se le añadirá un borde
+                        dibujar_texto_en_rectangulo("HAS PERDIDO", rectangulo_derrota, 50.0, 15.0, recursos.fuentes[TIMES_NEW_ROMAN_GIGANTE], BLANCO);                        
                     }
 
                     else
@@ -112,11 +116,12 @@ int main()
                         dibujar_mapa(recursos.mapas[nivel_actual-1], recursos.bloques, recursos.espina);  // Dibujamos el mapa del primer nivel
                         dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
                         actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                        detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);
-                        morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto
+                        detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);   
                     }
-                    
-                    mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[4], recursos.fuentes[1], nivel_actual);
+
+                    morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto
+                    mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[COMFORTAA_LIGHT_GIGANTE], 
+                                           recursos.fuentes[TIMES_NEW_ROMAN_NORMAL], nivel_actual);
                     al_flip_display();
 
                     break;

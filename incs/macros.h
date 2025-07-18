@@ -61,7 +61,7 @@
 #define DANHO_RAYO 28
 
 // Macro que define la cantidad de vidas que tendrá el personaje inicialmente
-#define VIDAS_INICIALES 3
+#define VIDAS_INICIALES 1
 
 // Macros para cargar fuentes de distinto tamaño
 #define NORMAL 20

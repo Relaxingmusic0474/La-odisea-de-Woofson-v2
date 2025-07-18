@@ -9,6 +9,18 @@ enum fuente
 
 typedef enum fuente Fuente;
 
+enum tipoFuente
+{
+    COMFORTAA_LIGHT_NORMAL,
+    TIMES_NEW_ROMAN_NORMAL,
+    COMFORTAA_LIGHT_GRANDE,
+    TIMES_NEW_ROMAN_GRANDE,
+    COMFORTAA_LIGHT_GIGANTE,
+    TIMES_NEW_ROMAN_GIGANTE,
+};
+
+typedef enum tipoFuente TipoFuente;
+
 enum etapa
 {
     MENU_PRINCIPAL = -4,  // Se partió en -4 estratégicamente para que el índice del nivel 1 sea 0, y se pueda usar el mismo índice para acceder al mapa

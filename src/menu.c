@@ -308,13 +308,13 @@ Procedure dibujar_imagen_en_rectangulo(Imagen imagen, Rectangulo rectangulo, flo
 }
 
 
-Procedure dibujar_texto_en_rectangulo(char* texto, Rectangulo rectangulo, float porcentaje_x, float porcentaje_y, ALLEGRO_FONT* fuente)
+Procedure dibujar_texto_en_rectangulo(char* texto, Rectangulo rectangulo, float porcentaje_x, float porcentaje_y, ALLEGRO_FONT* fuente, ALLEGRO_COLOR color)
 {
     Vector posicion_texto;
     int alto_texto = al_get_font_line_height(fuente);
     posicion_texto.x = rectangulo.pos_inicial.x + (float) porcentaje_x / 100 * (rectangulo.pos_final.x - rectangulo.pos_inicial.x);
     posicion_texto.y = rectangulo.pos_inicial.y + (float) porcentaje_y / 100 * (rectangulo.pos_final.y - rectangulo.pos_inicial.y);
-    al_draw_text(fuente, NEGRO, posicion_texto.x, posicion_texto.y - (float) alto_texto / 2, ALLEGRO_ALIGN_CENTRE, texto);
+    al_draw_text(fuente, color, posicion_texto.x, posicion_texto.y - (float) alto_texto / 2, ALLEGRO_ALIGN_CENTRE, texto);
 }
 
 
@@ -372,15 +372,15 @@ Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida, ALLE
 
     dibujar_rectangulo(rectangulo_datos, GRIS);
     sprintf(texto_nro_nivel, "Lvl %hu", nivel_actual);
-    dibujar_texto_en_rectangulo(texto_nro_nivel, rectangulo_datos, 5.0, 50.0, fuente);
+    dibujar_texto_en_rectangulo(texto_nro_nivel, rectangulo_datos, 5.0, 50.0, fuente, NEGRO);
     dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 10.0, 50.0, false, NEGRO);  // Esto es equivalente a dibujar una línea (una de las dimensiones es 0)
     dibujar_imagen_en_rectangulo(vida, rectangulo_datos, 12.5, 35.0);  // Se dibuja el corazón en un 5% en x y un 50% en y del rectángulo
     sprintf(texto_nro_vidas, "× %hu", personaje.nro_vidas);
-    dibujar_texto_en_rectangulo(texto_nro_vidas, rectangulo_datos, 18.0, 35.0, fuente);
-    dibujar_texto_en_rectangulo("VIDAS", rectangulo_datos, 16.3, 75.0, fuente_sec);
+    dibujar_texto_en_rectangulo(texto_nro_vidas, rectangulo_datos, 18.0, 35.0, fuente, NEGRO);
+    dibujar_texto_en_rectangulo("VIDAS", rectangulo_datos, 16.3, 75.0, fuente_sec, NEGRO);
     dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 22.5, 50.0, false, NEGRO);
     rectangulo_subvidas = dibujar_rectangulo_en_rectangulo(rectangulo_datos, 50, 800, 50.0, 35.0, false, NEGRO);
-    dibujar_texto_en_rectangulo("BARRA DE VIDA", rectangulo_datos, 50.0, 75.0, fuente_sec);
+    dibujar_texto_en_rectangulo("BARRA DE VIDA", rectangulo_datos, 50.0, 75.0, fuente_sec, NEGRO);
 
     alto_barras = 0.85 * (rectangulo_subvidas.pos_final.y - rectangulo_subvidas.pos_inicial.y);
 
@@ -390,9 +390,9 @@ Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida, ALLE
     }
 
     dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 78.0, 50.0, false, NEGRO);
-    dibujar_texto_en_rectangulo("PUNTUACIÓN", rectangulo_datos, 84.0, 75.0, fuente_sec);
+    dibujar_texto_en_rectangulo("PUNTUACIÓN", rectangulo_datos, 84.0, 75.0, fuente_sec, NEGRO);
     sprintf(texto_puntuacion, "%hu", puntuacion);
-    dibujar_texto_en_rectangulo(texto_puntuacion, rectangulo_datos, 84.0, 35.0, fuente);
+    dibujar_texto_en_rectangulo(texto_puntuacion, rectangulo_datos, 84.0, 35.0, fuente, NEGRO);
     dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 90.0, 50.0, false, NEGRO);   
 }
 

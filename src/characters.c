@@ -462,6 +462,13 @@ Procedure morir(Personaje* personaje, Tecla* ultima_lateral, Etapa* etapa_actual
 
         if (personaje->tiempo_muerte >= TIEMPO_MUERTE)
         {
+            if (*etapa_actual == DERROTA)
+            {
+                dx = personaje->posicion.x + personaje->ancho / 2 - ancho*factor_escala / 2;
+                dy = personaje->posicion.y + personaje->alto / 2 - alto*factor_escala / 2;
+                al_draw_scaled_bitmap(bitmap, 0, 0, ancho, alto, dx, dy, ancho*factor_escala, alto*factor_escala, 0);
+            }
+
             if (personaje->nro_vidas == 0)
             {
                 *etapa_actual = DERROTA;
