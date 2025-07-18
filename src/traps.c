@@ -13,7 +13,7 @@ Procedure inicializar_rayo(Rayo* rayo, EfectoSonido* efecto)
     rayo->objetivo.y = 0;
     rayo->posicion.x = 0;
     rayo->posicion.y = 0;
-    rayo->grosor = GROSOR_RAYO;
+    rayo->grosor = GROSOR_INICIAL_RAYO;
     rayo->danho = DANHO_RAYO;  // Asigna el daño del rayo
     rayo->activo = false;  // Inicialmente el rayo no está activo
     rayo->etapa = INOPERATIVO;
@@ -323,7 +323,7 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
     if (rayo->activo)
     {
         parametro = 0.5 * (1 + sin(20*tiempo_total));
-        rayo->grosor = GROSOR_RAYO + 0.75 * GROSOR_RAYO * parametro * pow(-1, rand() % 2);
+        rayo->grosor = GROSOR_INICIAL_RAYO + 0.75 * GROSOR_INICIAL_RAYO * parametro * pow(-1, rand() % 2);
         color_rayo = al_map_rgb((1-parametro)*255, 255, parametro*255);
         dibujar_rayo(*rayo, color_rayo);
 
@@ -373,6 +373,7 @@ Procedure actualizar_rayos(Rayo rayos[MAX_RAYOS], Natural cantidad, Personaje pe
     }
 }
 
+/*
 bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detectada)
 {
     float x1, y1, x2, y2, m, n, pos;
@@ -395,17 +396,14 @@ bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detec
 
     colision = false;
 
-    printf("Hola\n");
-
     for (i=bloque_x1; i<=bloque_x2; i++)
     {
         for (j=bloque_y1; j<=bloque_y2; j++)
         {
-            printf("Hole\n");
             if (mapa.mapa[i][j] == ESPINA)
             {
                 espina_valida = true;
-                printf("SOSSSSSSSSSSSSSSSSSSSSS\n");
+
                 if (j == mapa.nro_filas-1 || (j < mapa.nro_filas-1 && mapa.mapa[j+1][i] == BLOQUE))
                 {
                     
@@ -600,3 +598,5 @@ bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detec
 
     return false;
 }
+*/
+

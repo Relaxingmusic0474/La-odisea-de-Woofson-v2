@@ -10,6 +10,8 @@
 #define ANCHO_VENTANA 1620
 #define ALTO_VENTANA 900
 #define ALTURA_PISO (ALTO_VENTANA * 5/6)  // Altura del piso en px
+#define ALTO_JUEGO (8./9  * ALTO_VENTANA)
+#define RECTANGULO_JUEGO (Rectangulo) {{0, 0}, {ANCHO_VENTANA, ALTO_JUEGO}}
 #define NRO_NIVELES 5
 #define NRO_COLORES 5
 #define NRO_BLOQUES 2 // Tipos distintos de bloques que se cargarán
@@ -42,7 +44,7 @@
 #define MAX_RAYOS 8  // Número máximo de rayos que se pueden detectar en el mapa
 #define NRO_OSCILACIONES_RAYO 10  // Número de oscilaciones que tendrá el rayo
 #define RADIO_CIRCULO_ROJO 5  // Radio del círculo que representará el radio de los círculos de donde se originan los rayos
-#define GROSOR_RAYO 4  // Grosor del rayo
+#define GROSOR_INICIAL_RAYO 4  // Grosor del rayo
 #define DANHO_RAYO 28  // Daño que causa el rayo al impactar al personaje
 #define TIEMPO_RAYO_EN_ESPERA 0.5  // Tiempo en segundos que el rayo estará inactivo antes de volver a activarse
 #define TIEMPO_RAYO_EN_APARICION 0.4  // Tiempo en segundos que el rayo demorará en aparecer por completo

@@ -189,12 +189,14 @@ Procedure mostrar_menu(Menu menu)
 }
 
 
-Procedure redirigir_menu(Recursos* recursos, ALLEGRO_FONT* fuente, Natural opcion_clickeada, Etapa* etapa_actual)
+Procedure redirigir_menu(Recursos* recursos, ALLEGRO_FONT* fuente, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual)
 {
     finalizar_menu(&recursos->menu_actual);
 
     if (*etapa_actual == MENU_PRINCIPAL)
     {
+        *nivel_actual = 0;
+
         if (opcion_clickeada == 0)  
         {
             *etapa_actual = MENU_NIVELES;
@@ -221,6 +223,7 @@ Procedure redirigir_menu(Recursos* recursos, ALLEGRO_FONT* fuente, Natural opcio
     {
         if (opcion_clickeada == 5)
         {
+            *nivel_actual = 0;
             *etapa_actual = MENU_PRINCIPAL;
             inicializar_menu_principal(&recursos->menu_actual, fuente);
             mostrar_menu(recursos->menu_actual);
@@ -231,26 +234,31 @@ Procedure redirigir_menu(Recursos* recursos, ALLEGRO_FONT* fuente, Natural opcio
             switch (opcion_clickeada)
             {
                 case 0:
+                    *nivel_actual = 1;
                     *etapa_actual = NIVEL1;
                     cambiar_musica(recursos, recursos->musicas[1]);
                     break;
 
                 case 1:
+                    *nivel_actual = 2;
                     *etapa_actual = NIVEL2;
                     cambiar_musica(recursos, recursos->musicas[1]);
                     break;
 
                 case 2:
+                    *nivel_actual = 3;
                     *etapa_actual = NIVEL3;
                     cambiar_musica(recursos, recursos->musicas[1]);
                     break;
 
                 case 3:
+                    *nivel_actual = 4;
                     *etapa_actual = NIVEL4;
                     cambiar_musica(recursos, recursos->musicas[2]);
                     break;
 
                 case 4:
+                    *nivel_actual = 5;
                     *etapa_actual = NIVEL5;
                     cambiar_musica(recursos, recursos->musicas[2]);
                     break;
@@ -310,6 +318,16 @@ Procedure dibujar_texto_en_rectangulo(char* texto, Rectangulo rectangulo, float 
 }
 
 
+/**
+ * Dibuja un rectángulo dentro de otro rectángulo ya definido previamente.
+ * @param rect_destino Es el rectágulo sobre el cual se dibujará el otro rectángulo (que será el de origen, que deberá ser más pequeño que éste).
+ * @param alto Es el alto en px que tendrá el rectángulo que se quiere dibujar.
+ * @param ancho Es el ancho en px que tendrá el rectángulo que se quiere dibujar.
+ * @param porcentaje_x Es el porcentaje medido horizontalmente en el cual estará centrado el rectángulo respecto del de destino.
+ * @param porcentaje_y Es el porcentaje medido verticalmente en el cual estará centrado el rectángulo respexto del de destino.
+ * @param relleno Es un booleano que indica si el rectángulo se desea que sea relleno o no.
+ * @param color Color del cual se quiere dibujar el rectángulo.
+ */
 Rectangulo dibujar_rectangulo_en_rectangulo(Rectangulo rect_destino, float alto, float ancho, float porcentaje_x, float porcentaje_y, bool relleno, ALLEGRO_COLOR color)
 {
     Rectangulo rect;
@@ -334,10 +352,10 @@ Rectangulo dibujar_rectangulo_en_rectangulo(Rectangulo rect_destino, float alto,
 }
 
 
-Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, Etapa etapa_actual)
+Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, Natural nivel_actual)
 {
     Natural i;
-    Natural nivel, alto_linea, alto_barras;
+    Natural alto_linea, alto_barras;
     Rectangulo rectangulo_datos;
     Rectangulo rectangulo_subvidas;
     extern Natural puntuacion;
@@ -350,11 +368,10 @@ Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida, ALLE
     rectangulo_datos.pos_final.x = ANCHO_VENTANA;
     rectangulo_datos.pos_final.y = ALTO_VENTANA;
 
-    nivel = etapa_actual + 1;
     alto_linea = rectangulo_datos.pos_final.y - rectangulo_datos.pos_inicial.y;
 
     dibujar_rectangulo(rectangulo_datos, GRIS);
-    sprintf(texto_nro_nivel, "Lvl %hu", nivel);
+    sprintf(texto_nro_nivel, "Lvl %hu", nivel_actual);
     dibujar_texto_en_rectangulo(texto_nro_nivel, rectangulo_datos, 5.0, 50.0, fuente);
     dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 10.0, 50.0, false, NEGRO);  // Esto es equivalente a dibujar una línea (una de las dimensiones es 0)
     dibujar_imagen_en_rectangulo(vida, rectangulo_datos, 12.5, 35.0);  // Se dibuja el corazón en un 5% en x y un 50% en y del rectángulo
@@ -377,4 +394,25 @@ Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida, ALLE
     sprintf(texto_puntuacion, "%hu", puntuacion);
     dibujar_texto_en_rectangulo(texto_puntuacion, rectangulo_datos, 84.0, 35.0, fuente);
     dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 90.0, 50.0, false, NEGRO);   
+}
+
+
+Procedure mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, Natural iteracion)
+{
+    if (nivel_actual == 1)  // Nivel 1 no tiene fondo
+    {
+        determinar_color_pantalla(iteracion);
+    }
+
+    else if (nivel_actual == 3)  // Nivel en el cual tengo pensado añadir scroll (Por eso se está dibujando solo una parte de la imagen)
+    {
+        al_draw_scaled_bitmap(fondos[NIVEL3], 0, 0, ANCHO_VENTANA, 8./9*ALTO_VENTANA, 0, 0, 
+                              al_get_bitmap_width(fondos[NIVEL3]), al_get_bitmap_height(fondos[NIVEL3]), 0);
+    }
+
+    else
+    {
+        al_draw_scaled_bitmap(fondos[nivel_actual-1], 0, 0, al_get_bitmap_width(fondos[nivel_actual-1]), 
+                              al_get_bitmap_height(fondos[nivel_actual-1]), 0, 0, ANCHO_VENTANA, ALTO_JUEGO, 0);        
+    }
 }

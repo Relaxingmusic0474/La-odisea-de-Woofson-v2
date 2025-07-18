@@ -10,7 +10,7 @@ int main()
     ALLEGRO_EVENT evento; /* Ṕara agregar los eventos que vayan ocurriendo a la cola de eventos */
     Etapa etapa_juego = MENU_PRINCIPAL;  /* Para capturar el estado actual del juego */
     Tecla ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;  /* Para que el personaje parta mirando a la derecha */
-    Natural iteracion = 0;  /* Para controlar las iteraciones del juego */
+    Natural iteracion = 0, nivel_actual = 0;  /* Para controlar las iteraciones del juego */
     extern bool teclas[ALLEGRO_KEY_MAX]; /* Para manejar las teclas que se presionan */
 
     if (!inicializar_todo(&recursos))  /* Se inicializan todos los recursos de Allegro */
@@ -35,7 +35,7 @@ int main()
 
                 if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
                 {
-                    redirigir_menu(&recursos, recursos.fuentes[2], recursos.menu_actual.opcion_en_hover, &etapa_juego);
+                    redirigir_menu(&recursos, recursos.fuentes[2], recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
                 }
             }
 
@@ -54,7 +54,7 @@ int main()
         
                 if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
                 {
-                    redirigir_menu(&recursos, recursos.fuentes[3], recursos.menu_actual.opcion_en_hover, &etapa_juego);
+                    redirigir_menu(&recursos, recursos.fuentes[3], recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
                 }
             }
 
@@ -71,9 +71,9 @@ int main()
             {
                 case TECLA_PRESIONADA:
 
-                    teclas[evento.keyboard.keycode] = true;
+                    teclas[evento.keyboard.keycode] = recursos.pje_principal.muerto ? false : true;
                     
-                    if (es_tecla_lateral(evento.keyboard.keycode))
+                    if (!recursos.pje_principal.muerto && es_tecla_lateral(evento.keyboard.keycode))
                     {
                         ultima_tecla_lateral = (Natural) evento.keyboard.keycode;
                     }
@@ -85,7 +85,7 @@ int main()
 
                     teclas[evento.keyboard.keycode] = false;
 
-                    if (es_tecla_lateral(evento.keyboard.keycode))
+                    if (!recursos.pje_principal.muerto && es_tecla_lateral(evento.keyboard.keycode))
                     {
                         ultima_tecla_lateral = (Natural) evento.keyboard.keycode;
                     }
@@ -96,44 +96,27 @@ int main()
                 case ALLEGRO_EVENT_TIMER:
 
                     al_clear_to_color(NEGRO);
-
-                    if (etapa_juego  == NIVEL1)
-                    {
-                        determinar_color_pantalla(iteracion);  // Determina el color de la pantalla según la iteración
+                    mostrar_fondo_nivel(recursos.fondos, nivel_actual, iteracion);
+                    
+                    if (etapa_juego == DERROTA)
+                    {   
+                        dibujar_mapa(recursos.mapas[nivel_actual-1], recursos.bloques, recursos.espina);  // Dibujamos el mapa del primer nivel
+                        dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
+                        actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
+                        dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, 500, 1200, 50, 50, true, CAFE);
                     }
 
-                    else if (etapa_juego == NIVEL2)
+                    else
                     {
-                        al_draw_scaled_bitmap(recursos.fondos[NIVEL2], 0, 0, al_get_bitmap_width(recursos.fondos[NIVEL2]), al_get_bitmap_height(recursos.fondos[NIVEL2]), 
-                                              0, 0, ANCHO_VENTANA, 8./9 * ALTO_VENTANA, 0);
+                        mover_personaje(&recursos.pje_principal, recursos.mapas[nivel_actual-1]);  // Mueve al personaje según las teclas presionadas y considera lógica de salto
+                        dibujar_mapa(recursos.mapas[nivel_actual-1], recursos.bloques, recursos.espina);  // Dibujamos el mapa del primer nivel
+                        dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
+                        actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
+                        detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);
+                        morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto
                     }
-
-                    else if (etapa_juego == NIVEL3)
-                    {
-                        al_draw_scaled_bitmap(recursos.fondos[NIVEL3], 0, 0, ANCHO_VENTANA, 8./9*ALTO_VENTANA, 0, 0, 
-                                              al_get_bitmap_width(recursos.fondos[NIVEL3]), al_get_bitmap_height(recursos.fondos[NIVEL3]), 0);
-
-                    }
-
-                    else if (etapa_juego == NIVEL4)
-                    {
-                        al_draw_scaled_bitmap(recursos.fondos[NIVEL4], 0, 0, al_get_bitmap_width(recursos.fondos[NIVEL4]), al_get_bitmap_height(recursos.fondos[NIVEL4]), 
-                                              0, 0, ANCHO_VENTANA, 8./9 * ALTO_VENTANA, 0);
-                    }
-
-                    else  // NIVEL 5
-                    {
-                        al_draw_scaled_bitmap(recursos.fondos[NIVEL5], 0, 0, al_get_bitmap_width(recursos.fondos[NIVEL5]), al_get_bitmap_height(recursos.fondos[NIVEL5]), 
-                                              0, 0, ANCHO_VENTANA, 8./9 * ALTO_VENTANA, 0);
-                    }
-
-                    mover_personaje(&recursos.pje_principal, recursos.mapas[etapa_juego]);  // Mueve al personaje según las teclas presionadas y considera lógica de salto
-                    dibujar_mapa(recursos.mapas[etapa_juego], recursos.bloques, recursos.espina);  // Dibujamos el mapa del primer nivel
-                    dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
-                    morir(&recursos.pje_principal, &ultima_tecla_lateral);  // Esta función se ejecuta solamente si el personaje figura como muerto
-                    actualizar_rayos(recursos.rayos[etapa_juego], recursos.cantidad_rayos[etapa_juego], recursos.pje_principal, recursos.mapas[etapa_juego]);
-                    detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[etapa_juego]);
-                    mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[4], recursos.fuentes[1], etapa_juego);
+                    
+                    mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[4], recursos.fuentes[1], nivel_actual);
                     al_flip_display();
 
                     break;

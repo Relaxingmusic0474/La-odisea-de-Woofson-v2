@@ -22,7 +22,7 @@ Procedure activar_caida_libre(Personaje*);
 Entero velocidad_instantanea(Personaje, float);
 bool es_tecla_lateral(Tecla);
 Procedure patalear(Personaje*, int);
-Procedure morir(Personaje*, Tecla*);
+Procedure morir(Personaje*, Tecla*, Etapa*);
 Procedure aplicar_danho(Personaje*, Natural);
 Procedure aumentar_subvida(Personaje*, Natural);
 Procedure detectar_si_personaje_en_zona_de_rayo(Personaje*, Rayo [MAX_RAYOS]);

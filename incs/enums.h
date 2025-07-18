@@ -20,6 +20,7 @@ enum etapa
     NIVEL3,
     NIVEL4,
     NIVEL5,
+    DERROTA,
 };
 
 typedef enum etapa Etapa;

@@ -145,10 +145,10 @@ Procedure dibujar_personaje(Personaje personaje, Natural ultima_tecla_lateral, N
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
     Natural var;
     
-    if (!personaje.muerto)
-    {
+    //if (!personaje.muerto || (personaje.muerto && personaje.tiempo_muerte <= 1./FPS))
+    //{
         determinar_como_dibujar_personaje(&personaje, ultima_tecla_lateral);
-    }
+    //}
 
     if (personaje.danhado && personaje.tiempo_danho > 0)
     {
@@ -442,7 +442,7 @@ Procedure patalear(Personaje* personaje, int direccion)
 }
 
 
-Procedure morir(Personaje* personaje, Tecla* ultima_lateral)
+Procedure morir(Personaje* personaje, Tecla* ultima_lateral, Etapa* etapa_actual)
 {
     Imagen bitmap = personaje->imagen_modo_muerte;
     float ancho = al_get_bitmap_width(personaje->imagen_modo_muerte);
@@ -462,6 +462,12 @@ Procedure morir(Personaje* personaje, Tecla* ultima_lateral)
 
         if (personaje->tiempo_muerte >= TIEMPO_MUERTE)
         {
+            if (personaje->nro_vidas == 0)
+            {
+                *etapa_actual = DERROTA;
+                return;
+            }
+
             personaje->nro_vidas--;
             personaje->subvida_actual = 100;
             personaje->muerto = false;
@@ -544,8 +550,8 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[
             {
                 if (personaje->posicion.y < rayo[i].posicion.y && 
                     personaje->posicion.y + personaje->alto < rayo[i].objetivo.y &&
-                    personaje->posicion.x + personaje->ancho > rayo[i].posicion.x - GROSOR_RAYO/2 &&
-                    personaje->posicion.x < rayo[i].posicion.x + GROSOR_RAYO/2)
+                    personaje->posicion.x + personaje->ancho > rayo[i].posicion.x - rayo[i].grosor/2 &&
+                    personaje->posicion.x < rayo[i].posicion.x + rayo[i].grosor/2)
                 {
                     if (!personaje->danhado)
                     {
@@ -561,8 +567,8 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[
             {
                 if (personaje->posicion.x < rayo[i].posicion.x &&
                     personaje->posicion.x + personaje->ancho < rayo[i].objetivo.x &&
-                    personaje->posicion.y + personaje->alto > rayo[i].posicion.y - GROSOR_RAYO/2 && 
-                    personaje->posicion.y < rayo[i].posicion.y + GROSOR_RAYO/2)
+                    personaje->posicion.y + personaje->alto > rayo[i].posicion.y - rayo[i].grosor/2 && 
+                    personaje->posicion.y < rayo[i].posicion.y + rayo[i].grosor/2)
                 {
                     personaje->danhado = true;
                     personaje->tiempo_danho = 0;

@@ -177,6 +177,8 @@ struct recursos
     EfectoSonido* sonido_rayo;  // Efecto de sonido del rayo
     Espina espina_actual;  // POSIBLEMENTE QUITE LAS ESPINAS
     Imagen fondos[NRO_NIVELES];
+    
+
     /* 
     Lista bitmaps;  // Bitmaps en una lista enlazada (para dinamismo) -> Se implementara la idea mas adelante
     */
