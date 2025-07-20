@@ -53,9 +53,6 @@ TipoPersonaje tipo_personaje(TipoFrame tipo)
  */
 Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen* frames[TIPOS_PERSONAJES], bool estatico)
 {
-    Natural i;
-    char ruta_imagen[MAXLINEA] = {'\0'};
-
     if (personaje->tipo == WOOFSON && estatico == true)
     {
         return;  // No tiene sentido que se cargue el personaje principal y que no se pueda mover
@@ -102,7 +99,6 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
         case DRAGON:
             personaje->velocidad.x = VELOCIDAD_DRAGONES;
             personaje->velocidad.y = 0;  // Inicialmente no está en salto
-            personaje->imagen = al_load_bitmap("assets/images/dragon.png");
 
             break;
 
@@ -135,17 +131,8 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             personaje->tipo = 'M';  // Monstruo
             personaje->velocidad.x = VELOCIDAD_MONSTRUO;
             personaje->velocidad.y = 0;  // Inicialmente no está en salto
-            personaje->imagen = al_load_bitmap("assets/images/jefe.png");
             break;
     }
-
-    if (!personaje->imagen)
-    {
-        printf("Error al cargar la imagen del personaje.\n");
-        return false;
-    }
-
-    return true;
 }
 
 
@@ -170,21 +157,21 @@ Procedure inicializar_enemigos(Personaje enemigos[MAX_ENEMIGOS], Imagen* frames[
 
     for (i=0; i<MAX_DRAGONES; i++)
     {
-        inicializar_personaje(&enemigos[i], DRAGON, frames[FRAME_DRAGON], rand() % 2 ? true : false);
+        inicializar_personaje(&enemigos[i], DRAGON, frames, rand() % 2 ? true : false);
     }
 
     total = i;
 
     for (i=0; i<MAX_EXTRATERRESTRES; i++)
     {
-        inicializar_personaje(&enemigos[total+i], EXTRATERRESTRE, frames[FRAME_EXTRATERRESTRE], false);
+        inicializar_personaje(&enemigos[total+i], EXTRATERRESTRE, frames, false);
     }
 
     total += i;
 
     for (i=0; i<MAX_MONSTRUOS; i++)
     {
-        inicializar_personaje(&enemigos[total+i], MONSTRUO, frames[FRAME_MONSTRUO], false);
+        inicializar_personaje(&enemigos[total+i], MONSTRUO, frames, false);
     }
 }
 
@@ -668,31 +655,4 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[
             aplicar_danho(personaje, DANHO_RAYO);
         }
     }
-}
-
-bool generar_enemigo_dinamico(Mapa mapa, Natural nro_nivel)
-{
-    Natural i, j;
-    char tipos[4] = {'T', 'D', 'E', 'M'};  // Troll, dragón, extraterrestre, monstruo
-    char tipo;
-
-    if (nro_nivel == 1)  // En el nivel 1 no habrán enemigos
-    {
-        return false;
-    }
-
-    tipo = tipos[nro_nivel-2];  // Por ahora en el nivel 2 se generarán trolls, en el 3 dragones, en el 4 extraterrestres y en el 5 monstruos
-
-    for (i=0; i<mapa.nro_filas; i++)
-    {
-        for (j=0; j<mapa.nro_columnas; j++)  // También habría que comprobar la posición de los otros enemigos que aun no han muerto antes de colocar un enemigo nuevo, para evitar que se superpongan
-        {
-            if (mapa.mapa[i][j] == ENEMIGO_DINAMICO)
-            {
-
-
-            }
-        }
-    }
-    
 }

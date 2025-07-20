@@ -16,7 +16,7 @@ Procedure determinar_color_pantalla(Natural);
 bool inicializar_menu_principal(Menu*, ALLEGRO_FONT*);
 bool inicializar_menu_niveles(Menu*, ALLEGRO_FONT*); 
 Procedure mostrar_menu(Menu);
-Procedure redirigir_menu(Recursos*, ALLEGRO_FONT*, Natural, Etapa*, Natural*);
+Procedure redirigir_menu(Recursos*, /*ALLEGRO_FONT*, */Natural, Etapa*, Natural*);
 Procedure finalizar_menu(Menu*);
 Procedure dibujar_rectangulo(Rectangulo rectangulo, ALLEGRO_COLOR color);
 Procedure dibujar_imagen_en_rectangulo(Imagen, Rectangulo, float, float);

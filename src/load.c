@@ -596,7 +596,7 @@ Procedure liberar_escenarios(Recursos* R)
  */
 Imagen* cargar_frames(TipoPersonaje tipo)
 {
-    Natural i, j;
+    Natural i;
     Natural cantidad_frames;
     char ruta_base[MAXLINEA] = {'\0'};
     char ruta_completa[MAXLINEA] = {'\0'};

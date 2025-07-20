@@ -36,7 +36,7 @@ int main()
 
                 if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
                 {
-                    redirigir_menu(&recursos, recursos.fuentes[COMFORTAA_LIGHT_GRANDE], recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
+                    redirigir_menu(&recursos, recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
                 }
             }
 
@@ -55,7 +55,7 @@ int main()
         
                 if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
                 {
-                    redirigir_menu(&recursos, recursos.fuentes[TIMES_NEW_ROMAN_GRANDE], recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
+                    redirigir_menu(&recursos, recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
                 }
             }
 

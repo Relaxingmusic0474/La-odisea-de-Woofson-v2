@@ -145,7 +145,6 @@ bool inicializar_menu_niveles(Menu* menu, ALLEGRO_FONT* fuente)
 
 Procedure mostrar_menu(Menu menu)
 {
-    Vector posicion_texto_opcion;
     Rectangulo rect;
     float alto, ancho, porcentaje_x, porcentaje_y;
     Natural i;
@@ -186,7 +185,7 @@ Procedure cambiar_menu(Menu* menu_actual, Menu menu_nuevo)
 }
 
 
-Procedure redirigir_menu(Recursos* recursos, ALLEGRO_FONT* fuente, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual)
+Procedure redirigir_menu(Recursos* recursos, /*ALLEGRO_FONT* fuente, */Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual)
 {
     if (*etapa_actual == MENU_PRINCIPAL)
     {
