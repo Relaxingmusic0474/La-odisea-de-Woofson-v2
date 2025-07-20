@@ -11,8 +11,8 @@
 #include "types.h"
 #include "collisions.h"
 
-Procedure destruir_frames(Imagen*, Natural);
-Imagen* cargar_frames(TipoPersonaje);
+TipoFrame tipo_frame(TipoPersonaje);
+TipoPersonaje tipo_personaje(TipoFrame);
 Procedure inicializar_personaje(Personaje*, TipoPersonaje, Imagen* [TIPOS_PERSONAJES], bool);
 Procedure inicializar_salto(Personaje*);
 Procedure determinar_como_dibujar_personaje(Personaje*, Natural);

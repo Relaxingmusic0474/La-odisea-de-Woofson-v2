@@ -2,6 +2,7 @@
 #define LOAD_H
 
 #include "allegro_libraries.h"
+#include "characters.h"
 #include "enums.h"
 #include "structs.h"
 #include "types.h"
@@ -19,5 +20,10 @@ Procedure dibujar_mapa(Mapa, Imagen [NRO_BLOQUES], Imagen);
 Procedure liberar_mapa(Mapa*);
 Procedure liberar_mapas(Mapa[]);
 bool cargar_escenarios(Recursos*);  // Carga el fondo y el mapa asociado a cada nivel
+Procedure liberar_escenarios(Recursos*);
+Imagen* cargar_frames(TipoPersonaje);
+bool cargar_todos_los_frames(Imagen* [TIPOS_PERSONAJES]);
+Procedure destruir_frames(Imagen*, Natural);
+Procedure destruir_todos_los_frames(Imagen* [TIPOS_PERSONAJES]);
 
 #endif  // LOAD_H

@@ -1,86 +1,5 @@
 #include "characters.h"
 
-Procedure destruir_frames(Imagen* frames, Natural cantidad_frames)
-{
-    Natural i;
-
-    for (i=0; i<cantidad_frames; i++) 
-    {
-        if (frames[i] != NULL) 
-        {
-            al_destroy_bitmap(frames[i]);
-            frames[i] = NULL;
-        }
-    }
-
-    free(frames);
-    frames = NULL;
-}
-
-
-Imagen* cargar_frames(TipoPersonaje tipo)
-{
-    Natural i, j;
-    Natural cantidad_frames;
-    char ruta_base[MAXLINEA] = {'\0'};
-    char ruta_completa[MAXLINEA] = {'\0'};
-    Imagen* frames = NULL;
-
-    switch (tipo)
-    {
-        case WOOFSON:
-            cantidad_frames = NRO_FRAMES_WOOFSON;
-            strcpy(ruta_base, "assets/images/woofson-frames/woofson-");
-            break;
-            
-        case DRAGON:
-            cantidad_frames = NRO_FRAMES_DRAGON;
-            strcpy(ruta_base, "assets/images/dragon-frames/dragon-");
-            break;
-
-        case EXTRATERRESTRE:
-            cantidad_frames = NRO_FRAMES_EXTRATERRESTRE;
-            strcpy(ruta_base, "assets/images/extraterrestial-frames/extraterrestre-");
-            break;
-
-        case MONSTRUO:
-            cantidad_frames = NRO_FRAMES_MONSTRUO;
-            strcpy(ruta_base, "assets/images/monster-frames/monstruo-");
-            break;
-
-        default:
-            cantidad_frames = 0;
-            return NULL;
-    }
-
-    frames = (Imagen *) calloc(cantidad_frames, sizeof(Imagen));
-
-    if (!frames)
-    {
-        printf("Error de asignación de memoria al puntero que contendrá los frames del personaje de tipo %c\n", tipo);
-        return NULL;
-    }
-
-    for (i=0; i<cantidad_frames; i++)
-    {
-        sprintf(ruta_completa, "%s%hu.png", ruta_base, i+1);
-
-        frames[i] = al_load_bitmap(ruta_completa);
-
-        if (!frames[i])
-        {
-            printf("Error al cargar el frame %s\n", ruta_completa);
-            destruir_frames(frames, cantidad_frames);
-            return NULL;
-        }
-
-        memset(ruta_completa, '\0', sizeof(ruta_completa));
-    }
-    
-    return frames;
-}
-
-
 TipoFrame tipo_frame(TipoPersonaje tipo)
 {
     switch (tipo)
@@ -98,13 +17,35 @@ TipoFrame tipo_frame(TipoPersonaje tipo)
             return FRAME_MONSTRUO;
 
         default:
-            return 0;
+            return FRAME_WOOFSON;
+    }
+}
+
+
+TipoPersonaje tipo_personaje(TipoFrame tipo)
+{
+    switch (tipo)
+    {
+        case FRAME_WOOFSON:
+            return WOOFSON;
+
+        case FRAME_DRAGON:
+            return DRAGON;
+
+        case FRAME_EXTRATERRESTRE:
+            return EXTRATERRESTRE;
+        
+        case FRAME_MONSTRUO:
+            return MONSTRUO;
+    
+        default:
+            return WOOFSON;
     }
 }
 
 
 /**
- * Función que inicializa un personaje según su tipo.
+ * @brief Función que inicializa un personaje según su tipo.
  * @param personaje Puntero al personaje a inicializar.
  * @param tipo Tipo de personaje a inicializar.
  * @param frames Es el arreglo con los frames de todos los personajes.
@@ -152,7 +93,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
             personaje->danhado = true;  // Para que parta con cierta inmunidad antes de comenzar (parpadeo)
             personaje->tiempo_danho = 0;
-            //personaje->hay_obj_izq = false;
+            // personaje->hay_obj_izq = false;
             // personaje->hay_obj_der = false;
             // personaje->hay_obj_sup = false;
             inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
@@ -220,6 +161,31 @@ Procedure inicializar_salto(Personaje* personaje)
     personaje->salto.impulso = IMPULSO_PERSONAJE;  // Si bien no es necesario, es una buena práctica para la legibilidad
     personaje->salto.altura_inicial = personaje->posicion.y;  // Reinicia la altura inicial del salto
     return;
+}
+
+
+Procedure inicializar_enemigos(Personaje enemigos[MAX_ENEMIGOS], Imagen* frames[TIPOS_PERSONAJES], bool estatico)
+{
+    Natural i, total;
+
+    for (i=0; i<MAX_DRAGONES; i++)
+    {
+        inicializar_personaje(&enemigos[i], DRAGON, frames[FRAME_DRAGON], rand() % 2 ? true : false);
+    }
+
+    total = i;
+
+    for (i=0; i<MAX_EXTRATERRESTRES; i++)
+    {
+        inicializar_personaje(&enemigos[total+i], EXTRATERRESTRE, frames[FRAME_EXTRATERRESTRE], false);
+    }
+
+    total += i;
+
+    for (i=0; i<MAX_MONSTRUOS; i++)
+    {
+        inicializar_personaje(&enemigos[total+i], MONSTRUO, frames[FRAME_MONSTRUO], false);
+    }
 }
 
 

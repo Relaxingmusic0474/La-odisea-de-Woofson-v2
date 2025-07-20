@@ -24,12 +24,15 @@
 #define NRO_FRAMES_MOVIMIENTO 10
 #define NRO_FRAMES_PELEA (NRO_FRAMES_MOVIMIENTO)
 #define NRO_FRAMES 20  // Número de frames que tendrá Woofson
-#define MAX_EXTRATERRESTRES 10
+#define MAX_DRAGONES 5
+#define MAX_EXTRATERRESTRES 4
+#define MAX_MONSTRUOS 2
+#define MAX_ENEMIGOS (MAX_DRAGONES + MAX_EXTRATERRESTRES + MAX_MONSTRUOS)
 
 #define NRO_FRAMES_WOOFSON 20
-#define NRO_FRAMES_DRAGON 15
+#define NRO_FRAMES_DRAGON 10
 #define NRO_FRAMES_EXTRATERRESTRE 10
-#define NRO_FRAMES_MONSTRUO 15
+#define NRO_FRAMES_MONSTRUO 13
 
 // Macros para los elementos del mapa
 #define NADA 0  // Representa un espacio vacío en el mapa

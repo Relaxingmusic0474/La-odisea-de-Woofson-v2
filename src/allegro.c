@@ -202,18 +202,14 @@ bool crear_recursos(Recursos* R)
         printf("Error al cargar la imagen modo muerte de Woofson.\n");
         return false;
     }
-
-    inicializar_personaje(&R->pje_principal, WOOFSON, R->frames, false);  // Se inicializa el personaje principal
-
-    R->frames[FRAME_EXTRATERRESTRE] = cargar_frames(EXTRATERRESTRE);
-
-    if (!R->frames[FRAME_EXTRATERRESTRE])
+    
+    if (!cargar_todos_los_frames(R->frames))  // Se cargan todos los frames
     {
-        printf("Error al cargar los frames de los extraterrestres.\n");
+        printf("Error al cargar los frames de los personajes.\n");
         return false;
     }
 
-    
+    inicializar_personaje(&R->pje_principal, WOOFSON, R->frames, false);  // Se inicializa el personaje principal
 
     R->vida = al_load_bitmap("assets/images/corazon.png");
 
@@ -442,7 +438,7 @@ Procedure finalizar_allegro(Recursos* R)
     // Se finalizan los menús
     for (i=0; i<NRO_MENUS; i++)
     {
-        if (R->menus[i].finalizado == false)
+        if (!R->menus[i].finalizado)
         {
             finalizar_menu(&R->menus[i]);
         }
@@ -478,15 +474,8 @@ Procedure finalizar_allegro(Recursos* R)
         al_destroy_bitmap(R->pje_principal.imagen_modo_muerte);
         R->pje_principal.imagen_modo_muerte = NULL;
     }
-
-    for (i=0; i<NRO_FRAMES; i++)
-    {
-        if (R->pje_principal.frames[i] != NULL)
-        {
-            al_destroy_bitmap(R->pje_principal.frames[i]);
-            R->pje_principal.frames[i] = NULL;
-        }
-    }
+    
+    destruir_todos_los_frames(R->frames);
 
     if (R->espina != NULL)
     {

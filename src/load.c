@@ -561,6 +561,7 @@ bool cargar_escenarios(Recursos* R)
     return true;
 }
 
+
 Procedure liberar_fondos(Imagen fondos[NRO_NIVELES])
 {
     Natural i;
@@ -581,4 +582,124 @@ Procedure liberar_escenarios(Recursos* R)
 {
     liberar_mapas(R->mapas);
     liberar_fondos(R->fondos);
+}
+
+
+/**
+ * @brief Función que carga los frames (imágenes) correspondientes a un personaje animado según su tipo.
+ * Esta función reserva memoria para un arreglo de bitmaps (`Imagen*`) y carga desde disco las imágenes correspondientes al personaje especificado. 
+ * Las rutas dependen del tipo de personaje. Si ocurre un error al cargar cualquier frame, la función libera la memoria asignada y devuelve `NULL`.
+ * @param tipo Tipo de personaje (`WOOFSON`, `DRAGON`, `EXTRATERRESTRE` o `MONSTRUO`) cuyas imágenes se deben cargar.
+ * @return Un puntero al arreglo de `Imagen` (bitmaps de Allegro) si la carga fue exitosa, o `NULL` si hubo un error.
+ * @note La memoria retornada debe ser liberada posteriormente con `destruir_frames`.
+ * @see destruir_frames
+ */
+Imagen* cargar_frames(TipoPersonaje tipo)
+{
+    Natural i, j;
+    Natural cantidad_frames;
+    char ruta_base[MAXLINEA] = {'\0'};
+    char ruta_completa[MAXLINEA] = {'\0'};
+    Imagen* frames = NULL;
+
+    switch (tipo)
+    {
+        case WOOFSON:
+            cantidad_frames = NRO_FRAMES_WOOFSON;
+            strcpy(ruta_base, "assets/images/woofson-frames/woofson-");
+            break;
+            
+        case DRAGON:
+            cantidad_frames = NRO_FRAMES_DRAGON;
+            strcpy(ruta_base, "assets/images/dragon-frames/dragon-");
+            break;
+
+        case EXTRATERRESTRE:
+            cantidad_frames = NRO_FRAMES_EXTRATERRESTRE;
+            strcpy(ruta_base, "assets/images/extraterrestial-frames/extraterrestre-");
+            break;
+
+        case MONSTRUO:
+            cantidad_frames = NRO_FRAMES_MONSTRUO;
+            strcpy(ruta_base, "assets/images/monster-frames/monstruo-");
+            break;
+
+        default:
+            cantidad_frames = 0;
+            return NULL;
+    }
+
+    frames = (Imagen *) calloc(cantidad_frames, sizeof(Imagen));
+
+    if (!frames)
+    {
+        printf("Error de asignación de memoria al puntero que contendrá los frames del personaje de tipo %c\n", tipo);
+        return NULL;
+    }
+
+    for (i=0; i<cantidad_frames; i++)
+    {
+        sprintf(ruta_completa, "%s%hu.png", ruta_base, i+1);
+
+        frames[i] = al_load_bitmap(ruta_completa);
+
+        if (!frames[i])
+        {
+            printf("Error al cargar el frame %s\n", ruta_completa);
+            destruir_frames(frames, cantidad_frames);
+            return NULL;
+        }
+
+        memset(ruta_completa, '\0', sizeof(ruta_completa));
+    }
+    
+    return frames;
+}
+
+
+bool cargar_todos_los_frames(Imagen* frames[TIPOS_PERSONAJES])
+{
+    Natural i;
+
+    for (i=0; i<TIPOS_PERSONAJES; i++)
+    {
+        frames[i] = cargar_frames(tipo_personaje((TipoFrame) i));
+
+        if (!frames[i])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+Procedure destruir_frames(Imagen* frames, Natural cantidad_frames)
+{
+    Natural i;
+
+    for (i=0; i<cantidad_frames; i++) 
+    {
+        if (frames[i] != NULL) 
+        {
+            al_destroy_bitmap(frames[i]);
+            frames[i] = NULL;
+        }
+    }
+
+    free(frames);
+    frames = NULL;
+}
+
+
+Procedure destruir_todos_los_frames(Imagen* frames[TIPOS_PERSONAJES])
+{
+    Natural i;
+    Natural nro_frames[TIPOS_PERSONAJES] = {NRO_FRAMES_WOOFSON, NRO_FRAMES_DRAGON, NRO_FRAMES_EXTRATERRESTRE, NRO_FRAMES_MONSTRUO};
+
+    for (i=0; i<TIPOS_PERSONAJES; i++)
+    {
+        destruir_frames(frames[(TipoPersonaje) i], nro_frames[i]);
+    }
 }
