@@ -67,18 +67,14 @@ bool inicializar_allegro()
 
 
 /**
- * Función que crea los recursos necesarios para el juego.
- * Crea la ventana, la cola de eventos y el temporizador, y también lee los mapas de los niveles.
+ * Función que crea los recursos necesarios y más esenciales para el juego (propios de Allegro5).
+ * Crea la ventana, la cola de eventos, el temporizador, y habilita algunos dispositivos.
  * @param R Puntero a la estructura Recursos donde se almacenarán los recursos creados.
- * @return true si se crearon los recursos correctamente, false en caso contrario. 
+ * @return true si se crearon los recursos de Allegro correctamente, false en caso contrario. 
  */ 
 bool crear_recursos_allegro(Recursos* R)
 {
-    Natural i, j;
-    char ruta[40] = {'\0'};
-    bool exito = false;
-
-    /* Se crea la ventana */
+    // Se crea la ventana
     R->ventana = al_create_display(ANCHO_VENTANA, ALTO_VENTANA);
 
     if (!R->ventana)
@@ -116,7 +112,7 @@ bool crear_recursos_allegro(Recursos* R)
         return false;
     }
 
-    /* Se registran los eventos de la ventana en la cola de eventos */
+    // Se registran los eventos de la ventana en la cola de eventos
     al_register_event_source(R->cola_eventos, R->eventos.ventana);
 
     R->eventos.temporizador = al_get_timer_event_source(R->temporizador);
@@ -127,7 +123,7 @@ bool crear_recursos_allegro(Recursos* R)
         return false;
     }
 
-    /* Se registran los eventos del temporizador en la cola de eventos */
+    // Se registran los eventos del temporizador en la cola de eventos
     al_register_event_source(R->cola_eventos, R->eventos.temporizador);
 
     R->eventos.teclado = al_get_keyboard_event_source();
@@ -138,7 +134,7 @@ bool crear_recursos_allegro(Recursos* R)
         return false;
     }
 
-    /* Se registran los eventos del teclado en la cola de eventos */
+    // Se registran los eventos del teclado en la cola de eventos
     al_register_event_source(R->cola_eventos, R->eventos.teclado);
 
     R->eventos.raton = al_get_mouse_event_source();
@@ -152,33 +148,29 @@ bool crear_recursos_allegro(Recursos* R)
     // Se registran los eventos del mouse en la cola de eventos
     al_register_event_source(R->cola_eventos, al_get_mouse_event_source());
 
-    for (i=0; i<NRO_NIVELES; i++)  // Se cargan los fondos y se leen los mapas de todos los niveles 
+    return true;
+}
+
+
+/**
+ * Función que crea los recursos necesarios para el juego (tanto los recursos de Allegro como los que yo definí para el juego)
+ * @param R Puntero a la estructura Recursos donde se almacenarán los recursos creados.
+ * @return true si se crearon los recursos correctamente, false en caso contrario. 
+ */ 
+bool crear_recursos(Recursos* R)
+{
+    Natural i, j;
+    char ruta[40] = {'\0'};
+    bool exito = false;
+
+    if (!crear_recursos_allegro(R))
     {
-        if (i==0)  // El primer nivel no tendrá fondo (solo será una pantalla que cambiará de colores)
-        {
-            R->fondos[i] = NULL;
-        }
+        return false;
+    }
 
-        else 
-        {
-            sprintf(ruta, "assets/images/landscapes/fondo-%hu.png", i+1);
-            R->fondos[i] = al_load_bitmap(ruta);
-
-            if (!R->fondos[i])
-            {
-                printf("Error al cargar el fondo del nivel %hu.\n", i+1);
-                return false;
-            }
-        }
-
-        R->mapas[i] = leer_mapa(i+1);  // Se leen los mapas de los niveles, comenzando desde el nivel 1 (índice 0)
-
-        /* Si el mapa es NULL, se imprime un mensaje de error y se liberan los mapas ya leidos antes de retornar false */
-        if (!R->mapas[i].mapa)
-        {
-            printf("Error al leer el mapa del nivel %d.\n", i);
-            return false;
-        }
+    if (!cargar_escenarios(R))
+    {
+        return false;
     }
 
     R->espina = al_load_bitmap("assets/images/espina.png");
@@ -195,10 +187,33 @@ bool crear_recursos_allegro(Recursos* R)
     R->espina_actual.ancho = al_get_bitmap_width(R->espina);
     R->espina_actual.alto = al_get_bitmap_height(R->espina);
 
-    if (!inicializar_personaje(&R->pje_principal, 'W'))
+    R->frames[FRAME_WOOFSON] = cargar_frames(WOOFSON);
+    
+    if (!R->frames[FRAME_WOOFSON])
     {
+        printf("Error al cargar los frames de Woofson.\n");
         return false;
     }
+    
+    R->pje_principal.imagen_modo_muerte = al_load_bitmap("assets/images/muerte.png");
+
+    if (!R->pje_principal.imagen_modo_muerte)
+    {
+        printf("Error al cargar la imagen modo muerte de Woofson.\n");
+        return false;
+    }
+
+    inicializar_personaje(&R->pje_principal, WOOFSON, R->frames, false);  // Se inicializa el personaje principal
+
+    R->frames[FRAME_EXTRATERRESTRE] = cargar_frames(EXTRATERRESTRE);
+
+    if (!R->frames[FRAME_EXTRATERRESTRE])
+    {
+        printf("Error al cargar los frames de los extraterrestres.\n");
+        return false;
+    }
+
+    
 
     R->vida = al_load_bitmap("assets/images/corazon.png");
 
@@ -246,7 +261,8 @@ bool crear_recursos_allegro(Recursos* R)
     /* Se cargan los menus */
     for (i=0; i<NRO_MENUS; i++)
     {
-        exito = i==0 ? inicializar_menu_principal(&R->menus[i], R->fuentes[3]) : inicializar_menu_niveles(&R->menus[i], R->fuentes[2]);
+        exito = i==0 ? inicializar_menu_principal(&R->menus[i], R->fuentes[TIMES_NEW_ROMAN_GRANDE]) : 
+                       inicializar_menu_niveles(&R->menus[i], R->fuentes[COMFORTAA_LIGHT_GRANDE]);
 
         if (!exito)
         {
@@ -286,6 +302,7 @@ bool crear_recursos_allegro(Recursos* R)
         return false;
     }
 
+    // Se cargan las músicas
     for (i=0; i<NRO_MUSICAS; i++)
     {
         R->musicas[i] = i==0 ? cargar_musica(MUSICA_MENU, R->mixer) : (i==1 ? cargar_musica(MUSICA_NIVEL_1, R->mixer) : cargar_musica(MUSICA_NIVEL_4, R->mixer));
@@ -312,6 +329,7 @@ bool crear_recursos_allegro(Recursos* R)
     // Reproducir
     al_play_sample_instance(R->musica_actual->instancia);
 
+    // Se carga el efecto de sonido de los rayos
     R->sonido_rayo = cargar_efecto_sonido(SONIDO_RAYO, R->mixer);
 
     if (!R->sonido_rayo)
@@ -322,7 +340,7 @@ bool crear_recursos_allegro(Recursos* R)
 
     inicializar_rayos(R->rayos, R->sonido_rayo);  // Inicializa los rayos de todos los niveles
     
-    for (i=0; i<NRO_NIVELES; i++)
+    for (i=0; i<NRO_NIVELES; i++)  // Se detecta la cantidad de rayos que hay en cada nivel, además de dónde están
     {
         R->cantidad_rayos[i] = detectar_rayos(R->mapas[i], R->rayos[i], MAX_RAYOS);
     }
@@ -338,18 +356,18 @@ bool crear_recursos_allegro(Recursos* R)
  */
 bool inicializar_todo(Recursos* R)
 {
-    /* Se inicializa la semilla para los números aleatorios */
+    // Se inicializa la semilla para los números aleatorios
     srand(time(NULL));
 
-    /* Se inicializan todos los módulos de allegro */
+    // Se inicializan todos los módulos de allegro
     if (!inicializar_allegro())
     {
         finalizar_allegro(R);  // Por si el error ocurre después de haber inicializado algunos módulos
         return false;
     }
 
-    /* Se crean los recursos necesarios para el juego (ventana, cola de eventos, temporizador, mapa, etc) */
-    if (!crear_recursos_allegro(R))
+    // Se crean los recursos necesarios para el juego (ventana, cola de eventos, temporizador, mapa, etc)
+    if (!crear_recursos(R))
     {
         finalizar_allegro(R);  // En caso de error, se liberan los recursos creados
         return false;
@@ -407,16 +425,27 @@ Procedure finalizar_allegro(Recursos* R)
         }
     }
 
+    // Se destruye el mixer usado
     if (R->mixer != NULL)
     {
         al_destroy_mixer(R->mixer);
         R->mixer = NULL;
     }
 
+    // Se destruye la voz usada
     if (R->voz != NULL)
     {
         al_destroy_voice(R->voz);
         R->voz = NULL;
+    }
+
+    // Se finalizan los menús
+    for (i=0; i<NRO_MENUS; i++)
+    {
+        if (R->menus[i].finalizado == false)
+        {
+            finalizar_menu(&R->menus[i]);
+        }
     }
 
     // Se destruyen de forma iterativa todas las fuentes usadas

@@ -1,6 +1,27 @@
 #ifndef ENUMS_H
 #define ENUMS_H
 
+enum tipoFrame
+{
+    FRAME_WOOFSON,
+    FRAME_DRAGON,
+    FRAME_EXTRATERRESTRE,
+    FRAME_MONSTRUO,
+    TIPOS_PERSONAJES,
+};
+
+typedef enum tipoFrame TipoFrame;
+
+enum tipoPersonaje
+{
+    WOOFSON = 'W',
+    DRAGON = 'D',
+    EXTRATERRESTRE = 'E',
+    MONSTRUO = 'M',
+};
+
+typedef enum tipoPersonaje TipoPersonaje;
+
 enum fuente
 {
     COMFORTAA_LIGHT,

@@ -3,6 +3,7 @@
 
 #include "stdio.h"
 #include "stdbool.h"
+#include "dirent.h"
 #include "allegro_libraries.h"
 #include "macros.h"
 #include "enums.h"
@@ -10,7 +11,9 @@
 #include "types.h"
 #include "collisions.h"
 
-bool inicializar_personaje(Personaje*, char);
+Procedure destruir_frames(Imagen*, Natural);
+Imagen* cargar_frames(TipoPersonaje);
+Procedure inicializar_personaje(Personaje*, TipoPersonaje, Imagen* [TIPOS_PERSONAJES], bool);
 Procedure inicializar_salto(Personaje*);
 Procedure determinar_como_dibujar_personaje(Personaje*, Natural);
 Procedure dibujar_personaje(Personaje, Natural, Natural);

@@ -1,54 +1,180 @@
 #include "characters.h"
 
-/**
- * Función que inicializa un personaje según su tipo.
- * @param personaje Puntero al personaje a inicializar.
- * @param tipo Tipo de personaje a inicializar ('W' para Woofson, 'D' para Dragón, 'H' para Humanoide, 'J' para Jefe).
- * @return true si se inicializó correctamente, false en caso contrario.
- */
-bool inicializar_personaje(Personaje* personaje, char tipo)
+Procedure destruir_frames(Imagen* frames, Natural cantidad_frames)
 {
     Natural i;
-    char ruta_imagen[50] = {'\0'};
 
-    for (i=0; i<NRO_FRAMES; i++)
+    for (i=0; i<cantidad_frames; i++) 
     {
-        personaje->frames[i] = NULL;  // Inicializa cada frame a NULL
+        if (frames[i] != NULL) 
+        {
+            al_destroy_bitmap(frames[i]);
+            frames[i] = NULL;
+        }
     }
+
+    free(frames);
+    frames = NULL;
+}
+
+
+Imagen* cargar_frames(TipoPersonaje tipo)
+{
+    Natural i, j;
+    Natural cantidad_frames;
+    char ruta_base[MAXLINEA] = {'\0'};
+    char ruta_completa[MAXLINEA] = {'\0'};
+    Imagen* frames = NULL;
 
     switch (tipo)
     {
-        case 'W':
-            personaje->tipo = 'W';  // Woofson
-            personaje->velocidad.x = 0;
-            personaje->velocidad.y = 0;  // Inicialmente no está en salto
+        case WOOFSON:
+            cantidad_frames = NRO_FRAMES_WOOFSON;
+            strcpy(ruta_base, "assets/images/woofson-frames/woofson-");
+            break;
+            
+        case DRAGON:
+            cantidad_frames = NRO_FRAMES_DRAGON;
+            strcpy(ruta_base, "assets/images/dragon-frames/dragon-");
+            break;
+
+        case EXTRATERRESTRE:
+            cantidad_frames = NRO_FRAMES_EXTRATERRESTRE;
+            strcpy(ruta_base, "assets/images/extraterrestial-frames/extraterrestre-");
+            break;
+
+        case MONSTRUO:
+            cantidad_frames = NRO_FRAMES_MONSTRUO;
+            strcpy(ruta_base, "assets/images/monster-frames/monstruo-");
+            break;
+
+        default:
+            cantidad_frames = 0;
+            return NULL;
+    }
+
+    frames = (Imagen *) calloc(cantidad_frames, sizeof(Imagen));
+
+    if (!frames)
+    {
+        printf("Error de asignación de memoria al puntero que contendrá los frames del personaje de tipo %c\n", tipo);
+        return NULL;
+    }
+
+    for (i=0; i<cantidad_frames; i++)
+    {
+        sprintf(ruta_completa, "%s%hu.png", ruta_base, i+1);
+
+        frames[i] = al_load_bitmap(ruta_completa);
+
+        if (!frames[i])
+        {
+            printf("Error al cargar el frame %s\n", ruta_completa);
+            destruir_frames(frames, cantidad_frames);
+            return NULL;
+        }
+
+        memset(ruta_completa, '\0', sizeof(ruta_completa));
+    }
+    
+    return frames;
+}
+
+
+TipoFrame tipo_frame(TipoPersonaje tipo)
+{
+    switch (tipo)
+    {
+        case WOOFSON:
+            return FRAME_WOOFSON;
+
+        case DRAGON:
+            return FRAME_DRAGON;
+        
+        case EXTRATERRESTRE:
+            return FRAME_EXTRATERRESTRE;
+        
+        case MONSTRUO:
+            return FRAME_MONSTRUO;
+
+        default:
+            return 0;
+    }
+}
+
+
+/**
+ * Función que inicializa un personaje según su tipo.
+ * @param personaje Puntero al personaje a inicializar.
+ * @param tipo Tipo de personaje a inicializar.
+ * @param frames Es el arreglo con los frames de todos los personajes.
+ * @param estatico Un booleano que determina si el personaje estará en una posición fija o no.
+ */
+Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen* frames[TIPOS_PERSONAJES], bool estatico)
+{
+    Natural i;
+    char ruta_imagen[MAXLINEA] = {'\0'};
+
+    if (personaje->tipo == WOOFSON && estatico == true)
+    {
+        return;  // No tiene sentido que se cargue el personaje principal y que no se pueda mover
+    }
+
+    personaje->tipo = tipo;
+    personaje->estatico = estatico;
+
+    if (personaje->estatico)
+    {
+        personaje->velocidad = VECTOR_NULO;
+        personaje->caminata = false;
+        personaje->fps_en_caminata = 0;
+    }
+
+    personaje->frames = frames[tipo_frame(tipo)];
+    personaje->imagen = personaje->frames[0];
+    personaje->id_nro_frame = 0;
+    personaje->ancho = al_get_bitmap_width(personaje->imagen);
+    personaje->alto = al_get_bitmap_height(personaje->imagen);
+    personaje->muerto = false;
+    personaje->tiempo_muerte = 0;
+
+    switch (tipo)
+    {
+        case WOOFSON:
+            personaje->velocidad = VECTOR_NULO;  // Inicialmente no se mueve ni salta, ya que eso lo deberá hacer con las teclas
             personaje->caminata = false;  // Inicialmente no está en movimiento
             personaje->fps_en_caminata = 0;  // Inicializa el tiempo de caminata a 0
+            personaje->nro_vidas = VIDAS_INICIALES;
+            personaje->subvida_actual = 100;
+            personaje->posicion.x = ANCHO_VENTANA * 0.1;
+            personaje->posicion.y = ALTURA_PISO - personaje->alto;  // Se coloca en el piso
+            personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
+            personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
+            personaje->danhado = true;  // Para que parta con cierta inmunidad antes de comenzar (parpadeo)
+            personaje->tiempo_danho = 0;
+            //personaje->hay_obj_izq = false;
+            // personaje->hay_obj_der = false;
+            // personaje->hay_obj_sup = false;
+            inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
+            break;
 
-            for (i=0; i<NRO_FRAMES; i++)
-            {
-                sprintf(ruta_imagen, "assets/images/woofson_frames/woofson-%hu.png", i+1);
-                personaje->frames[i] = al_load_bitmap(ruta_imagen);
+        case DRAGON:
+            personaje->velocidad.x = VELOCIDAD_DRAGONES;
+            personaje->velocidad.y = 0;  // Inicialmente no está en salto
+            personaje->imagen = al_load_bitmap("assets/images/dragon.png");
 
-                if (!personaje->frames[i])
-                {
-                    printf("Error al cargar la imagen del frame %hu del personaje Woofson.\n", i+1);
-                    return false;
-                }
-            }
+            break;
 
-            personaje->imagen_modo_muerte = al_load_bitmap("assets/images/muerte.png");
-
-            if (!personaje->imagen_modo_muerte)
-            {
-                printf("Error al cargar la imagen de muerte del personaje Woofson.\n");
-                return false;
-            }
-
+        case EXTRATERRESTRE:
+            personaje->tipo = 'E';  // Extraterrestre
+            personaje->velocidad.x = VELOCIDAD_EXTRATERRESTRES;  // Esta velocidad vale solo si el extraterrestre es dinámico (no estático)
+            personaje->velocidad.y = 0;  // Inicialmente no está en salto
+            personaje->caminata = false;  // Esto dependerá de si el extraterrestre es estático o dinámico
+            personaje->fps_en_caminata = 0;
             personaje->imagen = personaje->frames[0];
             personaje->id_nro_frame = 0;  // Inicializa el número de frame actual a 0
             personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Ancho del personaje
-            personaje->nro_vidas = VIDAS_INICIALES;
+            personaje->nro_vidas = 1;  // Tendrá una sola vida
             personaje->subvida_actual = 100;
             personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Ancho del personaje
             personaje->alto = al_get_bitmap_height(personaje->imagen);  // Alto del personaje
@@ -56,33 +182,17 @@ bool inicializar_personaje(Personaje* personaje, char tipo)
             personaje->posicion.y = ALTURA_PISO - personaje->alto;  // Se coloca en el piso
             personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
             personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
-            personaje->danhado = true;  // Para que parta con cierta inmunidad antes de comenzar (parpadeo)
+            personaje->danhado = false;
             personaje->tiempo_danho = 0;
             personaje->muerto = false;
             personaje->tiempo_muerte = 0;
-            personaje->hay_obj_izq = false;
-            personaje->hay_obj_der = false;
-            personaje->hay_obj_sup = false;
             inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
+
             break;
 
-        case 'D':
-            personaje->tipo = 'D';  // Dragón
-            personaje->velocidad.x = VELOCIDAD_DRAGONES;
-            personaje->velocidad.y = 0;  // Inicialmente no está en salto
-            personaje->imagen = al_load_bitmap("assets/images/dragon.png");
-            break;
-
-        case 'H':
-            personaje->tipo = 'H';  // Humanoide
-            personaje->velocidad.x = VELOCIDAD_HUMANOIDES;
-            personaje->velocidad.y = 0;  // Inicialmente no está en salto
-            personaje->imagen = al_load_bitmap("assets/images/humanoide.png");
-            break;
-
-        case 'J':
-            personaje->tipo = 'J';  // Jefe
-            personaje->velocidad.x = VELOCIDAD_JEFE;
+        case MONSTRUO:
+            personaje->tipo = 'M';  // Monstruo
+            personaje->velocidad.x = VELOCIDAD_MONSTRUO;
             personaje->velocidad.y = 0;  // Inicialmente no está en salto
             personaje->imagen = al_load_bitmap("assets/images/jefe.png");
             break;
@@ -206,12 +316,12 @@ bool es_posible_mover_personaje_lateralmente(Personaje *personaje, Mapa mapa)
 {
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
 
-    if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(personaje, mapa) && !personaje->hay_obj_izq)
+    if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(personaje, mapa)) //&& !personaje->hay_obj_izq)
     {
         return true;  // Puede moverse a la izquierda
     }
 
-    else if (teclas[ALLEGRO_KEY_RIGHT] && !hay_colision_derecha(personaje, mapa) && !personaje->hay_obj_der)
+    else if (teclas[ALLEGRO_KEY_RIGHT] && !hay_colision_derecha(personaje, mapa)) //&& !personaje->hay_obj_der)
     {
         return true;  // Puede moverse a la derecha
     }
@@ -592,5 +702,31 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[
             aplicar_danho(personaje, DANHO_RAYO);
         }
     }
-}  
+}
 
+bool generar_enemigo_dinamico(Mapa mapa, Natural nro_nivel)
+{
+    Natural i, j;
+    char tipos[4] = {'T', 'D', 'E', 'M'};  // Troll, dragón, extraterrestre, monstruo
+    char tipo;
+
+    if (nro_nivel == 1)  // En el nivel 1 no habrán enemigos
+    {
+        return false;
+    }
+
+    tipo = tipos[nro_nivel-2];  // Por ahora en el nivel 2 se generarán trolls, en el 3 dragones, en el 4 extraterrestres y en el 5 monstruos
+
+    for (i=0; i<mapa.nro_filas; i++)
+    {
+        for (j=0; j<mapa.nro_columnas; j++)  // También habría que comprobar la posición de los otros enemigos que aun no han muerto antes de colocar un enemigo nuevo, para evitar que se superpongan
+        {
+            if (mapa.mapa[i][j] == ENEMIGO_DINAMICO)
+            {
+
+
+            }
+        }
+    }
+    
+}

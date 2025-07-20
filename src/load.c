@@ -110,6 +110,12 @@ Musica* cargar_musica(TipoAudio tipo, ALLEGRO_MIXER* mixer)
 }
 
 
+/** 
+ * Función que carga un efecto de sonido con sus instancias correspondientes.
+ * @param tipo Es el tipo de efecto de sonido que se cargará.
+ * @param mixer Es el mixer que se conectará a las instancias de sonido.
+ * @return El efecto de su sonido con sus instancias correspondientes.
+ */
 EfectoSonido* cargar_efecto_sonido(TipoEfecto tipo, ALLEGRO_MIXER* mixer)
 {
     Natural i, j;
@@ -171,7 +177,6 @@ EfectoSonido* cargar_efecto_sonido(TipoEfecto tipo, ALLEGRO_MIXER* mixer)
 
     return efecto;
 }
-
 
 
 /**
@@ -374,6 +379,9 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
 }
 
 
+
+
+
 /**
  * Función que dibuja el mapa en la ventana.
  * @param mapa Es el mapa que se desea dibujar.
@@ -450,6 +458,13 @@ Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina)
                                                  ancho_esc, alto_esc, flag);
                 }
             }
+
+            if (mapa.mapa[i][j] == ENEMIGO_ESTATICO)
+            {
+                // al_draw_bitmap();
+
+                
+            }
         }
     }
 
@@ -504,4 +519,66 @@ Procedure liberar_mapas(Mapa mapas[])
     }
 
     return;
+}
+
+
+bool cargar_escenarios(Recursos* R)
+{
+    Natural i;
+    char ruta[MAXLINEA] = {'\0'};
+
+    for (i=0; i<NRO_NIVELES; i++)  // Se cargan los fondos y se leen los mapas de todos los niveles 
+    {
+        if (i==0)  // El primer nivel no tendrá fondo (solo será una pantalla que cambiará de colores)
+        {
+            R->fondos[i] = NULL;
+        }
+
+        else 
+        {
+            sprintf(ruta, "assets/images/landscapes/fondo-%hu.png", i+1);
+            R->fondos[i] = al_load_bitmap(ruta);
+
+            if (!R->fondos[i])
+            {
+                printf("Error al cargar el fondo del nivel %hu.\n", i+1);
+                return false;
+            }
+
+            memset(ruta, '\0', sizeof(ruta));
+        }
+
+        R->mapas[i] = leer_mapa(i+1);
+
+        // Si el mapa es NULL, se imprime un mensaje de error
+        if (!R->mapas[i].mapa)
+        {
+            printf("Error al leer el mapa del nivel %d.\n", i);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+Procedure liberar_fondos(Imagen fondos[NRO_NIVELES])
+{
+    Natural i;
+
+    for (i=0; i<NRO_NIVELES; i++)
+    {
+        if (fondos[i] != NULL)
+        {
+            al_destroy_bitmap(fondos[i]);
+            fondos[i] = NULL;
+        }
+    }
+
+    return;
+}
+
+Procedure liberar_escenarios(Recursos* R)
+{
+    liberar_mapas(R->mapas);
+    liberar_fondos(R->fondos);
 }

@@ -14,7 +14,6 @@ int main()
     Rectangulo rectangulo_derrota;
     extern bool teclas[ALLEGRO_KEY_MAX]; /* Para manejar las teclas que se presionan */
 
-
     if (!inicializar_todo(&recursos))  /* Se inicializan todos los recursos de Allegro */
     {
         return 1;
@@ -100,10 +99,12 @@ int main()
                     al_clear_to_color(NEGRO);
                     mostrar_fondo_nivel(recursos.fondos, nivel_actual, iteracion);
                     
+                    
                     if (etapa_juego == DERROTA)
                     {   
                         dibujar_mapa(recursos.mapas[nivel_actual-1], recursos.bloques, recursos.espina);  // Dibujamos el mapa del primer nivel
                         dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
+                        morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto
                         actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
                         rectangulo_derrota = dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, 500, 1200, 50.0, 50.0, true, CAFE);
                         dibujar_rectangulo_en_rectangulo(rectangulo_derrota, 500, 1200, 50.0, 50.0, false, AMARILLO);  // Se le añadirá un borde
@@ -116,10 +117,10 @@ int main()
                         dibujar_mapa(recursos.mapas[nivel_actual-1], recursos.bloques, recursos.espina);  // Dibujamos el mapa del primer nivel
                         dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
                         actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                        detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);   
+                        detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);
+                        morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto   
                     }
 
-                    morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto
                     mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[COMFORTAA_LIGHT_GIGANTE], 
                                            recursos.fuentes[TIMES_NEW_ROMAN_NORMAL], nivel_actual);
                     al_flip_display();

@@ -12,6 +12,8 @@
 #define ALTURA_PISO (ALTO_VENTANA * 5/6)  // Altura del piso en px
 #define ALTO_JUEGO (8./9  * ALTO_VENTANA)
 #define RECTANGULO_JUEGO (Rectangulo) {{0, 0}, {ANCHO_VENTANA, ALTO_JUEGO}}
+#define RECTANGULO_VENTANA (Rectangulo) {{0, 0}, {ANCHO_VENTANA, ALTO_VENTANA}}
+#define VECTOR_NULO (Vector) {0, 0}
 #define NRO_NIVELES 5
 #define NRO_COLORES 5
 #define NRO_BLOQUES 2 // Tipos distintos de bloques que se cargarán
@@ -21,13 +23,21 @@
 #define NRO_FUENTES 6
 #define NRO_FRAMES_MOVIMIENTO 10
 #define NRO_FRAMES_PELEA (NRO_FRAMES_MOVIMIENTO)
-#define NRO_FRAMES 20  // Número de frames que tendrá cada personaje
+#define NRO_FRAMES 20  // Número de frames que tendrá Woofson
+#define MAX_EXTRATERRESTRES 10
+
+#define NRO_FRAMES_WOOFSON 20
+#define NRO_FRAMES_DRAGON 15
+#define NRO_FRAMES_EXTRATERRESTRE 10
+#define NRO_FRAMES_MONSTRUO 15
 
 // Macros para los elementos del mapa
 #define NADA 0  // Representa un espacio vacío en el mapa
 #define BLOQUE 1  // Representa un bloque del mapa (un bloque sólido)
 #define BLOQUE_RAYO 2  // Representa una trampa del mapa (un bloque del cual sale una trampa)
 #define ESPINA 3  // Una espina que dañará al personaje
+#define ENEMIGO_ESTATICO 4  // Un enemigo que no se mueve
+#define ENEMIGO_DINAMICO 5  // Un enemigo que sí se moverá
 
 // Macros para las caracteristicas del personaje
 #define VELOCIDAD_MAXIMA_PERSONAJE 8
@@ -35,8 +45,8 @@
 #define TIEMPO_MUERTE 2.0  // Tiempo que se tomará el personaje en morir, para volver a comenzar desde su posicion inicial
 #define ACELERACION_PERSONAJE 0.2  // Aceleración del personaje al caminar
 #define VELOCIDAD_DRAGONES 4
-#define VELOCIDAD_HUMANOIDES 3
-#define VELOCIDAD_JEFE 7
+#define VELOCIDAD_EXTRATERRESTRES 3
+#define VELOCIDAD_MONSTRUO 7
 #define ACELERACION_ADREDE 5 // Aceleración adicional que se genera al presionar la tecla de abajo estando en caida libre
 #define IMPULSO_PERSONAJE 700  // Impulso de salto del personaje en px/s
 
@@ -52,13 +62,11 @@
 #define TIEMPO_RAYO_EN_DESAPARICION (TIEMPO_RAYO_EN_APARICION)  // Tiempo en segundos que el rayo demorará en desaparecer por completo
 #define TIEMPO_CICLO_RAYO (TIEMPO_RAYO_EN_ESPERA + TIEMPO_RAYO_EN_APARICION + TIEMPO_RAYO_ACTIVO_AL_100 + TIEMPO_RAYO_EN_DESAPARICION) // Tiempo total del ciclo del rayo
 #define TOLERANCIA 1e-2  // Tolerancia para las comparaciones de punto flotante
+#define DANHO_RAYO 28
 
 // Macros para las espinas
 #define NRO_REGRESIONES 2
 #define FACTOR_ESPINA 0.5
-
-// Macro para definir los daños que causan las trampas o los enemigos al personaje
-#define DANHO_RAYO 28
 
 // Macro que define la cantidad de vidas que tendrá el personaje inicialmente
 #define VIDAS_INICIALES 1

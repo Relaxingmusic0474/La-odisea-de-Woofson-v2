@@ -18,5 +18,6 @@ Mapa leer_mapa(Natural/*, Natural*/);
 Procedure dibujar_mapa(Mapa, Imagen [NRO_BLOQUES], Imagen);
 Procedure liberar_mapa(Mapa*);
 Procedure liberar_mapas(Mapa[]);
+bool cargar_escenarios(Recursos*);  // Carga el fondo y el mapa asociado a cada nivel
 
 #endif  // LOAD_H

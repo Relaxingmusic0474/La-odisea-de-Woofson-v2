@@ -21,8 +21,8 @@ Natural obtener_opcion_en_hover(Menu menu)
 
     for (i=0; i<menu.nro_opciones; i++)  /* Se detecta si el mouse esta dentro de alguno de los botones de las opciones del menu */
     {
-        if (posicion_mouse.x >= menu.opciones[i].coordenada_inicial.x && posicion_mouse.x <= menu.opciones[i].coordenada_final.x &&
-            posicion_mouse.y >= menu.opciones[i].coordenada_inicial.y && posicion_mouse.y <= menu.opciones[i].coordenada_final.y)
+        if (posicion_mouse.x >= menu.opciones[i].rectangulo.pos_inicial.x && posicion_mouse.x <= menu.opciones[i].rectangulo.pos_final.x &&
+            posicion_mouse.y >= menu.opciones[i].rectangulo.pos_inicial.y && posicion_mouse.y <= menu.opciones[i].rectangulo.pos_final.y)
         {
             return i;
         }
@@ -72,12 +72,8 @@ bool inicializar_menu_principal(Menu* menu, ALLEGRO_FONT* fuente)
 
     for (i=0; i<menu->nro_opciones; i++)
     {
-        menu->opciones[i].coordenada_inicial.x = ANCHO_VENTANA*0.55;
-        menu->opciones[i].coordenada_inicial.y = ALTO_VENTANA*(0.50+0.15*i);
-
-        menu->opciones[i].coordenada_final.x = ANCHO_VENTANA*0.80;
-        menu->opciones[i].coordenada_final.y = ALTO_VENTANA*(0.62+0.15*i);
-
+        menu->opciones[i].rectangulo.pos_inicial = (Vector) {ANCHO_VENTANA*0.55, ALTO_VENTANA*(0.50 + 0.15*i)};
+        menu->opciones[i].rectangulo.pos_final = (Vector) {ANCHO_VENTANA*0.80, ALTO_VENTANA*(0.62 + 0.15*i)};
         strcpy(menu->opciones[i].texto, textos_opciones_menu[i]);
     }
         
@@ -122,19 +118,13 @@ bool inicializar_menu_niveles(Menu* menu, ALLEGRO_FONT* fuente)
 
     for (i=0; i<NRO_NIVELES; i++) /* Asignación de coordenadas para los botones de los niveles */
     {
-        menu->opciones[i].coordenada_inicial.x = ANCHO_VENTANA*(0.15 + 0.15*i);
-        menu->opciones[i].coordenada_inicial.y = ALTO_VENTANA*0.44;
-
-        menu->opciones[i].coordenada_final.x = ANCHO_VENTANA*(0.25 + 0.15*i);
-        menu->opciones[i].coordenada_final.y = ALTO_VENTANA*0.56;
+        menu->opciones[i].rectangulo.pos_inicial = (Vector) {ANCHO_VENTANA*(0.15 + 0.15*i), ALTO_VENTANA*0.44};
+        menu->opciones[i].rectangulo.pos_final = (Vector) {ANCHO_VENTANA*(0.25 + 0.15*i), ALTO_VENTANA*0.56};
     }
 
     /* Coordenadas para el botón "Volver atrás" */
-    menu->opciones[i].coordenada_inicial.x = ANCHO_VENTANA*0.05;
-    menu->opciones[i].coordenada_inicial.y = ALTO_VENTANA*0.80;
-
-    menu->opciones[i].coordenada_final.x = ANCHO_VENTANA*0.20;
-    menu->opciones[i].coordenada_final.y = ALTO_VENTANA*0.90; 
+    menu->opciones[i].rectangulo.pos_inicial = (Vector) {ANCHO_VENTANA*0.05, ALTO_VENTANA*0.80};
+    menu->opciones[i].rectangulo.pos_final = (Vector) {ANCHO_VENTANA*0.20, ALTO_VENTANA*0.90};
 
     menu->fondo = al_load_bitmap("assets/images/menu_niveles.png");
 
@@ -156,6 +146,8 @@ bool inicializar_menu_niveles(Menu* menu, ALLEGRO_FONT* fuente)
 Procedure mostrar_menu(Menu menu)
 {
     Vector posicion_texto_opcion;
+    Rectangulo rect;
+    float alto, ancho, porcentaje_x, porcentaje_y;
     Natural i;
 
     menu.opcion_en_hover = obtener_opcion_en_hover(menu);  /* Se obtiene la opcion por la que pasa el cursor (sin seleccionarla aun) */
@@ -172,15 +164,14 @@ Procedure mostrar_menu(Menu menu)
 
     for (i=0; i<menu.nro_opciones; i++)
     {
-        al_draw_rectangle(menu.opciones[i].coordenada_inicial.x, menu.opciones[i].coordenada_inicial.y, 
-                          menu.opciones[i].coordenada_final.x, menu.opciones[i].coordenada_final.y, 
-                          menu.opcion_en_hover == i ? AZUL : NEGRO, 3.0);
+        alto = menu.opciones[i].rectangulo.pos_final.y - menu.opciones[i].rectangulo.pos_inicial.y;
+        ancho = menu.opciones[i].rectangulo.pos_final.x - menu.opciones[i].rectangulo.pos_inicial.x;
 
-        posicion_texto_opcion.x = (menu.opciones[i].coordenada_inicial.x + menu.opciones[i].coordenada_final.x) / 2;
-        posicion_texto_opcion.y = (menu.opciones[i].coordenada_inicial.y + menu.opciones[i].coordenada_final.y) / 2;
+        porcentaje_x = (menu.opciones[i].rectangulo.pos_inicial.x + ancho/2)/ANCHO_VENTANA * 100;
+        porcentaje_y = (menu.opciones[i].rectangulo.pos_inicial.y + alto/2)/ALTO_VENTANA * 100;
 
-        al_draw_text(menu.fuente, menu.opcion_en_hover == i ? AZUL : NEGRO, posicion_texto_opcion.x, 
-                     posicion_texto_opcion.y, ALLEGRO_ALIGN_CENTRE, menu.opciones[i].texto);
+        rect = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, ancho, porcentaje_x, porcentaje_y, false, menu.opcion_en_hover == i ? AZUL : NEGRO);
+        dibujar_texto_en_rectangulo(menu.opciones[i].texto, rect, 50.0, 50.0, menu.fuente, menu.opcion_en_hover == i ? AZUL : NEGRO);
     }
 
     al_flip_display();  // Se muestra el menu
@@ -189,10 +180,14 @@ Procedure mostrar_menu(Menu menu)
 }
 
 
+Procedure cambiar_menu(Menu* menu_actual, Menu menu_nuevo)
+{
+    *menu_actual = menu_nuevo;
+}
+
+
 Procedure redirigir_menu(Recursos* recursos, ALLEGRO_FONT* fuente, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual)
 {
-    finalizar_menu(&recursos->menu_actual);
-
     if (*etapa_actual == MENU_PRINCIPAL)
     {
         *nivel_actual = 0;
@@ -200,7 +195,7 @@ Procedure redirigir_menu(Recursos* recursos, ALLEGRO_FONT* fuente, Natural opcio
         if (opcion_clickeada == 0)  
         {
             *etapa_actual = MENU_NIVELES;
-            inicializar_menu_niveles(&recursos->menu_actual, fuente);    
+            cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_NIVELES+4]);
             mostrar_menu(recursos->menu_actual);
         }
 
@@ -225,7 +220,7 @@ Procedure redirigir_menu(Recursos* recursos, ALLEGRO_FONT* fuente, Natural opcio
         {
             *nivel_actual = 0;
             *etapa_actual = MENU_PRINCIPAL;
-            inicializar_menu_principal(&recursos->menu_actual, fuente);
+            cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_PRINCIPAL+4]);
             mostrar_menu(recursos->menu_actual);
         }
 
@@ -274,6 +269,16 @@ Procedure redirigir_menu(Recursos* recursos, ALLEGRO_FONT* fuente, Natural opcio
 
 Procedure finalizar_menu(Menu* menu)
 {   
+    Natural i;
+
+    for (i=0; i<menu->nro_opciones; i++)
+    {
+        memset(menu->opciones[i].texto, '\0', sizeof(menu->opciones[i].texto));
+        menu->opciones[i].rectangulo = (Rectangulo) {{0, 0}, {0, 0}};
+    }
+    
+    menu->fuente = NULL;
+
     if (menu->opciones != NULL)
     {
         free(menu->opciones);
@@ -364,7 +369,7 @@ Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida, ALLE
     char texto_puntuacion[5] = {'\0'};
 
     rectangulo_datos.pos_inicial.x = 0;
-    rectangulo_datos.pos_inicial.y = (8./9) * ALTO_VENTANA;
+    rectangulo_datos.pos_inicial.y = ALTO_JUEGO;
     rectangulo_datos.pos_final.x = ANCHO_VENTANA;
     rectangulo_datos.pos_final.y = ALTO_VENTANA;
 
