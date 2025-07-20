@@ -13,7 +13,7 @@
 
 TipoFrame tipo_frame(TipoPersonaje);
 TipoPersonaje tipo_personaje(TipoFrame);
-Procedure inicializar_personaje(Personaje*, TipoPersonaje, Imagen* [TIPOS_PERSONAJES], bool);
+Procedure inicializar_personaje(Personaje*, TipoPersonaje, Imagen* [TIPOS_PERSONAJES], Vector, bool);
 Procedure inicializar_salto(Personaje*);
 Procedure determinar_como_dibujar_personaje(Personaje*, Natural);
 Procedure dibujar_personaje(Personaje, Natural, Natural);

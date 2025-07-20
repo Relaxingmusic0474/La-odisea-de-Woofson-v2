@@ -39,10 +39,13 @@
 #define BLOQUE 1  // Representa un bloque del mapa (un bloque sólido)
 #define BLOQUE_RAYO 2  // Representa una trampa del mapa (un bloque del cual sale una trampa)
 #define ESPINA 3  // Una espina que dañará al personaje
-#define ENEMIGO_ESTATICO 4  // Un enemigo que no se mueve
-#define ENEMIGO_DINAMICO 5  // Un enemigo que sí se moverá
+#define EXTRATERRESTRE_ESTATICO 4  // Un extraterrestre que no se mueve
+#define EXTRATERRESTRE_DINAMICO 5  // Un extraterrestre que sí se moverá
+#define DRAGON_ 6
+#define MONSTRUO_ 7
 
 // Macros para las caracteristicas del personaje
+#define POSICION_INICIAL_WOOFSON (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-personaje.alto}
 #define VELOCIDAD_MAXIMA_PERSONAJE 8
 #define MAX_TIEMPO_INMUNE 1.5  // Máximo tiempo en que el personaje no puede recibir un daño adicional
 #define TIEMPO_MUERTE 2.0  // Tiempo que se tomará el personaje en morir, para volver a comenzar desde su posicion inicial

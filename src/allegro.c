@@ -208,8 +208,9 @@ bool crear_recursos(Recursos* R)
         printf("Error al cargar los frames de los personajes.\n");
         return false;
     }
-
-    inicializar_personaje(&R->pje_principal, WOOFSON, R->frames, false);  // Se inicializa el personaje principal
+    
+    // Se inicializa el personaje principal
+    inicializar_personaje(&R->pje_principal, WOOFSON, R->frames, (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(R->frames[FRAME_WOOFSON][0])}, false);  
 
     R->vida = al_load_bitmap("assets/images/corazon.png");
 

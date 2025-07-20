@@ -78,6 +78,7 @@ struct personaje
     float tiempo_muerte;
     Imagen imagen_modo_muerte;
     bool estatico;
+    bool inicializado;
 
     // bool hay_obj_izq;
     // bool hay_obj_der;

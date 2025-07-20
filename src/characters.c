@@ -1,5 +1,10 @@
 #include "characters.h"
 
+/**
+ * @brief Función que devuelve el tipo de frames de un cierto tipo de personaje.
+ * @param tipo Es el tipo de personaje al cual se le desea obtener los tipos de frames correspondientes.
+ * @return El tipo de frame del personaje.
+ */
 TipoFrame tipo_frame(TipoPersonaje tipo)
 {
     switch (tipo)
@@ -22,6 +27,11 @@ TipoFrame tipo_frame(TipoPersonaje tipo)
 }
 
 
+/**
+ * @brief Función que devuelve el tipo de personaje según el tipo de frames que tenga.
+ * @param tipo Es el tipo de frame que tiene el personaje.
+ * @return El tipo de personaje que corresponde con ese tipo de frames.
+ */
 TipoPersonaje tipo_personaje(TipoFrame tipo)
 {
     switch (tipo)
@@ -51,23 +61,24 @@ TipoPersonaje tipo_personaje(TipoFrame tipo)
  * @param frames Es el arreglo con los frames de todos los personajes.
  * @param estatico Un booleano que determina si el personaje estará en una posición fija o no.
  */
-Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen* frames[TIPOS_PERSONAJES], bool estatico)
+Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen* frames[TIPOS_PERSONAJES], Vector posicion_deseada, bool estatico)
 {
-    if (personaje->tipo == WOOFSON && estatico == true)
+    if ((personaje->tipo == WOOFSON || personaje->tipo == DRAGON || personaje->tipo == MONSTRUO) && estatico == true)
     {
-        return;  // No tiene sentido que se cargue el personaje principal y que no se pueda mover
+        return;  // No tiene sentido que se cargue el personaje principal y que no se pueda mover.  Así mismo, los dragones (ya que volarán) y el monstruo (que será duro).
     }
 
     personaje->tipo = tipo;
+    personaje->posicion = posicion_deseada;
     personaje->estatico = estatico;
 
     if (personaje->estatico)
     {
         personaje->velocidad = VECTOR_NULO;
-        personaje->caminata = false;
-        personaje->fps_en_caminata = 0;
     }
 
+    personaje->caminata = tipo!=WOOFSON && !personaje->estatico;  // Si el tipo de personaje es Woofson y/o el personaje es estático entonces parte quieto (sin caminar)
+    personaje->fps_en_caminata = 0;
     personaje->frames = frames[tipo_frame(tipo)];
     personaje->imagen = personaje->frames[0];
     personaje->id_nro_frame = 0;
@@ -80,12 +91,8 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
     {
         case WOOFSON:
             personaje->velocidad = VECTOR_NULO;  // Inicialmente no se mueve ni salta, ya que eso lo deberá hacer con las teclas
-            personaje->caminata = false;  // Inicialmente no está en movimiento
-            personaje->fps_en_caminata = 0;  // Inicializa el tiempo de caminata a 0
             personaje->nro_vidas = VIDAS_INICIALES;
             personaje->subvida_actual = 100;
-            personaje->posicion.x = ANCHO_VENTANA * 0.1;
-            personaje->posicion.y = ALTURA_PISO - personaje->alto;  // Se coloca en el piso
             personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
             personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
             personaje->danhado = true;  // Para que parta con cierta inmunidad antes de comenzar (parpadeo)
@@ -103,8 +110,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             break;
 
         case EXTRATERRESTRE:
-            personaje->tipo = 'E';  // Extraterrestre
-            personaje->velocidad.x = VELOCIDAD_EXTRATERRESTRES;  // Esta velocidad vale solo si el extraterrestre es dinámico (no estático)
+            personaje->velocidad.x = personaje->estatico ? 0 : VELOCIDAD_EXTRATERRESTRES;  // Esta velocidad vale solo si el extraterrestre es dinámico (no estático)
             personaje->velocidad.y = 0;  // Inicialmente no está en salto
             personaje->caminata = false;  // Esto dependerá de si el extraterrestre es estático o dinámico
             personaje->fps_en_caminata = 0;
@@ -128,11 +134,12 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             break;
 
         case MONSTRUO:
-            personaje->tipo = 'M';  // Monstruo
             personaje->velocidad.x = VELOCIDAD_MONSTRUO;
             personaje->velocidad.y = 0;  // Inicialmente no está en salto
             break;
     }
+
+    personaje->inicializado = true;
 }
 
 
@@ -148,31 +155,6 @@ Procedure inicializar_salto(Personaje* personaje)
     personaje->salto.impulso = IMPULSO_PERSONAJE;  // Si bien no es necesario, es una buena práctica para la legibilidad
     personaje->salto.altura_inicial = personaje->posicion.y;  // Reinicia la altura inicial del salto
     return;
-}
-
-
-Procedure inicializar_enemigos(Personaje enemigos[MAX_ENEMIGOS], Imagen* frames[TIPOS_PERSONAJES], bool estatico)
-{
-    Natural i, total;
-
-    for (i=0; i<MAX_DRAGONES; i++)
-    {
-        inicializar_personaje(&enemigos[i], DRAGON, frames, rand() % 2 ? true : false);
-    }
-
-    total = i;
-
-    for (i=0; i<MAX_EXTRATERRESTRES; i++)
-    {
-        inicializar_personaje(&enemigos[total+i], EXTRATERRESTRE, frames, false);
-    }
-
-    total += i;
-
-    for (i=0; i<MAX_MONSTRUOS; i++)
-    {
-        inicializar_personaje(&enemigos[total+i], MONSTRUO, frames, false);
-    }
 }
 
 
@@ -200,18 +182,18 @@ Procedure determinar_como_dibujar_personaje(Personaje* personaje, Natural ultima
 /**
  * Función que dibuja el personaje en su posición actual.
  * @param personaje El personaje a dibujar.
- * @param teclas Un arreglo de booleanos que indica qué teclas están presionadas.
  * @param ultima_tecla_lateral La última tecla lateral presionada (para determinar la dirección de dibujo).
+ * @param iteracion La iteración actual del loop general del juego.
  */
 Procedure dibujar_personaje(Personaje personaje, Natural ultima_tecla_lateral, Natural iteracion)
 {
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
     Natural var;
     
-    //if (!personaje.muerto || (personaje.muerto && personaje.tiempo_muerte <= 1./FPS))
-    //{
+    if (personaje.tipo == WOOFSON)
+    {
         determinar_como_dibujar_personaje(&personaje, ultima_tecla_lateral);
-    //}
+    }
 
     if (personaje.danhado && personaje.tiempo_danho > 0)
     {
@@ -253,7 +235,8 @@ Procedure actualizar_frame(Personaje* personaje, char modo)
     if (personaje->frames[personaje->id_nro_frame])  // Verifica si hay un frame siguiente para evitar errores de acceso a memoria
     {
         personaje->imagen = personaje->frames[personaje->id_nro_frame];  // Cambia al siguiente frame de animación
-        personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Actualiza el ancho del personaje (el alto no cambia)
+        personaje->alto = al_get_bitmap_height(personaje->imagen);  // Actualiza el alto del personaje
+        personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Actualiza el ancho del personaje
     }
 }
 
@@ -495,6 +478,7 @@ Procedure patalear(Personaje* personaje, int direccion)
         if (fabs(personaje->velocidad.x) < ACELERACION_PERSONAJE)
         {
             personaje->velocidad.x = 0;  /* Detiene la velocidad en el eje x */
+            
         }
 
         else

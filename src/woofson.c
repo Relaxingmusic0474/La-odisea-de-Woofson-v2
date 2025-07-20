@@ -102,7 +102,7 @@ int main()
                     
                     if (etapa_juego == DERROTA)
                     {   
-                        dibujar_mapa(recursos.mapas[nivel_actual-1], recursos.bloques, recursos.espina);  // Dibujamos el mapa del primer nivel
+                        dibujar_mapa(recursos.mapas[nivel_actual-1], recursos.bloques, recursos.espina, recursos.frames, recursos.pje_principal, recursos.enemigos);  // Dibujamos el mapa del primer nivel
                         dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
                         morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto
                         actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
@@ -114,7 +114,7 @@ int main()
                     else
                     {
                         mover_personaje(&recursos.pje_principal, recursos.mapas[nivel_actual-1]);  // Mueve al personaje según las teclas presionadas y considera lógica de salto
-                        dibujar_mapa(recursos.mapas[nivel_actual-1], recursos.bloques, recursos.espina);  // Dibujamos el mapa del primer nivel
+                        dibujar_mapa(recursos.mapas[nivel_actual-1], recursos.bloques, recursos.espina, recursos.frames, recursos.pje_principal, recursos.enemigos);  // Dibujamos el mapa del primer nivel
                         dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
                         actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
                         detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);

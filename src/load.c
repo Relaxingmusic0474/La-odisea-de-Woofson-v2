@@ -379,26 +379,27 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
 }
 
 
-
-
-
 /**
  * Función que dibuja el mapa en la ventana.
  * @param mapa Es el mapa que se desea dibujar.
  */
-Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina)
+Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina, Imagen* frames[TIPOS_PERSONAJES], Personaje woofson, Personaje enemigos[MAX_ENEMIGOS])
 {
     Natural i=0, j=0;
+    Natural id_enemigo = 0;
     Entero flag = 0;
     bool aux = false;
     float ancho_espina, alto_espina, x, y;
     float ancho_esc, alto_esc;
+    float alto_extraterrestre;
 
     ancho_espina = al_get_bitmap_width(espina);
     alto_espina = al_get_bitmap_height(espina);
 
     ancho_esc = ancho_espina * FACTOR_ESPINA;
     alto_esc = alto_espina * FACTOR_ESPINA;
+
+    alto_extraterrestre = al_get_bitmap_height(frames[FRAME_EXTRATERRESTRE][0]);
     
     for (i=0; i<mapa.nro_filas; i++)
     {
@@ -459,11 +460,41 @@ Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina)
                 }
             }
 
-            if (mapa.mapa[i][j] == ENEMIGO_ESTATICO)
+            if (mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO)
             {
-                // al_draw_bitmap();
+                if (i==mapa.nro_filas-1 || (i<mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i+1][j] == BLOQUE_RAYO)))
+                {
+                    if  (id_enemigo < MAX_ENEMIGOS)
+                    {
+                        if (!enemigos[id_enemigo].inicializado)
+                        {
+                            printf("Holi\n");
+                            inicializar_personaje(&enemigos[id_enemigo], EXTRATERRESTRE, frames, 
+                                                  (Vector) {mapa.ancho_bloque*j, mapa.alto_bloque*(i+1) - alto_extraterrestre}, true);
+                        }
 
-                
+                        else  // Si ya estaba inicializado
+                        {
+                            if (woofson.posicion.x + woofson.ancho < enemigos[id_enemigo].posicion.x)
+                            {
+                                enemigos[id_enemigo].bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;
+                            }
+
+                            else
+                            {
+                                if (woofson.posicion.x > enemigos[id_enemigo].posicion.x + enemigos[id_enemigo].ancho)
+                                {
+                                    enemigos[id_enemigo].bandera_dibujo = 0;
+                                }
+                            }
+
+                            dibujar_personaje(enemigos[id_enemigo], 0, 0);
+                        }
+
+                    }
+                }
+
+                id_enemigo++;
             }
         }
     }
