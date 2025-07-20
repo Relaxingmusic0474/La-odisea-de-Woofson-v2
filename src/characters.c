@@ -121,8 +121,6 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             personaje->subvida_actual = 100;
             personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Ancho del personaje
             personaje->alto = al_get_bitmap_height(personaje->imagen);  // Alto del personaje
-            personaje->posicion.x = ANCHO_VENTANA * 0.1;
-            personaje->posicion.y = ALTURA_PISO - personaje->alto;  // Se coloca en el piso
             personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
             personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
             personaje->danhado = false;
@@ -201,13 +199,14 @@ Procedure dibujar_personaje(Personaje personaje, Natural ultima_tecla_lateral, N
 
         if (var & 1)
         {
-            al_draw_bitmap(personaje.imagen, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);
+            al_draw_tinted_bitmap(personaje.imagen, BLANCO, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);
+            //al_draw_bitmap(personaje.imagen, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);
         }
     }
 
     else
     {
-        al_draw_bitmap(personaje.imagen, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);   
+        al_draw_tinted_bitmap(personaje.imagen, BLANCO, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);   
     }
 }
 
