@@ -97,9 +97,6 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
             personaje->danhado = true;  // Para que parta con cierta inmunidad antes de comenzar (parpadeo)
             personaje->tiempo_danho = 0;
-            // personaje->hay_obj_izq = false;
-            // personaje->hay_obj_der = false;
-            // personaje->hay_obj_sup = false;
             inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
             break;
 
@@ -112,21 +109,13 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
         case EXTRATERRESTRE:
             personaje->velocidad.x = personaje->estatico ? 0 : VELOCIDAD_EXTRATERRESTRES;  // Esta velocidad vale solo si el extraterrestre es dinámico (no estático)
             personaje->velocidad.y = 0;  // Inicialmente no está en salto
-            personaje->caminata = false;  // Esto dependerá de si el extraterrestre es estático o dinámico
-            personaje->fps_en_caminata = 0;
-            personaje->imagen = personaje->frames[0];
-            personaje->id_nro_frame = 0;  // Inicializa el número de frame actual a 0
-            personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Ancho del personaje
+            personaje->direccion = pow(-1, rand() % 2);
             personaje->nro_vidas = 1;  // Tendrá una sola vida
             personaje->subvida_actual = 100;
-            personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Ancho del personaje
-            personaje->alto = al_get_bitmap_height(personaje->imagen);  // Alto del personaje
             personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
             personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
             personaje->danhado = false;
             personaje->tiempo_danho = 0;
-            personaje->muerto = false;
-            personaje->tiempo_muerte = 0;
             inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
 
             break;
@@ -168,6 +157,7 @@ Procedure determinar_como_dibujar_personaje(Personaje* personaje, Natural ultima
     if (teclas[ALLEGRO_KEY_LEFT] || (!teclas[ALLEGRO_KEY_RIGHT] && ultima_tecla_lateral == ALLEGRO_KEY_LEFT))
     {
         personaje->bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;  // Dibuja el personaje mirando a la izquierda
+        personaje->direccion = -1;  // Significa que su dirección de movimiento es hacia la izquierda
     }
 
     else
@@ -199,14 +189,13 @@ Procedure dibujar_personaje(Personaje personaje, Natural ultima_tecla_lateral, N
 
         if (var & 1)
         {
-            al_draw_tinted_bitmap(personaje.imagen, BLANCO, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);
-            //al_draw_bitmap(personaje.imagen, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);
+            al_draw_bitmap(personaje.imagen, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);
         }
     }
 
     else
     {
-        al_draw_tinted_bitmap(personaje.imagen, BLANCO, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);   
+        al_draw_bitmap(personaje.imagen, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);   
     }
 }
 
@@ -218,17 +207,30 @@ Procedure dibujar_personaje(Personaje personaje, Natural ultima_tecla_lateral, N
  */
 Procedure actualizar_frame(Personaje* personaje, char modo)
 {
-    if (modo == 'P')  // Si está en modo pelea, se actualiza el frame de pelea
+    if (personaje->estatico)
     {
-        personaje->id_nro_frame = NRO_FRAMES_MOVIMIENTO + (personaje->id_nro_frame + 1) % NRO_FRAMES_PELEA ;  // Evita que el frame se salga del rango
+        return;  // Si es estático no tiene sentido que sus frames se actualicen
     }
 
-    else  // Si está en modo movimiento, se actualiza el frame de movimiento siempre que esté en movimiento o en pataleo
+    if (personaje->tipo == WOOFSON)
     {
-        if (personaje->velocidad.x != 0)
+        if (modo == 'P')  // Si está en modo pelea, se actualiza el frame de pelea
         {
-            personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_MOVIMIENTO;  // Evita que el frame se salga del rango
+            personaje->id_nro_frame = NRO_FRAMES_MOVIMIENTO + (personaje->id_nro_frame + 1) % NRO_FRAMES_PELEA ;  // Evita que el frame se salga del rango
         }
+
+        else  // Si está en modo movimiento, se actualiza el frame de movimiento siempre que esté en movimiento o en pataleo
+        {
+            if (personaje->velocidad.x != 0)
+            {
+                personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_MOVIMIENTO;  // Evita que el frame se salga del rango
+            }
+        }
+    }
+
+    else if (personaje->tipo == EXTRATERRESTRE)
+    {
+        personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_EXTRATERRESTRE;
     }
 
     if (personaje->frames[personaje->id_nro_frame])  // Verifica si hay un frame siguiente para evitar errores de acceso a memoria
@@ -388,6 +390,43 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa)
         }
     }
 }
+
+
+Procedure mover_enemigo_dinamico(Personaje* enemigo, Mapa mapa)
+{
+    if (enemigo->estatico || enemigo->muerto)  // No tiene sentido mover un enemigo estático o que ya murió
+    {
+        return;
+    }
+    
+    if ((enemigo->direccion == -1 && hay_colision_izquierda(enemigo, mapa)) || (enemigo->direccion == 1 && hay_colision_derecha(enemigo, mapa)))
+    {
+        enemigo->direccion *= -1;
+    }
+
+    enemigo->posicion.x += enemigo->velocidad.x * enemigo->direccion;
+
+    if (enemigo->fps_en_caminata % 8 == 0)
+    {
+        actualizar_frame(enemigo, '\0');  // El modo es '\0' ya que da igual para los enemigos
+    }
+
+    // Si no está en salto, activa caída libre
+    if (!enemigo->salto.en_salto && !hay_colision_inferior(enemigo, mapa))
+    {
+        activar_caida_libre(enemigo);
+    }
+
+    // Si está en salto (o caída), continuar con física
+    if (enemigo->salto.en_salto)
+    {
+        enemigo->salto.tiempo_en_salto += 1./FPS;
+        continuar_salto(enemigo, enemigo->salto.tiempo_en_salto, mapa);
+    }
+
+    enemigo->fps_en_caminata++;
+}
+
 
 
 /**

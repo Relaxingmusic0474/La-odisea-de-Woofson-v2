@@ -41,8 +41,8 @@
 #define ESPINA 3  // Una espina que dañará al personaje
 #define EXTRATERRESTRE_ESTATICO 4  // Un extraterrestre que no se mueve
 #define EXTRATERRESTRE_DINAMICO 5  // Un extraterrestre que sí se moverá
-#define DRAGON_ 6
-#define MONSTRUO_ 7
+#define _DRAGON 6  // _DRAGON en vez de DRAGON para que no se confunda con el enum
+#define _MONSTRUO 7  // Caso similar
 
 // Macros para las caracteristicas del personaje
 #define POSICION_INICIAL_WOOFSON (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-personaje.alto}

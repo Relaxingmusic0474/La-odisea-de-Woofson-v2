@@ -20,6 +20,7 @@ Procedure dibujar_personaje(Personaje, Natural, Natural);
 Procedure actualizar_frame(Personaje*, char);
 bool es_posible_mover_personaje_lateralmente(Personaje*, Mapa);
 Procedure mover_personaje(Personaje*, Mapa);
+Procedure mover_enemigo_dinamico(Personaje*, Mapa);
 Procedure continuar_salto(Personaje*, float, Mapa);
 Procedure activar_caida_libre(Personaje*);
 Entero velocidad_instantanea(Personaje, float);

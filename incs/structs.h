@@ -10,6 +10,9 @@ typedef struct vector Vector;
 typedef struct rectangulo Rectangulo;
 typedef struct salto Salto;
 typedef struct mapa Mapa;
+typedef struct bala Bala;
+typedef union formaAtaque FormaAtaque;
+typedef struct arma Arma;
 typedef struct personaje Personaje;
 typedef struct colision Colision;
 typedef struct boton Boton; 
@@ -53,6 +56,24 @@ struct mapa
     float alto_bloque;
 };
 
+struct bala
+{
+    Vector posicion;
+    Vector velocidad;
+    Entero dirección;  // 1 si es hacia la derecha y -1 si es hacia la izquierda
+};
+
+union formaAtaque
+{
+    Bala balas[10];
+    // Otra para cuerpo a cuerpo
+};
+
+struct arma
+{
+    FormaAtaque ataque;
+};
+
 struct personaje
 {
     char tipo;
@@ -67,6 +88,7 @@ struct personaje
     float ancho;
     float alto;
     int bandera_dibujo;  // Si se dibuja normal o en espejo
+    int direccion;  // Dirección de movimiento (1: derecha; -1: izquierda)
     bool en_plataforma;  // Si el personaje está en una plataforma o no (si está en el suelo es false)
     bool caminata;  // Si el personaje está en movimiento o intentando moverse (caminando, corriendo o pataleando)
     unsigned int fps_en_caminata;  // Número de frames en caminata (para la animación)

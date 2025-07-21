@@ -391,15 +391,13 @@ Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina, Im
     bool aux = false;
     float ancho_espina, alto_espina, x, y;
     float ancho_esc, alto_esc;
-    float alto_extraterrestre;
+    float alto_enemigo;
 
     ancho_espina = al_get_bitmap_width(espina);
     alto_espina = al_get_bitmap_height(espina);
 
     ancho_esc = ancho_espina * FACTOR_ESPINA;
     alto_esc = alto_espina * FACTOR_ESPINA;
-
-    alto_extraterrestre = al_get_bitmap_height(frames[FRAME_EXTRATERRESTRE][0]);
     
     for (i=0; i<mapa.nro_filas; i++)
     {
@@ -410,7 +408,7 @@ Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina, Im
 
             if (mapa.mapa[i][j] == BLOQUE || mapa.mapa[i][j] == BLOQUE_RAYO)
             {
-                al_draw_bitmap(bloques[1], x, y, 0);
+                al_draw_scaled_bitmap(bloques[1], 0, 0, al_get_bitmap_width(bloques[1]), al_get_bitmap_height(bloques[1]), x, y, mapa.ancho_bloque, mapa.alto_bloque, 0);
             }
 
             if (mapa.mapa[i][j] == BLOQUE_RAYO)
@@ -460,7 +458,7 @@ Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina, Im
                 }
             }
 
-            if (mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO)
+            if (mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO || mapa.mapa[i][j] == EXTRATERRESTRE_DINAMICO || mapa.mapa[i][j] == _MONSTRUO)
             {
                 if (i==mapa.nro_filas-1 || (i<mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i+1][j] == BLOQUE_RAYO)))
                 {
@@ -468,24 +466,45 @@ Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina, Im
                     {
                         if (!enemigos[id_enemigo].inicializado)
                         {
-                            printf("Holi\n");
-                            inicializar_personaje(&enemigos[id_enemigo], EXTRATERRESTRE, frames, 
-                                                  (Vector) {mapa.ancho_bloque*j, mapa.alto_bloque*(i+1) - alto_extraterrestre}, true);
+                            alto_enemigo = al_get_bitmap_height(frames[(TipoFrame) (1./6 * pow(mapa.mapa[i][j], 2) - 1.5 * mapa.mapa[i][j] + 16./3)][0]);  // Polinomio de interpolación de Lagrange
+
+                            inicializar_personaje(&enemigos[id_enemigo], mapa.mapa[i][j] <= EXTRATERRESTRE_DINAMICO ? EXTRATERRESTRE : MONSTRUO, frames, 
+                                                  (Vector) {mapa.ancho_bloque*j, mapa.alto_bloque*(i+1) - alto_enemigo - 1}, mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO ? true : false);
                         }
 
                         else  // Si ya estaba inicializado
                         {
-                            if (woofson.posicion.x + woofson.ancho < enemigos[id_enemigo].posicion.x)
+                            if (enemigos[id_enemigo].estatico)
                             {
-                                enemigos[id_enemigo].bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;
+                                if (woofson.posicion.x + woofson.ancho < enemigos[id_enemigo].posicion.x)
+                                {
+                                    enemigos[id_enemigo].bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;
+                                    enemigos[id_enemigo].direccion = -1;
+                                }
+
+                                else
+                                {
+                                    if (woofson.posicion.x > enemigos[id_enemigo].posicion.x + enemigos[id_enemigo].ancho)
+                                    {
+                                        enemigos[id_enemigo].bandera_dibujo = 0;
+                                        enemigos[id_enemigo].direccion = 1;
+                                    }
+                                }
                             }
 
-                            else
+                            else  // Si es dinámico
                             {
-                                if (woofson.posicion.x > enemigos[id_enemigo].posicion.x + enemigos[id_enemigo].ancho)
+                                if (enemigos[id_enemigo].direccion == 1)
                                 {
                                     enemigos[id_enemigo].bandera_dibujo = 0;
                                 }
+
+                                else
+                                {
+                                    enemigos[id_enemigo].bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;
+                                }
+
+                                mover_enemigo_dinamico(&enemigos[id_enemigo], mapa);
                             }
 
                             dibujar_personaje(enemigos[id_enemigo], 0, 0);
