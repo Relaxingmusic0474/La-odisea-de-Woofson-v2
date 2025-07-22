@@ -593,7 +593,7 @@ Procedure aplicar_danho(Personaje* personaje, Natural cantidad_danho)
 
     else
     {
-        personaje->subvida_actual -= DANHO_RAYO;
+        personaje->subvida_actual -= cantidad_danho;
     }
 }
 
