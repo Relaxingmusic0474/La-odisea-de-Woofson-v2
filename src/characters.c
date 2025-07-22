@@ -86,6 +86,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
     personaje->alto = al_get_bitmap_height(personaje->imagen);
     personaje->muerto = false;
     personaje->tiempo_muerte = 0;
+    personaje->frames_para_prox_disparo = 0;
 
     switch (tipo)
     {
@@ -675,6 +676,184 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[
         if (personaje->tiempo_danho == 0)
         {
             aplicar_danho(personaje, DANHO_RAYO);
+        }
+    }
+}
+
+
+bool hay_balas_activas(Bala balas[MAX_BALAS])
+{
+    Natural i;
+
+    for (i=0; i<MAX_BALAS; i++)
+    {
+        if (balas[i].direccion != 0)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa)
+{
+    Natural i;
+
+    for (i=0; i<MAX_BALAS; i++)
+    {
+        if (atacante->balas[i].direccion != 0)
+        {
+            atacante->balas[i].posicion.x += atacante->balas[i].velocidad.x;
+
+            if (atacante->balas[i].posicion.x - RADIO_AXIAL_X_BALA > ANCHO_VENTANA || atacante->balas[i].posicion.x + RADIO_AXIAL_X_BALA < 0)
+            {
+                atacante->balas[i].direccion = 0;  // Se desactiva la bala
+                atacante->balas[i].velocidad = VECTOR_NULO;  // Se deja de mover
+                continue;
+            }
+
+            // Verificar colisión con Woofson   
+            if (!victima->danhado)
+            {
+                if (atacante->balas[i].posicion.x + RADIO_AXIAL_X_BALA > victima->posicion.x &&
+                    atacante->balas[i].posicion.x - RADIO_AXIAL_X_BALA < victima->posicion.x + victima->ancho &&
+                    atacante->balas[i].posicion.y + RADIO_AXIAL_Y_BALA > victima->posicion.y &&
+                    atacante->balas[i].posicion.y - RADIO_AXIAL_Y_BALA < victima->posicion.y + victima->alto)
+                {
+                    atacante->balas[i].direccion = 0;
+                    atacante->balas[i].velocidad = VECTOR_NULO;
+
+                    victima->danhado = true;
+                    victima->tiempo_danho = 0;
+
+                    aplicar_danho(victima, DANHO_BALA);
+
+                    continue;
+                }
+            }
+
+            al_draw_filled_ellipse(atacante->balas[i].posicion.x, atacante->balas[i].posicion.y, RADIO_AXIAL_X_BALA, RADIO_AXIAL_Y_BALA, VERDE);
+        }
+    }
+}
+
+
+bool puede_disparar_horizontalmente(Personaje enemigo, Personaje woofson, Mapa mapa)
+{
+    Natural fila, col;
+    Natural col_enemigo, col_woofson, col_min, col_max;
+    bool alineados_en_y;
+    bool mirando_a_woofson;
+    Natural frames_disparo[] = {0, 1, 2, 3, 7, 8, 9};
+    Natural nro_frames_disparo = sizeof(frames_disparo) / sizeof(frames_disparo[0]);
+
+    if (enemigo.frames_para_prox_disparo > 0)
+    {
+        return false;
+    }
+
+    // Verificamos que estén alineados verticalmente (en el eje Y)
+    alineados_en_y = woofson.posicion.y < enemigo.posicion.y + enemigo.alto && woofson.posicion.y + woofson.alto > enemigo.posicion.y;
+
+    if (!alineados_en_y)
+    {
+        return false;
+    }
+
+    // Determinamos las columnas (en bloques) entre el enemigo y Woofson
+    col_enemigo = (enemigo.posicion.x + enemigo.ancho / 2) / mapa.ancho_bloque;
+    col_woofson = (woofson.posicion.x + woofson.ancho / 2) / mapa.ancho_bloque;
+    fila = (enemigo.posicion.y + enemigo.alto / 2) / mapa.alto_bloque;
+
+    col_min = fmin(col_enemigo, col_woofson);
+    col_max = fmax(col_enemigo, col_woofson);
+
+    // Verificar que no haya bloque en la misma fila, entre las columnas del enemigo y del jugador
+    for (col=col_min+1; col<col_max; col++)
+    {
+        if (mapa.mapa[fila][col] == BLOQUE || mapa.mapa[fila][col] == BLOQUE_RAYO)
+        {
+            return false;  // Obstruido
+        }
+    }
+
+    mirando_a_woofson = false;
+
+    if (enemigo.bandera_dibujo == ALLEGRO_FLIP_HORIZONTAL && woofson.posicion.x + woofson.ancho <= enemigo.posicion.x)
+    {
+        mirando_a_woofson = true;
+    }
+
+    else if (enemigo.bandera_dibujo == 0 && woofson.posicion.x >= enemigo.posicion.x + enemigo.ancho)
+    {
+        mirando_a_woofson = true;
+    }
+
+    else
+    {
+        mirando_a_woofson = false;
+    }
+
+    return mirando_a_woofson;  // Puede disparar
+}
+
+
+Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Mapa mapa)
+{
+    Natural i;
+    float dx;
+
+    if (!enemigo->inicializado) 
+    {
+        return;
+    }
+
+    if (hay_balas_activas(enemigo->balas))
+    {
+        mover_balas_activas(enemigo, woofson, mapa);
+    }
+    
+    if (enemigo->frames_para_prox_disparo > 0)
+    {
+        enemigo->frames_para_prox_disparo--;
+    }
+
+    if (woofson->danhado)
+    {
+        if (woofson->tiempo_danho <= MAX_TIEMPO_INMUNE)
+        {
+            woofson->tiempo_danho += 1./FPS;
+        }
+
+        else
+        {
+            woofson->danhado = false;
+            woofson->tiempo_danho = 0;
+        }
+    }
+
+    if (puede_disparar_horizontalmente(*enemigo, *woofson, mapa))
+    {
+        for (i=0; i<MAX_BALAS; i++)  // Buscamos una bala disponible en el arreglo de balas del enemigo
+        {
+            if (enemigo->balas[i].velocidad.x == 0 && enemigo->balas[i].velocidad.y == 0)
+            {
+                // Inicializar posición y dirección de la bala
+                enemigo->balas[i].posicion = (Vector) {enemigo->bandera_dibujo == 0 ? enemigo->posicion.x + enemigo->ancho : enemigo->posicion.x, 
+                                                       enemigo->posicion.y + 0.45f * enemigo->alto};
+
+                dx = woofson->posicion.x - enemigo->posicion.x;
+
+                enemigo->balas[i].direccion = (dx >= 0) ? 1 : -1;
+                enemigo->balas[i].velocidad.x = enemigo->balas[i].direccion * VELOCIDAD_BALA;
+                enemigo->balas[i].velocidad.y = 0;
+                enemigo->frames_para_prox_disparo = MAX_FRAMES_ESPERA;                
+                // Sonido u otra animación si lo deseas
+                // reproducir_sonido_disparo();
+                break;
+            }
         }
     }
 }

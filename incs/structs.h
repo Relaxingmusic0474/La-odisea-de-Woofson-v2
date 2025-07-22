@@ -60,7 +60,7 @@ struct bala
 {
     Vector posicion;
     Vector velocidad;
-    Entero dirección;  // 1 si es hacia la derecha y -1 si es hacia la izquierda
+    Entero direccion;  // 1 si es hacia la derecha y -1 si es hacia la izquierda
 };
 
 union formaAtaque
@@ -101,7 +101,8 @@ struct personaje
     Imagen imagen_modo_muerte;
     bool estatico;
     bool inicializado;
-
+    Bala balas[MAX_BALAS];
+    Natural frames_para_prox_disparo;
     // bool hay_obj_izq;
     // bool hay_obj_der;
     // bool hay_obj_sup;

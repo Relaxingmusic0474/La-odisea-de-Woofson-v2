@@ -118,7 +118,26 @@ int main()
                         dibujar_personaje(recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
                         actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
                         detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);
-                        morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto   
+                        morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto
+                        
+                        for (Natural i=0; i<MAX_BALAS; i++)
+                        {
+                            efectuar_disparo_de_enemigo(&recursos.enemigos[i], &recursos.pje_principal, recursos.mapas[nivel_actual-1]);
+                            
+                        }
+
+                        morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);
+
+                    }
+
+                    for (Natural i=0; i<MAX_ENEMIGOS; i++)
+                    {
+                        if (recursos.enemigos[i].inicializado)
+                        {
+                            bool aux = puede_disparar_horizontalmente(recursos.enemigos[i], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
+                            printf("Enemigo nro. %hu (en posicion (%.2f, %.2f)) = %s\n", i+1, recursos.enemigos[i].posicion.x, recursos.enemigos[i].posicion.y, aux!=0 ? "true" : "false");
+
+                        }
                     }
 
                     mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[COMFORTAA_LIGHT_GIGANTE], 

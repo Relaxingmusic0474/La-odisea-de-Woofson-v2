@@ -30,5 +30,6 @@ Procedure morir(Personaje*, Tecla*, Etapa*);
 Procedure aplicar_danho(Personaje*, Natural);
 Procedure aumentar_subvida(Personaje*, Natural);
 Procedure detectar_si_personaje_en_zona_de_rayo(Personaje*, Rayo [MAX_RAYOS]);
+bool puede_disparar_horizontalmente(Personaje, Personaje, Mapa);
 
 #endif  // CHARACTERS_H
