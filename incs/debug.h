@@ -9,5 +9,6 @@ Procedure mostrar_bloque_actual_personaje(Personaje, Mapa);
 Procedure caida_libre_activada(Personaje);
 Procedure debug_rayo_personaje(Rayo*, Personaje*);
 Procedure imprimir_datos_rayos(Rayo [MAX_RAYOS], Natural);
+Procedure imprimir_posicion_balas(Bala [MAX_BALAS]);
 
 #endif  // DEBUG_H

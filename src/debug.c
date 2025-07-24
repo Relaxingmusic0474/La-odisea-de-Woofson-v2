@@ -75,3 +75,15 @@ Procedure imprimir_datos_rayos(Rayo rayos[MAX_RAYOS], Natural cantidad)
         printf("Destino: (%.1f, %.1f)\n", rayos[i].objetivo.x, rayos[i].objetivo.y);
     }
 }
+
+Procedure imprimir_posicion_balas(Bala balas[MAX_BALAS])
+{
+    Natural i;
+
+    for (i=0; i<MAX_BALAS; i++)
+    {
+        printf("Bala %hu en posición (%.2f, %.2f)\n", i+1, balas[i].posicion.x, balas[i].posicion.y);
+    }
+
+    printf("\n");
+}

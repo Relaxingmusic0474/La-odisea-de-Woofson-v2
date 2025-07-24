@@ -29,7 +29,12 @@ Procedure patalear(Personaje*, int);
 Procedure morir(Personaje*, Tecla*, Etapa*);
 Procedure aplicar_danho(Personaje*, Natural);
 Procedure aumentar_subvida(Personaje*, Natural);
+Procedure actualizar_estado_danho(Personaje*);
 Procedure detectar_si_personaje_en_zona_de_rayo(Personaje*, Rayo [MAX_RAYOS]);
 bool puede_disparar_horizontalmente(Personaje, Personaje, Mapa);
+bool hay_balas_activas(Bala [MAX_BALAS]);
+Procedure mover_balas_activas(Personaje*, Personaje*, Mapa);
+bool puede_disparar_horizontalmente(Personaje, Personaje, Mapa);
+Procedure efectuar_disparo_de_enemigo(Personaje*, Personaje*, Mapa);
 
 #endif  // CHARACTERS_H

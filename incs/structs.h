@@ -61,6 +61,7 @@ struct bala
     Vector posicion;
     Vector velocidad;
     Entero direccion;  // 1 si es hacia la derecha y -1 si es hacia la izquierda
+    bool activa;
 };
 
 union formaAtaque

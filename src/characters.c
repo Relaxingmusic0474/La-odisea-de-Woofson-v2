@@ -63,6 +63,8 @@ TipoPersonaje tipo_personaje(TipoFrame tipo)
  */
 Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen* frames[TIPOS_PERSONAJES], Vector posicion_deseada, bool estatico)
 {
+    Natural i;
+
     if ((personaje->tipo == WOOFSON || personaje->tipo == DRAGON || personaje->tipo == MONSTRUO) && estatico == true)
     {
         return;  // No tiene sentido que se cargue el personaje principal y que no se pueda mover.  Así mismo, los dragones (ya que volarán) y el monstruo (que será duro).
@@ -125,6 +127,11 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             personaje->velocidad.x = VELOCIDAD_MONSTRUO;
             personaje->velocidad.y = 0;  // Inicialmente no está en salto
             break;
+    }
+
+    for (i=0; i<MAX_BALAS; i++)
+    {
+        personaje->balas[i] = (Bala) {0};
     }
 
     personaje->inicializado = true;
@@ -597,6 +604,7 @@ Procedure aplicar_danho(Personaje* personaje, Natural cantidad_danho)
     }
 }
 
+
 Procedure aumentar_subvida(Personaje* personaje, Natural cantidad_aumento)
 {
     if (cantidad_aumento >= 100 - personaje->subvida_actual)
@@ -610,28 +618,31 @@ Procedure aumentar_subvida(Personaje* personaje, Natural cantidad_aumento)
     }
 }
 
-Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[MAX_RAYOS])
+
+Procedure actualizar_estado_danho(Personaje* personaje)
 {
-    Natural i;
-
-    if (personaje->muerto)
+    if (personaje->danhado) 
     {
-        return;
-    }
-
-    if (personaje->danhado)  // Si el personaje ya habia sido dañado, solo se aumenta el tiempo que dura el daño (parpadeo)
-    {
-        if (personaje->tiempo_danho <= MAX_TIEMPO_INMUNE)
+        if (personaje->tiempo_danho <= MAX_TIEMPO_INMUNE) 
         {
-            personaje->tiempo_danho += 1./FPS;
-        }
-
-        else
+            personaje->tiempo_danho += 1.0 / FPS;
+        } 
+        
+        else 
         {
             personaje->danhado = false;
             personaje->tiempo_danho = 0;
         }
+    }
+}
 
+
+Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[MAX_RAYOS])
+{
+    Natural i;
+
+    if (personaje->muerto || personaje->danhado)   // Si el personaje ya está muerto o dañado no se hace nada
+    {
         return;
     }
 
@@ -687,7 +698,7 @@ bool hay_balas_activas(Bala balas[MAX_BALAS])
 
     for (i=0; i<MAX_BALAS; i++)
     {
-        if (balas[i].direccion != 0)
+        if (balas[i].activa)
         {
             return true;
         }
@@ -703,7 +714,7 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
 
     for (i=0; i<MAX_BALAS; i++)
     {
-        if (atacante->balas[i].direccion != 0)
+        if (atacante->balas[i].activa)//atacante->balas[i].direccion != 0)
         {
             atacante->balas[i].posicion.x += atacante->balas[i].velocidad.x;
 
@@ -711,6 +722,7 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
             {
                 atacante->balas[i].direccion = 0;  // Se desactiva la bala
                 atacante->balas[i].velocidad = VECTOR_NULO;  // Se deja de mover
+                atacante->balas[i].activa = false;
                 continue;
             }
 
@@ -724,11 +736,13 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
                 {
                     atacante->balas[i].direccion = 0;
                     atacante->balas[i].velocidad = VECTOR_NULO;
+                    atacante->balas[i].posicion = VECTOR_NULO;
 
                     victima->danhado = true;
                     victima->tiempo_danho = 0;
 
                     aplicar_danho(victima, DANHO_BALA);
+                    atacante->balas[i].activa = false;
 
                     continue;
                 }
@@ -746,8 +760,8 @@ bool puede_disparar_horizontalmente(Personaje enemigo, Personaje woofson, Mapa m
     Natural col_enemigo, col_woofson, col_min, col_max;
     bool alineados_en_y;
     bool mirando_a_woofson;
-    Natural frames_disparo[] = {0, 1, 2, 3, 7, 8, 9};
-    Natural nro_frames_disparo = sizeof(frames_disparo) / sizeof(frames_disparo[0]);
+    //Natural frames_disparo[] = {0, 1, 2, 3, 7, 8, 9};
+    //Natural nro_frames_disparo = sizeof(frames_disparo) / sizeof(frames_disparo[0]);
 
     if (enemigo.frames_para_prox_disparo > 0)
     {
@@ -804,8 +818,13 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
 {
     Natural i;
     float dx;
+    
+    if (enemigo->frames_para_prox_disparo > 0)
+    {
+        enemigo->frames_para_prox_disparo--;
+    }
 
-    if (!enemigo->inicializado) 
+    if (!enemigo->inicializado)
     {
         return;
     }
@@ -815,31 +834,14 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
         mover_balas_activas(enemigo, woofson, mapa);
     }
     
-    if (enemigo->frames_para_prox_disparo > 0)
-    {
-        enemigo->frames_para_prox_disparo--;
-    }
-
-    if (woofson->danhado)
-    {
-        if (woofson->tiempo_danho <= MAX_TIEMPO_INMUNE)
-        {
-            woofson->tiempo_danho += 1./FPS;
-        }
-
-        else
-        {
-            woofson->danhado = false;
-            woofson->tiempo_danho = 0;
-        }
-    }
-
     if (puede_disparar_horizontalmente(*enemigo, *woofson, mapa))
     {
         for (i=0; i<MAX_BALAS; i++)  // Buscamos una bala disponible en el arreglo de balas del enemigo
         {
-            if (enemigo->balas[i].velocidad.x == 0 && enemigo->balas[i].velocidad.y == 0)
+            if (!enemigo->balas[i].activa)//enemigo->balas[i].velocidad.x == 0 && enemigo->balas[i].velocidad.y == 0)
             {
+                enemigo->balas[i].activa = true;
+
                 // Inicializar posición y dirección de la bala
                 enemigo->balas[i].posicion = (Vector) {enemigo->bandera_dibujo == 0 ? enemigo->posicion.x + enemigo->ancho : enemigo->posicion.x, 
                                                        enemigo->posicion.y + 0.45f * enemigo->alto};
@@ -850,8 +852,7 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
                 enemigo->balas[i].velocidad.x = enemigo->balas[i].direccion * VELOCIDAD_BALA;
                 enemigo->balas[i].velocidad.y = 0;
                 enemigo->frames_para_prox_disparo = MAX_FRAMES_ESPERA;                
-                // Sonido u otra animación si lo deseas
-                // reproducir_sonido_disparo();
+                // AQUI LUEGO PODRIA IR EFECTO DE SONIDO
                 break;
             }
         }
