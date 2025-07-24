@@ -3,6 +3,9 @@
 
 #include "allegro5/allegro_color.h"  // Para las macros de los colores (lineas 49 a 57)
 
+// Macros de funciones básicas útiles
+#define X_ENTRE_A_Y_B(x, A, B) (x >= A && x < B)
+
 // Macros generales
 #define NOMBRE_JUEGO "La odisea de Woofson"
 #define FPS 60  // Frecuencia de actualización de la pantalla 

@@ -711,6 +711,7 @@ bool hay_balas_activas(Bala balas[MAX_BALAS])
 Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa)
 {
     Natural i;
+    int fil, col;
 
     for (i=0; i<MAX_BALAS; i++)
     {
@@ -746,6 +747,17 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
 
                     continue;
                 }
+            }
+
+            fil = atacante->balas[i].posicion.y / mapa.alto_bloque;
+            col = atacante->balas[i].posicion.x / mapa.ancho_bloque;
+
+            if (X_ENTRE_A_Y_B(fil, 0, mapa.nro_filas) && X_ENTRE_A_Y_B(col, 0, mapa.nro_columnas) && (mapa.mapa[fil][col] == BLOQUE || mapa.mapa[fil][col] == BLOQUE_RAYO))
+            {
+                atacante->balas[i].direccion = 0;
+                atacante->balas[i].velocidad = VECTOR_NULO;
+                atacante->balas[i].posicion = VECTOR_NULO;
+                atacante->balas[i].activa = false;
             }
 
             al_draw_filled_ellipse(atacante->balas[i].posicion.x, atacante->balas[i].posicion.y, RADIO_AXIAL_X_BALA, RADIO_AXIAL_Y_BALA, VERDE);
