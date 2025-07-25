@@ -33,11 +33,12 @@
 #define MAX_ENEMIGOS (MAX_DRAGONES + MAX_EXTRATERRESTRES + MAX_MONSTRUOS)
 
 #define MAX_BALAS 5
-#define MAX_FRAMES_ESPERA 80
+#define MAX_FRAMES_ESPERA_ENEMIGO 80
+#define MAX_FRAMES_ESPERA_WOOFSON 24
 #define VELOCIDAD_BALA 9
 #define RADIO_AXIAL_X_BALA 6
 #define RADIO_AXIAL_Y_BALA 4
-#define DANHO_BALA 1
+#define DANHO_BALA 15
 
 #define NRO_FRAMES_WOOFSON (NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA + NRO_FRAMES_DISPARO)
 #define NRO_FRAMES_DRAGON 10
@@ -108,6 +109,7 @@
 #define AMARILLO al_map_rgb(255, 255, 0)
 #define ROSADO al_map_rgb(216, 84, 180)
 #define MORADO al_map_rgb(128, 0, 128)
+#define NARANJO al_map_rgb(255, 165, 0)
 
 // Macros de estilo personal de programacion (para hacerlo mas legible para mi)
 #define LOOP while (1)

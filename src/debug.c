@@ -34,6 +34,7 @@ Procedure mostrar_datos_personaje(Personaje personaje)
     printf("Tiempo en salto: %.2f\n", personaje.salto.tiempo_en_salto);
     printf("Impulso del salto: %.2f\n", personaje.salto.impulso);
     printf("Vidas: %hu\n", personaje.nro_vidas);
+    printf("Frames para el proximo disparo: %hu\n", personaje.frames_para_prox_disparo);
     caida_libre_activada(personaje);
 }
 

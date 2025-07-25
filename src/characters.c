@@ -720,7 +720,7 @@ bool hay_balas_activas(Bala balas[MAX_BALAS])
 }
 
 
-Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa)
+Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa, ALLEGRO_COLOR color)
 {
     Natural i;
     int fil, col;
@@ -772,7 +772,7 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
                 atacante->balas[i].activa = false;
             }
 
-            al_draw_filled_ellipse(atacante->balas[i].posicion.x, atacante->balas[i].posicion.y, RADIO_AXIAL_X_BALA, RADIO_AXIAL_Y_BALA, VERDE);
+            al_draw_filled_ellipse(atacante->balas[i].posicion.x, atacante->balas[i].posicion.y, RADIO_AXIAL_X_BALA, RADIO_AXIAL_Y_BALA, color);
         }
     }
 }
@@ -847,15 +847,15 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
     {
         return;
     }
-
+    
     if (enemigo->frames_para_prox_disparo > 0)
     {
         enemigo->frames_para_prox_disparo--;
     }
-
+    
     if (hay_balas_activas(enemigo->balas))
     {
-        mover_balas_activas(enemigo, woofson, mapa);
+        mover_balas_activas(enemigo, woofson, mapa, VERDE);
     }
     
     if (puede_disparar_horizontalmente(*enemigo, *woofson, mapa))
@@ -875,7 +875,7 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
                 enemigo->balas[i].direccion = (dx >= 0) ? 1 : -1;
                 enemigo->balas[i].velocidad.x = enemigo->balas[i].direccion * VELOCIDAD_BALA;
                 enemigo->balas[i].velocidad.y = 0;
-                enemigo->frames_para_prox_disparo = MAX_FRAMES_ESPERA;                
+                enemigo->frames_para_prox_disparo = MAX_FRAMES_ESPERA_ENEMIGO;                
                 // AQUI LUEGO PODRIA IR EFECTO DE SONIDO
                 break;
             }
@@ -900,16 +900,37 @@ Natural nro_enemigos_activos(Personaje enemigos[MAX_ENEMIGOS])
 }
 
 
+bool woofson_puede_disparar(Personaje* woofson)
+{
+    Natural i;
+    Natural id_frames_disparo[] = {23, 24, 25, 26, 27, 28, 29};
+    Natural nro_frames_disparo;
+    extern bool teclas[ALLEGRO_KEY_MAX];
+
+    if (!woofson->inicializado || woofson->frames_para_prox_disparo != 0 || !teclas[ALLEGRO_KEY_SPACE])
+    {
+        return false;
+    }
+
+    nro_frames_disparo = sizeof(id_frames_disparo) / sizeof(id_frames_disparo[0]);
+
+    for (i=0; i<nro_frames_disparo; i++)
+    {
+        if (woofson->id_nro_frame == id_frames_disparo[i])
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
 Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX_ENEMIGOS], Mapa mapa)
 {
     Natural i, nro_enemigos;
-    extern bool teclas[ALLEGRO_KEY_MAX];
 
-    nro_enemigos = nro_enemigos_activos(enemigos);
-
-    printf("Holi\n");
-
-    if (!woofson->inicializado || !teclas[ALLEGRO_KEY_SPACE])
+    if (!woofson->inicializado)
     {
         return;
     }
@@ -919,49 +940,53 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
         woofson->frames_para_prox_disparo--;
     }
     
-    for (i=0; i<MAX_BALAS; i++)  // Buscamos una bala disponible en el arreglo de balas del enemigo
-    {
-        if (!woofson->balas[i].activa) //enemigo->balas[i].velocidad.x == 0 && enemigo->balas[i].velocidad.y == 0)
-        {
-            woofson->balas[i].activa = true;
-
-            // Inicializar posición y dirección de la bala
-            woofson->balas[i].posicion = (Vector) {woofson->bandera_dibujo == 0 ? woofson->posicion.x + woofson->ancho : woofson->posicion.x, 
-                                                       woofson->posicion.y + 0.45f * woofson->alto};
-
-            woofson->balas[i].direccion = woofson->direccion;
-
-            if (nro_enemigos == 0)
-            {
-                woofson->balas[i].velocidad.x = woofson->balas[i].direccion * VELOCIDAD_BALA;
-            }
-
-            else
-            {
-                woofson->balas[i].velocidad.x = woofson->balas[i].direccion * (float) VELOCIDAD_BALA / nro_enemigos;  // En Woofson se va a llamar la funcion hay_balas_activas tantas veces como nro de enemigos haya
-            }
-
-            woofson->balas[i].velocidad.y = 0;
-            woofson->frames_para_prox_disparo = MAX_FRAMES_ESPERA;                
-            // AQUI LUEGO PODRIA IR EFECTO DE SONIDO
-            break;
-        }
-    }
+    nro_enemigos = nro_enemigos_activos(enemigos);
     
     if (hay_balas_activas(woofson->balas))
-    {
+    {       
         if (nro_enemigos == 0)
         {   
-            mover_balas_activas(woofson, (Personaje*) {0}, mapa);
+            mover_balas_activas(woofson, &enemigos[0], mapa, NARANJO);
         }
 
         else
         {        
             for (i=0; i<nro_enemigos; i++)
-            {
-                
-                mover_balas_activas(woofson, &enemigos[i], mapa);
+            {    
+                mover_balas_activas(woofson, &enemigos[i], mapa, NARANJO);
             }
         }
     }
+    
+    if (woofson_puede_disparar(woofson))
+    {
+        for (i=0; i<MAX_BALAS; i++)  // Buscamos una bala disponible en el arreglo de balas del enemigo
+        {
+            if (!woofson->balas[i].activa) //enemigo->balas[i].velocidad.x == 0 && enemigo->balas[i].velocidad.y == 0)
+            {
+                woofson->balas[i].activa = true;
+
+                // Inicializar posición y dirección de la bala
+                woofson->balas[i].posicion = (Vector) {woofson->bandera_dibujo == 0 ? woofson->posicion.x + woofson->ancho : woofson->posicion.x, 
+                                                       woofson->posicion.y + 0.45f * woofson->alto};
+
+                woofson->balas[i].direccion = woofson->direccion;
+
+                if (nro_enemigos == 0)
+                {
+                    woofson->balas[i].velocidad.x = woofson->balas[i].direccion * VELOCIDAD_BALA;
+                }
+
+                else
+                {
+                    woofson->balas[i].velocidad.x = woofson->balas[i].direccion * (float) VELOCIDAD_BALA / nro_enemigos;  // En Woofson se va a llamar la funcion hay_balas_activas tantas veces como nro de enemigos haya
+                }
+
+                woofson->balas[i].velocidad.y = 0;
+                woofson->frames_para_prox_disparo = MAX_FRAMES_ESPERA_WOOFSON;                
+                // AQUI LUEGO PODRIA IR EFECTO DE SONIDO
+                break;
+            }
+        }
+    }    
 }
