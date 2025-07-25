@@ -179,11 +179,14 @@ struct palanca
 {
     Vector posicion;
     Imagen imagen;
+    Estado estado;
 };
 
 struct puerta
 {
-    
+    Vector posicion;
+    Imagen imagen;
+    Estado estado;
 };
 
 struct eventos

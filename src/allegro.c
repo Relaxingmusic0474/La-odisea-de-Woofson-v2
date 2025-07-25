@@ -234,6 +234,32 @@ bool crear_recursos(Recursos* R)
         memset(ruta, '\0', sizeof(ruta));
     }
 
+    // Se cargan las imagenes de las palancas y las puertas
+    for (i=0; i<NRO_ESTADOS; i++)
+    {
+        sprintf(ruta, "assets/images/palanca-%hu.png", i+1);
+        R->palancas[i] = al_load_bitmap(ruta);
+
+        if (!R->palancas[i])
+        {
+            printf("Error al cargar la imagen de la palanca %s del juego.\n", i==0 ? "desactivada" : "activada");
+            return false;
+        }
+
+        memset(ruta, '\0', sizeof(ruta));
+
+        sprintf(ruta, "assets/images/puerta-%hu.png", i+1);
+        R->puertas[i] = al_load_bitmap(ruta);
+
+        if (!R->puertas[i])
+        {
+            printf("Error al cargar la imagen de la puerta %s del juego.\n", i==0 ? "cerrada" : "abierta");
+            return false;
+        }
+
+        memset(ruta, '\0', sizeof(ruta));
+    }
+
     /* Se cargan las fuentes */
     for (i=0; i<3; i++)
     {
@@ -452,6 +478,22 @@ Procedure finalizar_allegro(Recursos* R)
         {
             al_destroy_font(R->fuentes[i]);
             R->fuentes[i] = NULL;
+        }
+    }
+
+    // Se destruyen las palancas y las puertas
+    for (i=0; i<NRO_ESTADOS; i++)
+    {
+        if (R->palancas[i] != NULL)
+        {
+            al_destroy_bitmap(R->palancas[i]);
+            R->palancas[i] = NULL;
+        }
+
+        if (R->puertas[i] != NULL)
+        {
+            al_destroy_bitmap(R->puertas[i]);
+            R->puertas[i] = NULL;
         }
     }
 
