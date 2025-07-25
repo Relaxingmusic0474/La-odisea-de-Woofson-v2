@@ -9,6 +9,7 @@
 #include "enums.h"
 #include "structs.h"
 #include "types.h"
+#include "ranking.h"
 #include "collisions.h"
 
 TipoFrame tipo_frame(TipoPersonaje);

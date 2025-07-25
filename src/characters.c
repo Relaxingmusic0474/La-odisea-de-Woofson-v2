@@ -742,6 +742,7 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
 {
     Natural i;
     int fil, col;
+    extern Natural puntuacion;
 
     for (i=0; i<MAX_BALAS; i++)
     {
@@ -773,6 +774,16 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
                     victima->tiempo_danho = 0;
 
                     aplicar_danho(victima, DANHO_BALA);
+
+                    if (atacante->tipo == WOOFSON)
+                    {
+                        if (victima->subvida_actual == 0)
+                        {
+                            *victima = (Personaje) {0};  // Se simula la muerte del enemigo
+                            puntuacion += 10;
+                        }
+                    }
+
                     atacante->balas[i].activa = false;
 
                     continue;
