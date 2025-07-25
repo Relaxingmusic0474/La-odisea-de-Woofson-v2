@@ -383,7 +383,7 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
  * Función que dibuja el mapa en la ventana.
  * @param mapa Es el mapa que se desea dibujar.
  */
-Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina, Imagen* frames[TIPOS_PERSONAJES], Personaje woofson, Personaje enemigos[MAX_ENEMIGOS])
+Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina, Imagen* frames[TIPOS_PERSONAJES], Personaje woofson, Personaje enemigos[MAX_ENEMIGOS], Natural iteracion)
 {
     Natural i=0, j=0;
     Natural id_enemigo = 0;
@@ -507,7 +507,7 @@ Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina, Im
                                 mover_enemigo_dinamico(&enemigos[id_enemigo], mapa);
                             }
 
-                            dibujar_personaje(&enemigos[id_enemigo], 0, 0);
+                            dibujar_personaje(&enemigos[id_enemigo], 0, iteracion);
                         }
 
                     }

@@ -187,6 +187,11 @@ Procedure dibujar_personaje(Personaje* personaje, Natural ultima_tecla_lateral, 
 {
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
     Natural var;
+
+    if (!personaje->inicializado)
+    {
+        return;
+    }
     
     if (personaje->tipo == WOOFSON)
     {
@@ -649,6 +654,19 @@ Procedure actualizar_estado_danho(Personaje* personaje)
 }
 
 
+Procedure actualizar_estado_danho_enemigos(Personaje enemigos[MAX_ENEMIGOS])
+{
+    Natural i, cantidad_enemigos;
+
+    cantidad_enemigos = nro_enemigos_activos(enemigos);
+
+    for (i=0; i<cantidad_enemigos; i++)
+    {
+        actualizar_estado_danho(&enemigos[i]);
+    }
+}
+
+
 Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[MAX_RAYOS])
 {
     Natural i;
@@ -880,6 +898,19 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
                 break;
             }
         }
+    }
+}
+
+
+Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Personaje* woofson, Mapa mapa)
+{
+    Natural i, cantidad_enemigos;
+
+    cantidad_enemigos = nro_enemigos_activos(enemigos);
+
+    for (i=0; i<cantidad_enemigos; i++)
+    {
+        efectuar_disparo_de_enemigo(&enemigos[i], woofson, mapa);
     }
 }
 
