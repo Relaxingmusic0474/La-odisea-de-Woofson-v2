@@ -22,6 +22,8 @@ typedef struct efectoSonido EfectoSonido;
 typedef struct rayo Rayo;
 typedef struct regresionLineal RegresionLineal;
 typedef struct espina Espina;
+typedef struct palanca Palanca;
+typedef struct puerta Puerta;
 typedef struct eventos Eventos;
 typedef struct recursos Recursos;
 
@@ -173,6 +175,17 @@ struct espina
     char direccion_espina;  // Si la espina es 'I' (inferior: está abajo y hay que saltarla), 'S' (superior), 'L' (izquierda: left) o 'R' (derecha: right)
 };
 
+struct palanca
+{
+    Vector posicion;
+    Imagen imagen;
+};
+
+struct puerta
+{
+    
+};
+
 struct eventos
 {
     ALLEGRO_EVENT_SOURCE* ventana;
@@ -206,10 +219,8 @@ struct recursos
     Imagen fondos[NRO_NIVELES];
     Imagen* frames[TIPOS_PERSONAJES];
     Personaje enemigos[MAX_ENEMIGOS];
-    
-
-
-
+    Imagen puertas[NRO_ESTADOS];
+    Imagen palancas[NRO_ESTADOS];
     //Imagen imagen_extraterrestre;
     //Personaje extraterrestres[MAX_EXTRATERRESTRES];
     // Personaje* enemigos[NRO_NIVELES];

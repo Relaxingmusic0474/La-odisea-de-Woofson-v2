@@ -97,4 +97,12 @@ enum modoWoofson
 
 typedef enum modoWoofson ModoWoofson;
 
+enum estado
+{
+    CERRADO,
+    ABIERTO,
+};
+
+typedef enum estado Estado;
+
 #endif  // ENUMS_H

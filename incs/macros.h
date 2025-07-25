@@ -21,6 +21,7 @@
 #define NRO_COLORES 5
 #define NRO_BLOQUES 2 // Tipos distintos de bloques que se cargarán
 #define NRO_MENUS 2
+#define NRO_ESTADOS 2
 #define NRO_MUSICAS 3
 #define NRO_INSTANCIAS 8
 #define NRO_FUENTES 6
@@ -54,6 +55,8 @@
 #define EXTRATERRESTRE_DINAMICO 5  // Un extraterrestre que sí se moverá
 #define _DRAGON 6  // _DRAGON en vez de DRAGON para que no se confunda con el enum
 #define _MONSTRUO 7  // Caso similar
+#define PUERTA 8  // Puerta para pasar de nivel
+#define PALANCA 9  // Palanca para abrir o cerrar la puerta
 
 // Macros para las caracteristicas del personaje
 #define POSICION_INICIAL_WOOFSON (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-personaje.alto}
