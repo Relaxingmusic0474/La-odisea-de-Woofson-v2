@@ -81,6 +81,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
 
     personaje->caminata = tipo!=WOOFSON && !personaje->estatico;  // Si el tipo de personaje es Woofson y/o el personaje es estático entonces parte quieto (sin caminar)
     personaje->fps_en_caminata = 0;
+    personaje->fps_en_ataque = 0;
     personaje->frames = frames[tipo_frame(tipo)];
     personaje->imagen = personaje->frames[0];
     personaje->id_nro_frame = 0;
@@ -165,12 +166,13 @@ Procedure determinar_como_dibujar_personaje(Personaje* personaje, Natural ultima
     if (teclas[ALLEGRO_KEY_LEFT] || (!teclas[ALLEGRO_KEY_RIGHT] && ultima_tecla_lateral == ALLEGRO_KEY_LEFT))
     {
         personaje->bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;  // Dibuja el personaje mirando a la izquierda
-        personaje->direccion = -1;  // Significa que su dirección de movimiento es hacia la izquierda
+        personaje->direccion = -1;
     }
 
     else
     {
         personaje->bandera_dibujo = 0;  // Dibuja el personaje mirando a la derecha
+        personaje->direccion = 1;
     }
 }
 
@@ -181,29 +183,29 @@ Procedure determinar_como_dibujar_personaje(Personaje* personaje, Natural ultima
  * @param ultima_tecla_lateral La última tecla lateral presionada (para determinar la dirección de dibujo).
  * @param iteracion La iteración actual del loop general del juego.
  */
-Procedure dibujar_personaje(Personaje personaje, Natural ultima_tecla_lateral, Natural iteracion)
+Procedure dibujar_personaje(Personaje* personaje, Natural ultima_tecla_lateral, Natural iteracion)
 {
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
     Natural var;
     
-    if (personaje.tipo == WOOFSON)
+    if (personaje->tipo == WOOFSON)
     {
-        determinar_como_dibujar_personaje(&personaje, ultima_tecla_lateral);
+        determinar_como_dibujar_personaje(personaje, ultima_tecla_lateral);
     }
 
-    if (personaje.danhado && personaje.tiempo_danho > 0)
+    if (personaje->danhado && personaje->tiempo_danho > 0)
     {
         var = iteracion / (FPS/6);
 
         if (var & 1)
         {
-            al_draw_bitmap(personaje.imagen, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);
+            al_draw_bitmap(personaje->imagen, personaje->posicion.x, personaje->posicion.y, personaje->bandera_dibujo);
         }
     }
 
     else
     {
-        al_draw_bitmap(personaje.imagen, personaje.posicion.x, personaje.posicion.y, personaje.bandera_dibujo);   
+        al_draw_bitmap(personaje->imagen, personaje->posicion.x, personaje->posicion.y, personaje->bandera_dibujo);   
     }
 }
 
@@ -211,9 +213,9 @@ Procedure dibujar_personaje(Personaje personaje, Natural ultima_tecla_lateral, N
 /**
  * Función que actualiza el frame del personaje según su velocidad y estado de caminata.
  * @param personaje Puntero al personaje cuyo frame se va a actualizar.
- * @param modo Modo de actualización del frame ('M' para movimiento, 'P' para pelea).
+ * @param modo Modo de actualización del frame (este parámetro tiene importancia solo si los frames que se actualizan son de Woofson)
  */
-Procedure actualizar_frame(Personaje* personaje, char modo)
+Procedure actualizar_frame(Personaje* personaje, ModoWoofson modo)
 {
     if (personaje->estatico)
     {
@@ -222,9 +224,14 @@ Procedure actualizar_frame(Personaje* personaje, char modo)
 
     if (personaje->tipo == WOOFSON)
     {
-        if (modo == 'P')  // Si está en modo pelea, se actualiza el frame de pelea
+        if (modo == PELEA)  // Si está en modo pelea, se actualiza el frame de pelea
         {
             personaje->id_nro_frame = NRO_FRAMES_MOVIMIENTO + (personaje->id_nro_frame + 1) % NRO_FRAMES_PELEA ;  // Evita que el frame se salga del rango
+        }
+
+        else if (modo == DISPARO)
+        {
+            personaje->id_nro_frame = NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA + (personaje->id_nro_frame + 1) % NRO_FRAMES_DISPARO;
         }
 
         else  // Si está en modo movimiento, se actualiza el frame de movimiento siempre que esté en movimiento o en pataleo
@@ -282,9 +289,10 @@ bool es_posible_mover_personaje_lateralmente(Personaje *personaje, Mapa mapa)
  * @param teclas Un arreglo de booleanos que indica qué teclas están presionadas.
  * @param mapa El mapa del juego, que contiene los bloques y obstáculos.
  */
-Procedure mover_personaje(Personaje* personaje, Mapa mapa)
+Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 {
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
+    ModoWoofson modo_ataque;
 
     if (personaje->muerto)  // En caso de que el personaje esté muerto, no se podrá mover
     {
@@ -297,12 +305,14 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa)
     
         if (teclas[ALLEGRO_KEY_SPACE])
         {
-            personaje->fps_en_pelea++;
+            personaje->fps_en_ataque++;
 
-            if (personaje->fps_en_pelea % 8 == 0)  // Actualiza el frame de pelea cada 8 frames
+            if (personaje->fps_en_ataque % 8 == 0)  // Actualiza el frame de pelea cada 8 frames
             {
-                actualizar_frame(personaje, 'P');  // Actualiza el frame del personaje si está en pelea
+                modo_ataque = nivel <= NIVEL3 ? PELEA : DISPARO;
+                actualizar_frame(personaje, modo_ataque);  // Actualiza el frame del personaje si está en pelea
             }
+        
         }
     
         if (personaje->caminata)
@@ -313,7 +323,7 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa)
             {
                 if (personaje->velocidad.x != 0 && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)  // Actualiza el frame cada cierto numero de iteraciones que depende de la velocidad
                 {
-                    actualizar_frame(personaje, 'M');  // Actualiza el frame del personaje si está caminando
+                    actualizar_frame(personaje, CAMINATA);  // Actualiza el frame del personaje si está caminando
                 }
             }
 
@@ -322,7 +332,9 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa)
                 if (fabs(personaje->velocidad.x) < VELOCIDAD_MAXIMA_PERSONAJE)
                 {
                     personaje->velocidad.x = teclas[ALLEGRO_KEY_LEFT] ? personaje->velocidad.x - ACELERACION_PERSONAJE 
-                                                                  : personaje->velocidad.x + ACELERACION_PERSONAJE;   // Acelera el personaje al caminar dependiendo del sentido
+                                                                      : personaje->velocidad.x + ACELERACION_PERSONAJE;   // Acelera el personaje al caminar dependiendo del sentido
+                
+                    //personaje->direccion = personaje->bandera_dibujo == 0 ? 1 : -1;
                 }
 
                 else
@@ -353,7 +365,7 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa)
             
                 if (!teclas[ALLEGRO_KEY_SPACE] && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)
                 {
-                    actualizar_frame(personaje, 'M');  // Actualiza el frame del personaje si está caminando
+                    actualizar_frame(personaje, CAMINATA);  // Actualiza el frame del personaje si está caminando
                 }
             
                 personaje->velocidad.x = personaje->velocidad.x < 0 ? personaje->velocidad.x + ACELERACION_PERSONAJE 
@@ -715,7 +727,7 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
 
     for (i=0; i<MAX_BALAS; i++)
     {
-        if (atacante->balas[i].activa)//atacante->balas[i].direccion != 0)
+        if (atacante->balas[i].activa)
         {
             atacante->balas[i].posicion.x += atacante->balas[i].velocidad.x;
 
@@ -831,14 +843,14 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
     Natural i;
     float dx;
     
-    if (enemigo->frames_para_prox_disparo > 0)
-    {
-        enemigo->frames_para_prox_disparo--;
-    }
-
     if (!enemigo->inicializado)
     {
         return;
+    }
+
+    if (enemigo->frames_para_prox_disparo > 0)
+    {
+        enemigo->frames_para_prox_disparo--;
     }
 
     if (hay_balas_activas(enemigo->balas))
@@ -866,6 +878,89 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
                 enemigo->frames_para_prox_disparo = MAX_FRAMES_ESPERA;                
                 // AQUI LUEGO PODRIA IR EFECTO DE SONIDO
                 break;
+            }
+        }
+    }
+}
+
+
+Natural nro_enemigos_activos(Personaje enemigos[MAX_ENEMIGOS])
+{
+    Natural i, cantidad = 0;
+
+    for (i=0; i<MAX_ENEMIGOS; i++)
+    {
+        if (enemigos[i].inicializado)
+        {
+            cantidad++;
+        }
+    }
+
+    return cantidad;
+}
+
+
+Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX_ENEMIGOS], Mapa mapa)
+{
+    Natural i, nro_enemigos;
+    extern bool teclas[ALLEGRO_KEY_MAX];
+
+    nro_enemigos = nro_enemigos_activos(enemigos);
+
+    printf("Holi\n");
+
+    if (!woofson->inicializado || !teclas[ALLEGRO_KEY_SPACE])
+    {
+        return;
+    }
+
+    if (woofson->frames_para_prox_disparo > 0)
+    {
+        woofson->frames_para_prox_disparo--;
+    }
+    
+    for (i=0; i<MAX_BALAS; i++)  // Buscamos una bala disponible en el arreglo de balas del enemigo
+    {
+        if (!woofson->balas[i].activa) //enemigo->balas[i].velocidad.x == 0 && enemigo->balas[i].velocidad.y == 0)
+        {
+            woofson->balas[i].activa = true;
+
+            // Inicializar posición y dirección de la bala
+            woofson->balas[i].posicion = (Vector) {woofson->bandera_dibujo == 0 ? woofson->posicion.x + woofson->ancho : woofson->posicion.x, 
+                                                       woofson->posicion.y + 0.45f * woofson->alto};
+
+            woofson->balas[i].direccion = woofson->direccion;
+
+            if (nro_enemigos == 0)
+            {
+                woofson->balas[i].velocidad.x = woofson->balas[i].direccion * VELOCIDAD_BALA;
+            }
+
+            else
+            {
+                woofson->balas[i].velocidad.x = woofson->balas[i].direccion * (float) VELOCIDAD_BALA / nro_enemigos;  // En Woofson se va a llamar la funcion hay_balas_activas tantas veces como nro de enemigos haya
+            }
+
+            woofson->balas[i].velocidad.y = 0;
+            woofson->frames_para_prox_disparo = MAX_FRAMES_ESPERA;                
+            // AQUI LUEGO PODRIA IR EFECTO DE SONIDO
+            break;
+        }
+    }
+    
+    if (hay_balas_activas(woofson->balas))
+    {
+        if (nro_enemigos == 0)
+        {   
+            mover_balas_activas(woofson, (Personaje*) {0}, mapa);
+        }
+
+        else
+        {        
+            for (i=0; i<nro_enemigos; i++)
+            {
+                
+                mover_balas_activas(woofson, &enemigos[i], mapa);
             }
         }
     }

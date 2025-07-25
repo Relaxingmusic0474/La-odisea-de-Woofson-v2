@@ -26,6 +26,8 @@ Procedure mostrar_datos_personaje(Personaje personaje)
 {
     printf("Posición: (%.2f, %.2f)\n", personaje.posicion.x, personaje.posicion.y);
     printf("Velocidad: (%.2f, %.2f)\n", personaje.velocidad.x, personaje.velocidad.y);
+    printf("Direccion: %s\n", personaje.direccion == 1 ? "DERECHA" : (personaje.direccion == -1 ? "IZQUIERDA" : "INDETERMINADA"));
+    printf("Bandera de dibujo: %d\n", personaje.bandera_dibujo);
     printf("Salto: %s\n", personaje.salto.en_salto ? "Sí" : "No");
     printf("En plataforma: %s\n", personaje.en_plataforma ? "Sí" : "No");
     printf("Altura inicial del salto: %.2f\n", personaje.salto.altura_inicial);

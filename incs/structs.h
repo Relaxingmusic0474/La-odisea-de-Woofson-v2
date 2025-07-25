@@ -93,7 +93,7 @@ struct personaje
     bool en_plataforma;  // Si el personaje está en una plataforma o no (si está en el suelo es false)
     bool caminata;  // Si el personaje está en movimiento o intentando moverse (caminando, corriendo o pataleando)
     unsigned int fps_en_caminata;  // Número de frames en caminata (para la animación)
-    unsigned int fps_en_pelea; // Número de frames en pelea (para la animación)
+    unsigned int fps_en_ataque; // Número de frames en ataque (para la animación)
     Salto salto;
     bool danhado;
     float tiempo_danho;
@@ -207,9 +207,11 @@ struct recursos
     Imagen* frames[TIPOS_PERSONAJES];
     Personaje enemigos[MAX_ENEMIGOS];
     
-    Imagen imagen_extraterrestre;
-    Personaje extraterrestres[MAX_EXTRATERRESTRES];
 
+
+
+    //Imagen imagen_extraterrestre;
+    //Personaje extraterrestres[MAX_EXTRATERRESTRES];
     // Personaje* enemigos[NRO_NIVELES];
     
     /* 

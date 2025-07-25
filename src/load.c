@@ -507,7 +507,7 @@ Procedure dibujar_mapa(Mapa mapa, Imagen bloques[NRO_BLOQUES], Imagen espina, Im
                                 mover_enemigo_dinamico(&enemigos[id_enemigo], mapa);
                             }
 
-                            dibujar_personaje(enemigos[id_enemigo], 0, 0);
+                            dibujar_personaje(&enemigos[id_enemigo], 0, 0);
                         }
 
                     }

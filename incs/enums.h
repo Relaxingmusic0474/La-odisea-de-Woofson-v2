@@ -88,4 +88,13 @@ enum etapaRayo
 
 typedef enum etapaRayo EtapaRayo;
 
+enum modoWoofson
+{
+    CAMINATA = 'M',  // M de movimiento (normal)
+    PELEA = 'P',  // P de pelea
+    DISPARO = 'D',  // D de disparo
+};
+
+typedef enum modoWoofson ModoWoofson;
+
 #endif  // ENUMS_H
