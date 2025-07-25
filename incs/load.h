@@ -16,7 +16,7 @@ FILE* cargar_mapa(Natural);
 Natural obtener_nro_filas(Natural);
 Natural obtener_nro_columnas(Natural);
 Mapa leer_mapa(Natural/*, Natural*/);
-Procedure dibujar_mapa(Mapa, Imagen [NRO_BLOQUES], Imagen, Imagen* [TIPOS_PERSONAJES], Personaje, Personaje [MAX_ENEMIGOS], Natural iteracion);
+Procedure dibujar_mapa(Mapa, Recursos*, Natural);
 Procedure liberar_mapa(Mapa*);
 Procedure liberar_mapas(Mapa[]);
 bool cargar_escenarios(Recursos*);  // Carga el fondo y el mapa asociado a cada nivel

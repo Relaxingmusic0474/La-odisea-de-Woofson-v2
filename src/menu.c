@@ -185,7 +185,7 @@ Procedure cambiar_menu(Menu* menu_actual, Menu menu_nuevo)
 }
 
 
-Procedure redirigir_menu(Recursos* recursos, /*ALLEGRO_FONT* fuente, */Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual)
+Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual)
 {
     if (*etapa_actual == MENU_PRINCIPAL)
     {
@@ -416,7 +416,10 @@ Procedure mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, 
 
     else
     {
-        al_draw_scaled_bitmap(fondos[nivel_actual-1], 0, 0, al_get_bitmap_width(fondos[nivel_actual-1]), 
-                              al_get_bitmap_height(fondos[nivel_actual-1]), 0, 0, ANCHO_VENTANA, ALTO_JUEGO, 0);        
+        if (nivel_actual != 0)
+        {
+            al_draw_scaled_bitmap(fondos[nivel_actual-1], 0, 0, al_get_bitmap_width(fondos[nivel_actual-1]), 
+                                  al_get_bitmap_height(fondos[nivel_actual-1]), 0, 0, ANCHO_VENTANA, ALTO_JUEGO, 0);
+        }        
     }
 }

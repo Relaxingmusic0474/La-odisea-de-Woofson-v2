@@ -99,36 +99,39 @@ int main()
                     al_clear_to_color(NEGRO);
                     mostrar_fondo_nivel(recursos.fondos, nivel_actual, iteracion);
                     
-                    
-                    if (etapa_juego == DERROTA)
-                    {   
-                        dibujar_mapa(recursos.mapas[nivel_actual-1], recursos.bloques, recursos.espina, recursos.frames, recursos.pje_principal, recursos.enemigos, iteracion);  // Dibujamos el mapa del primer nivel
-                        dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
-                        morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto
-                        actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                        rectangulo_derrota = dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, 500, 1200, 50.0, 50.0, true, CAFE);
-                        dibujar_rectangulo_en_rectangulo(rectangulo_derrota, 500, 1200, 50.0, 50.0, false, AMARILLO);  // Se le añadirá un borde
-                        dibujar_texto_en_rectangulo("HAS PERDIDO", rectangulo_derrota, 50.0, 15.0, recursos.fuentes[TIMES_NEW_ROMAN_GIGANTE], BLANCO);                        
-                    }
-
-                    else
+                    if (nivel_actual != 0)
                     {
-                        mover_personaje(&recursos.pje_principal, recursos.mapas[nivel_actual-1], nivel_actual-1);  // Mueve al personaje según las teclas presionadas y considera lógica de salto
-                        efectuar_disparo_de_woofson(&recursos.pje_principal, recursos.enemigos, recursos.mapas[nivel_actual-1]);
-                        actualizar_estado_danho(&recursos.pje_principal);
-                        actualizar_estado_danho_enemigos(recursos.enemigos);
-                        dibujar_mapa(recursos.mapas[nivel_actual-1], recursos.bloques, recursos.espina, recursos.frames, recursos.pje_principal, recursos.enemigos, iteracion);  // Dibujamos el mapa del primer nivel
-                        dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
-                        actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                        detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);
-                        efectuar_disparo_de_enemigos(recursos.enemigos, &recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                        morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);
+                        if (etapa_juego == DERROTA)
+                        {   
+                            dibujar_mapa(recursos.mapas[nivel_actual-1], &recursos, iteracion);  // Dibujamos el mapa del primer nivel
+                            dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
+                            morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto
+                            actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
+                            rectangulo_derrota = dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, 500, 1200, 50.0, 50.0, true, CAFE);
+                            dibujar_rectangulo_en_rectangulo(rectangulo_derrota, 500, 1200, 50.0, 50.0, false, AMARILLO);  // Se le añadirá un borde
+                            dibujar_texto_en_rectangulo("HAS PERDIDO", rectangulo_derrota, 50.0, 15.0, recursos.fuentes[TIMES_NEW_ROMAN_GIGANTE], BLANCO);
+                        }
+
+                        else
+                        {
+                            mover_personaje(&recursos.pje_principal, recursos.mapas[nivel_actual-1], nivel_actual-1);  // Mueve al personaje según las teclas presionadas y considera lógica de salto
+                            efectuar_disparo_de_woofson(&recursos.pje_principal, recursos.enemigos, recursos.mapas[nivel_actual-1]);
+                            actualizar_estado_danho(&recursos.pje_principal);
+                            actualizar_estado_danho_enemigos(recursos.enemigos);
+                            dibujar_mapa(recursos.mapas[nivel_actual-1], &recursos, iteracion);  // Dibujamos el mapa del primer nivel
+                            dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
+                            actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
+                            detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);
+                            efectuar_disparo_de_enemigos(recursos.enemigos, &recursos.pje_principal, recursos.mapas[nivel_actual-1]);
+                            morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);
+                        }
+
+                        mostrar_datos_personaje(recursos.enemigos[3]);
+
+                        mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[COMFORTAA_LIGHT_GIGANTE], 
+                                               recursos.fuentes[TIMES_NEW_ROMAN_NORMAL], nivel_actual);
                     }
 
-                    mostrar_datos_personaje(recursos.enemigos[3]);
-
-                    mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[COMFORTAA_LIGHT_GIGANTE], 
-                                           recursos.fuentes[TIMES_NEW_ROMAN_NORMAL], nivel_actual);
                     al_flip_display();
 
                     break;

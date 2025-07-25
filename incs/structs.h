@@ -224,6 +224,8 @@ struct recursos
     Personaje enemigos[MAX_ENEMIGOS];
     Imagen puertas[NRO_ESTADOS];
     Imagen palancas[NRO_ESTADOS];
+    Puerta puerta;
+    Palanca palanca;
     //Imagen imagen_extraterrestre;
     //Personaje extraterrestres[MAX_EXTRATERRESTRES];
     // Personaje* enemigos[NRO_NIVELES];

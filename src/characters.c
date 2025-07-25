@@ -773,7 +773,7 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
                     victima->danhado = true;
                     victima->tiempo_danho = 0;
 
-                    aplicar_danho(victima, DANHO_BALA);
+                    aplicar_danho(victima, atacante->tipo == EXTRATERRESTRE ? DANHO_BALA_EXTRATERRESTRE : DANHO_BALA_WOOFSON);
 
                     if (atacante->tipo == WOOFSON)
                     {
