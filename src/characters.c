@@ -94,6 +94,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
     switch (tipo)
     {
         case WOOFSON:
+            personaje->posicion_inicial = posicion_deseada;
             personaje->velocidad = VECTOR_NULO;  // Inicialmente no se mueve ni salta, ya que eso lo deberá hacer con las teclas
             personaje->nro_vidas = VIDAS_INICIALES;
             personaje->subvida_actual = 100;
@@ -651,6 +652,26 @@ Procedure actualizar_estado_danho(Personaje* personaje)
             personaje->tiempo_danho = 0;
         }
     }
+
+    if (personaje->tipo != WOOFSON)
+    {
+        if (personaje->muerto)
+        {
+            if (personaje->tiempo_muerte <= TIEMPO_MUERTE_ENEMIGO)
+            {
+                personaje->posicion = VECTOR_NULO;
+                personaje->tiempo_muerte += 1.0 / FPS;
+            }
+
+            else
+            {
+                personaje->posicion = personaje->posicion_inicial;
+                personaje->muerto = false;
+                personaje->subvida_actual = 100;
+                personaje->tiempo_muerte = 0;
+            }
+        }
+    }
 }
 
 
@@ -779,7 +800,9 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
                     {
                         if (victima->subvida_actual == 0)
                         {
-                            *victima = (Personaje) {0};  // Se simula la muerte del enemigo
+                            //*victima = (Personaje) {0};  // Se simula la muerte del enemigo
+                            victima->muerto = true;
+                            victima->tiempo_muerte = 0;
                             puntuacion += 10;
                         }
                     }
@@ -872,7 +895,12 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
     Natural i;
     float dx;
     
-    if (!enemigo->inicializado)
+    if (hay_balas_activas(enemigo->balas))
+    {
+        mover_balas_activas(enemigo, woofson, mapa, VERDE);
+    }
+    
+    if (!enemigo->inicializado || enemigo->muerto)
     {
         return;
     }
@@ -880,11 +908,6 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
     if (enemigo->frames_para_prox_disparo > 0)
     {
         enemigo->frames_para_prox_disparo--;
-    }
-    
-    if (hay_balas_activas(enemigo->balas))
-    {
-        mover_balas_activas(enemigo, woofson, mapa, VERDE);
     }
     
     if (puede_disparar_horizontalmente(*enemigo, *woofson, mapa))
@@ -971,7 +994,28 @@ bool woofson_puede_disparar(Personaje* woofson)
 Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX_ENEMIGOS], Mapa mapa)
 {
     Natural i, nro_enemigos;
+    
+    nro_enemigos = nro_enemigos_activos(enemigos);
+    
+    if (!(woofson->muerto && woofson->subvida_actual == 0))  // Si no ha perdido aún, se mueven las balas
+    {
+        if (hay_balas_activas(woofson->balas))
+        {       
+            if (nro_enemigos == 0)
+            {   
+                mover_balas_activas(woofson, &enemigos[0], mapa, NARANJO);
+            }
 
+            else
+            {        
+                for (i=0; i<nro_enemigos; i++)
+                {    
+                    mover_balas_activas(woofson, &enemigos[i], mapa, NARANJO);
+                }
+            }
+        }
+    }
+    
     if (!woofson->inicializado)
     {
         return;
@@ -980,24 +1024,6 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
     if (woofson->frames_para_prox_disparo > 0)
     {
         woofson->frames_para_prox_disparo--;
-    }
-    
-    nro_enemigos = nro_enemigos_activos(enemigos);
-    
-    if (hay_balas_activas(woofson->balas))
-    {       
-        if (nro_enemigos == 0)
-        {   
-            mover_balas_activas(woofson, &enemigos[0], mapa, NARANJO);
-        }
-
-        else
-        {        
-            for (i=0; i<nro_enemigos; i++)
-            {    
-                mover_balas_activas(woofson, &enemigos[i], mapa, NARANJO);
-            }
-        }
     }
     
     if (woofson_puede_disparar(woofson))

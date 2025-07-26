@@ -389,8 +389,10 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, Natural iteracion)
     Natural id_enemigo = 0;
     Entero flag = 0;
     Personaje* woofson = &recursos->pje_principal;
+    Imagen bloque_cafe = recursos->bloques[0];
+    Imagen bloque_plateado = recursos->bloques[1];
     bool aux = false;
-    float ancho_espina, alto_espina, x, y;
+    float ancho_espina, alto_espina, x1, y1, x2, y2;
     float ancho_esc, alto_esc;
     float alto_enemigo;
     
@@ -404,17 +406,20 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, Natural iteracion)
     {
         for (j=0; j<mapa.nro_columnas; j++)
         {
-            x = j*mapa.ancho_bloque;
-            y = i*mapa.alto_bloque;
+            x1 = j*mapa.ancho_bloque;
+            y1 = i*mapa.alto_bloque;
+
+            x2 = (j+1)*mapa.ancho_bloque;
+            y2 = (i+1)*mapa.alto_bloque;
 
             if (mapa.mapa[i][j] == BLOQUE || mapa.mapa[i][j] == BLOQUE_RAYO)
             {
-                al_draw_scaled_bitmap(recursos->bloques[1], 0, 0, al_get_bitmap_width(recursos->bloques[1]), al_get_bitmap_height(recursos->bloques[1]), x, y, mapa.ancho_bloque, mapa.alto_bloque, 0);
+                al_draw_scaled_bitmap(bloque_plateado, 0, 0, al_get_bitmap_width(bloque_plateado), al_get_bitmap_height(bloque_plateado), x1, y1, mapa.ancho_bloque, mapa.alto_bloque, 0);
             }
 
             if (mapa.mapa[i][j] == BLOQUE_RAYO)
             {
-                al_draw_filled_circle((j+0.5)*mapa.ancho_bloque, (i+0.5)*mapa.alto_bloque, RADIO_CIRCULO_ROJO, ROJO);
+                al_draw_filled_circle((x1+x2)/2, (y1+y2)/2, RADIO_CIRCULO_ROJO, ROJO);
             }
 
             if (mapa.mapa[i][j] == ESPINA)
@@ -435,7 +440,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, Natural iteracion)
                 {
                     if (j == 0 || (j > 0 && mapa.mapa[i][j-1] == BLOQUE))
                     {
-                        al_draw_tinted_scaled_rotated_bitmap(recursos->espina, ROJO, ancho_espina/2, alto_espina/2, x+alto_esc/2, y+mapa.alto_bloque/2, 
+                        al_draw_tinted_scaled_rotated_bitmap(recursos->espina, ROJO, ancho_espina/2, alto_espina/2, x1+alto_esc/2, (y1+y2)/2, 
                                                              FACTOR_ESPINA, FACTOR_ESPINA, ALLEGRO_PI/2, 0);
                     }
 
@@ -443,8 +448,8 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, Natural iteracion)
                     {
                         if (j == mapa.nro_columnas-1 || (j < mapa.nro_columnas-1 && mapa.mapa[i][j+1] == BLOQUE))
                         {
-                            al_draw_tinted_scaled_rotated_bitmap(recursos->espina, ROJO, ancho_espina/2, alto_espina/2, x+mapa.ancho_bloque-alto_esc/2, 
-                                                                 y+mapa.alto_bloque/2, FACTOR_ESPINA, FACTOR_ESPINA, -ALLEGRO_PI/2, 0);
+                            al_draw_tinted_scaled_rotated_bitmap(recursos->espina, ROJO, ancho_espina/2, alto_espina/2, x2-alto_esc/2, 
+                                                                 (y1+y2)/2, FACTOR_ESPINA, FACTOR_ESPINA, -ALLEGRO_PI/2, 0);
                         }
                     }
 
@@ -454,7 +459,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, Natural iteracion)
                 if (aux)
                 {
                     al_draw_tinted_scaled_bitmap(recursos->espina, ROJO, 0, 0, ancho_espina, alto_espina, 
-                                                 x+(mapa.ancho_bloque-ancho_esc)/2, y+(mapa.alto_bloque-alto_esc)*(ALLEGRO_FLIP_VERTICAL-flag)/ALLEGRO_FLIP_VERTICAL, 
+                                                 (x1+x2-ancho_esc)/2, y1+(mapa.alto_bloque-alto_esc)*(ALLEGRO_FLIP_VERTICAL-flag)/ALLEGRO_FLIP_VERTICAL, 
                                                  ancho_esc, alto_esc, flag);
                 }
             }
@@ -468,6 +473,9 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, Natural iteracion)
                         if (!recursos->enemigos[id_enemigo].inicializado)
                         {
                             alto_enemigo = al_get_bitmap_height(recursos->frames[(TipoFrame) (1./6 * pow(mapa.mapa[i][j], 2) - 1.5 * mapa.mapa[i][j] + 16./3)][0]);  // Polinomio de interpolación de Lagrange
+
+                            recursos->enemigos[id_enemigo].posicion_inicial.x = mapa.ancho_bloque*j;
+                            recursos->enemigos[id_enemigo].posicion_inicial.y = mapa.alto_bloque*(i+1) - alto_enemigo - 1;
 
                             inicializar_personaje(&recursos->enemigos[id_enemigo], mapa.mapa[i][j] <= EXTRATERRESTRE_DINAMICO ? EXTRATERRESTRE : MONSTRUO, recursos->frames, 
                                                   (Vector) {mapa.ancho_bloque*j, mapa.alto_bloque*(i+1) - alto_enemigo - 1}, mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO ? true : false);
@@ -508,7 +516,10 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, Natural iteracion)
                                 mover_enemigo_dinamico(&recursos->enemigos[id_enemigo], mapa);
                             }
 
-                            dibujar_personaje(&recursos->enemigos[id_enemigo], 0, iteracion);
+                            if (!recursos->enemigos[id_enemigo].muerto)
+                            {   
+                                dibujar_personaje(&recursos->enemigos[id_enemigo], 0, iteracion);
+                            }
                         }
 
                     }
@@ -519,19 +530,29 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, Natural iteracion)
 
             if (mapa.mapa[i][j] == PUERTA)
             {
-                al_draw_bitmap(recursos->puertas[0], x, y+mapa.alto_bloque-al_get_bitmap_height(recursos->puertas[0])+15, 0);
+                recursos->puerta.imagen = recursos->puertas[recursos->palanca.estado];
+                recursos->puerta.estado = recursos->palanca.estado;  // Si la palanca está activada (cerrada) la puerta igual deberá estar cerrada
+                recursos->puerta.alto = al_get_bitmap_height(recursos->puerta.imagen);
+                recursos->puerta.ancho = al_get_bitmap_width(recursos->puerta.imagen);
+                recursos->puerta.posicion = (Vector) {x1, y2-recursos->puerta.alto+15};
+                al_draw_bitmap(recursos->puerta.imagen, recursos->puerta.posicion.x, recursos->puerta.posicion.y, 0);
             }
 
             if (mapa.mapa[i][j] == PALANCA)
             {
-                al_draw_bitmap(recursos->palancas[0], x, y+mapa.alto_bloque-al_get_bitmap_height(recursos->palancas[0]), 0);
+                recursos->palanca.imagen = recursos->palancas[ABIERTO];
+                recursos->palanca.estado = ABIERTO;
+                recursos->palanca.alto = al_get_bitmap_height(recursos->palanca.imagen);
+                recursos->palanca.ancho = al_get_bitmap_width(recursos->palanca.imagen);
+                recursos->palanca.posicion = (Vector) {x1, y2-recursos->palanca.alto};
+                al_draw_bitmap(recursos->palancas[0], recursos->palanca.posicion.x, recursos->palanca.posicion.y, 0);
             }
         }
     }
 
     for (i=0; i<mapa.nro_columnas; i++)
     {
-        al_draw_bitmap(recursos->bloques[0], i*ANCHO_VENTANA/mapa.nro_columnas, ALTURA_PISO, 0);
+        al_draw_bitmap(bloque_cafe, i*mapa.ancho_bloque, ALTURA_PISO, 0);
     }
 
     return;

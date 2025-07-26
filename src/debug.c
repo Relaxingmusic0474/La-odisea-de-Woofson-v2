@@ -37,6 +37,7 @@ Procedure mostrar_datos_personaje(Personaje personaje)
     printf("Subvida actual: %hu\n", personaje.subvida_actual);
     printf("Frames para el proximo disparo: %hu\n", personaje.frames_para_prox_disparo);
     printf("Tiempo de daño: %.4f s\n", personaje.tiempo_danho);
+    printf("Muerto: %s\n", personaje.muerto ? "Sí" : "No");
     caida_libre_activada(personaje);
 }
 

@@ -87,6 +87,7 @@ struct personaje
     Natural nro_vidas;
     Natural subvida_actual;
     Vector posicion;
+    Vector posicion_inicial;
     Vector velocidad;
     float ancho;
     float alto;
@@ -180,6 +181,8 @@ struct palanca
     Vector posicion;
     Imagen imagen;
     Estado estado;
+    float alto;
+    float ancho;
 };
 
 struct puerta
@@ -187,6 +190,8 @@ struct puerta
     Vector posicion;
     Imagen imagen;
     Estado estado;
+    float alto;
+    float ancho;
 };
 
 struct eventos

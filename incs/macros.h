@@ -71,6 +71,8 @@
 #define ACELERACION_ADREDE 5 // Aceleración adicional que se genera al presionar la tecla de abajo estando en caida libre
 #define IMPULSO_PERSONAJE 700  // Impulso de salto del personaje en px/s
 
+#define TIEMPO_MUERTE_ENEMIGO 5.0  // Durante 5 segundos el enemigo muerto no vuelve a aparecer
+
 // Macros para los rayos
 #define MAX_RAYOS 8  // Número máximo de rayos que se pueden detectar en el mapa
 #define NRO_OSCILACIONES_RAYO 10  // Número de oscilaciones que tendrá el rayo
@@ -90,7 +92,7 @@
 #define FACTOR_ESPINA 0.5
 
 // Macro que define la cantidad de vidas que tendrá el personaje inicialmente
-#define VIDAS_INICIALES 1
+#define VIDAS_INICIALES 3
 
 // Macros para cargar fuentes de distinto tamaño
 #define NORMAL 20
