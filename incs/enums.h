@@ -54,6 +54,7 @@ enum etapa
     NIVEL4,
     NIVEL5,
     DERROTA,
+    VICTORIA,
 };
 
 typedef enum etapa Etapa;

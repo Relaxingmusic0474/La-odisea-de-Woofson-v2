@@ -24,6 +24,8 @@ typedef struct regresionLineal RegresionLineal;
 typedef struct espina Espina;
 typedef struct palanca Palanca;
 typedef struct puerta Puerta;
+typedef struct datos Datos;
+typedef struct ranking Ranking;
 typedef struct eventos Eventos;
 typedef struct recursos Recursos;
 
@@ -194,6 +196,18 @@ struct puerta
     EstadoPuerta estado;
     float alto;
     float ancho;
+};
+
+struct datos
+{
+    char nombre[LARGO];
+    Natural puntaje;
+    Natural nro_nivel;
+};
+
+struct ranking
+{
+    Datos datos[MAX_DATOS];
 };
 
 struct eventos

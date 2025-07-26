@@ -113,6 +113,16 @@ int main()
                             dibujar_texto_en_rectangulo("HAS PERDIDO", rectangulo_derrota, 50.0, 15.0, recursos.fuentes[TIMES_NEW_ROMAN_GIGANTE], BLANCO);
                         }
 
+                        else if (etapa_juego == VICTORIA)
+                        {
+                            dibujar_mapa(recursos.mapas[nivel_actual-1], &recursos, &cambio_estado_procesado, iteracion);  // Dibujamos el mapa del primer nivel
+                            dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
+                            actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
+                            rectangulo_derrota = dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, 500, 1200, 50.0, 50.0, true, CAFE);
+                            dibujar_rectangulo_en_rectangulo(rectangulo_derrota, 500, 1200, 50.0, 50.0, false, AMARILLO);  // Se le añadirá un borde
+                            dibujar_texto_en_rectangulo("HAS PASADO DE NIVEL", rectangulo_derrota, 50.0, 15.0, recursos.fuentes[TIMES_NEW_ROMAN_GIGANTE], BLANCO);
+                        }
+
                         else
                         {
                             mover_personaje(&recursos.pje_principal, recursos.mapas[nivel_actual-1], nivel_actual-1);  // Mueve al personaje según las teclas presionadas y considera lógica de salto
@@ -124,7 +134,7 @@ int main()
                             actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
                             detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);
                             efectuar_disparo_de_enemigos(recursos.enemigos, &recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                            determinar_victoria_woofson(&recursos.pje_principal, recursos.enemigos, recursos.puerta);
+                            determinar_victoria_woofson(&recursos.pje_principal, recursos.enemigos, recursos.puerta, &etapa_juego);
                             morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);
                         }
 

@@ -28,7 +28,7 @@ Entero velocidad_instantanea(Personaje, float);
 bool es_tecla_lateral(Tecla);
 Procedure patalear(Personaje*, int);
 Procedure morir(Personaje*, Tecla*, Etapa*);
-Procedure determinar_victoria_woofson(Personaje*, Personaje [MAX_ENEMIGOS], Puerta);
+Procedure determinar_victoria_woofson(Personaje*, Personaje [MAX_ENEMIGOS], Puerta, Etapa*);
 Procedure aplicar_danho(Personaje*, Natural);
 Procedure aumentar_subvida(Personaje*, Natural);
 Procedure actualizar_estado_danho(Personaje*);

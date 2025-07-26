@@ -618,7 +618,7 @@ Procedure morir(Personaje* personaje, Tecla* ultima_lateral, Etapa* etapa_actual
 }
 
 
-Procedure determinar_victoria_woofson(Personaje* personaje, Personaje enemigos[MAX_ENEMIGOS], Puerta puerta)
+Procedure determinar_victoria_woofson(Personaje* personaje, Personaje enemigos[MAX_ENEMIGOS], Puerta puerta, Etapa* etapa_actual)
 {
     Natural i;
     Natural nro_enemigos = nro_enemigos_activos(enemigos);
@@ -634,6 +634,8 @@ Procedure determinar_victoria_woofson(Personaje* personaje, Personaje enemigos[M
             {
                 enemigos[i].victoria = false;  // Se rinden los enemigos
             }
+
+            *etapa_actual = VICTORIA;
         }
     }
 }

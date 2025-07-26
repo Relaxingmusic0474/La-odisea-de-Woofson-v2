@@ -18,6 +18,7 @@
 #define RECTANGULO_VENTANA (Rectangulo) {{0, 0}, {ANCHO_VENTANA, ALTO_VENTANA}}
 #define VECTOR_NULO (Vector) {0, 0}
 #define NRO_NIVELES 5
+#define MAX_DATOS 10
 #define NRO_COLORES 5
 #define NRO_BLOQUES 2 // Tipos distintos de bloques que se cargarán
 #define NRO_MENUS 2
