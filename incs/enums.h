@@ -97,12 +97,20 @@ enum modoWoofson
 
 typedef enum modoWoofson ModoWoofson;
 
-enum estado
+enum estadoPuerta
 {
-    CERRADO,
-    ABIERTO,
+    CERRADA,
+    ABIERTA,
 };
 
-typedef enum estado Estado;
+typedef enum estadoPuerta EstadoPuerta;
+
+enum estadoPalanca
+{
+    DESACTIVADA,
+    ACTIVADA,
+};
+
+typedef enum estadoPalanca EstadoPalanca;
 
 #endif  // ENUMS_H

@@ -95,6 +95,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
     {
         case WOOFSON:
             personaje->posicion_inicial = posicion_deseada;
+            personaje->en_ataque = false;
             personaje->velocidad = VECTOR_NULO;  // Inicialmente no se mueve ni salta, ya que eso lo deberá hacer con las teclas
             personaje->nro_vidas = VIDAS_INICIALES;
             personaje->subvida_actual = 100;
@@ -311,6 +312,7 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
     
         if (teclas[ALLEGRO_KEY_SPACE])
         {
+            personaje->en_ataque = true;
             personaje->fps_en_ataque++;
 
             if (personaje->fps_en_ataque % 8 == 0)  // Actualiza el frame de pelea cada 8 frames
@@ -318,7 +320,13 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
                 modo_ataque = nivel <= NIVEL3 ? PELEA : DISPARO;
                 actualizar_frame(personaje, modo_ataque);  // Actualiza el frame del personaje si está en pelea
             }
-        
+        }
+
+        else
+        {
+            personaje->ancho = al_get_bitmap_width(personaje->imagen);
+            personaje->alto = al_get_bitmap_height(personaje->imagen);
+            personaje->en_ataque = false;
         }
     
         if (personaje->caminata)
@@ -737,6 +745,7 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[
     {
         if (personaje->tiempo_danho == 0)
         {
+            printf("Oh nooooo\n");
             aplicar_danho(personaje, DANHO_RAYO);
         }
     }
@@ -836,8 +845,6 @@ bool puede_disparar_horizontalmente(Personaje enemigo, Personaje woofson, Mapa m
     Natural col_enemigo, col_woofson, col_min, col_max;
     bool alineados_en_y;
     bool mirando_a_woofson;
-    //Natural frames_disparo[] = {0, 1, 2, 3, 7, 8, 9};
-    //Natural nro_frames_disparo = sizeof(frames_disparo) / sizeof(frames_disparo[0]);
 
     if (enemigo.frames_para_prox_disparo > 0)
     {

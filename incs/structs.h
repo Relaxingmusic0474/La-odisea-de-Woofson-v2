@@ -96,6 +96,7 @@ struct personaje
     bool en_plataforma;  // Si el personaje está en una plataforma o no (si está en el suelo es false)
     bool caminata;  // Si el personaje está en movimiento o intentando moverse (caminando, corriendo o pataleando)
     unsigned int fps_en_caminata;  // Número de frames en caminata (para la animación)
+    bool en_ataque;
     unsigned int fps_en_ataque; // Número de frames en ataque (para la animación)
     Salto salto;
     bool danhado;
@@ -180,7 +181,7 @@ struct palanca
 {
     Vector posicion;
     Imagen imagen;
-    Estado estado;
+    EstadoPalanca estado;
     float alto;
     float ancho;
 };
@@ -189,7 +190,7 @@ struct puerta
 {
     Vector posicion;
     Imagen imagen;
-    Estado estado;
+    EstadoPuerta estado;
     float alto;
     float ancho;
 };

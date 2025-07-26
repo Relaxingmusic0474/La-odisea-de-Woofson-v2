@@ -13,6 +13,7 @@ int main()
     Natural iteracion = 0, nivel_actual = 0;  /* Para controlar las iteraciones del juego */
     Rectangulo rectangulo_derrota;
     extern bool teclas[ALLEGRO_KEY_MAX]; /* Para manejar las teclas que se presionan */
+    bool cambio_estado_procesado = false;
 
     if (!inicializar_todo(&recursos))  /* Se inicializan todos los recursos de Allegro */
     {
@@ -103,7 +104,7 @@ int main()
                     {
                         if (etapa_juego == DERROTA)
                         {   
-                            dibujar_mapa(recursos.mapas[nivel_actual-1], &recursos, iteracion);  // Dibujamos el mapa del primer nivel
+                            dibujar_mapa(recursos.mapas[nivel_actual-1], &recursos, &cambio_estado_procesado, iteracion);  // Dibujamos el mapa del primer nivel
                             dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
                             morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto
                             actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
@@ -118,7 +119,7 @@ int main()
                             efectuar_disparo_de_woofson(&recursos.pje_principal, recursos.enemigos, recursos.mapas[nivel_actual-1]);
                             actualizar_estado_danho(&recursos.pje_principal);
                             actualizar_estado_danho_enemigos(recursos.enemigos);
-                            dibujar_mapa(recursos.mapas[nivel_actual-1], &recursos, iteracion);  // Dibujamos el mapa del primer nivel
+                            dibujar_mapa(recursos.mapas[nivel_actual-1], &recursos, &cambio_estado_procesado, iteracion);  // Dibujamos el mapa del primer nivel
                             dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
                             actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
                             detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);
@@ -126,11 +127,11 @@ int main()
                             morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);
                         }
 
-                        mostrar_datos_personaje(recursos.enemigos[3]);
-
                         mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[COMFORTAA_LIGHT_GIGANTE], 
                                                recursos.fuentes[TIMES_NEW_ROMAN_NORMAL], nivel_actual);
                     }
+
+                    mostrar_datos_personaje(recursos.pje_principal);
 
                     al_flip_display();
 

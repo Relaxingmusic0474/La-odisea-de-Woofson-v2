@@ -383,7 +383,7 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
  * Función que dibuja el mapa en la ventana.
  * @param mapa Es el mapa que se desea dibujar.
  */
-Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, Natural iteracion)
+Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, Natural iteracion)
 {
     Natural i=0, j=0;
     Natural id_enemigo = 0;
@@ -391,6 +391,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, Natural iteracion)
     Personaje* woofson = &recursos->pje_principal;
     Imagen bloque_cafe = recursos->bloques[0];
     Imagen bloque_plateado = recursos->bloques[1];
+    extern bool teclas[ALLEGRO_KEY_MAX];
     bool aux = false;
     float ancho_espina, alto_espina, x1, y1, x2, y2;
     float ancho_esc, alto_esc;
@@ -530,8 +531,18 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, Natural iteracion)
 
             if (mapa.mapa[i][j] == PUERTA)
             {
-                recursos->puerta.imagen = recursos->puertas[recursos->palanca.estado];
-                recursos->puerta.estado = recursos->palanca.estado;  // Si la palanca está activada (cerrada) la puerta igual deberá estar cerrada
+                if (recursos->palanca.estado == DESACTIVADA)
+                {
+                    recursos->puerta.imagen = recursos->puertas[CERRADA];
+                    recursos->puerta.estado = CERRADA;
+                }
+
+                else
+                {
+                    recursos->puerta.imagen = recursos->puertas[ABIERTA];
+                    recursos->puerta.estado = ABIERTA;
+                }
+
                 recursos->puerta.alto = al_get_bitmap_height(recursos->puerta.imagen);
                 recursos->puerta.ancho = al_get_bitmap_width(recursos->puerta.imagen);
                 recursos->puerta.posicion = (Vector) {x1, y2-recursos->puerta.alto+15};
@@ -540,12 +551,34 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, Natural iteracion)
 
             if (mapa.mapa[i][j] == PALANCA)
             {
-                recursos->palanca.imagen = recursos->palancas[ABIERTO];
-                recursos->palanca.estado = ABIERTO;
+                recursos->palanca.imagen = recursos->palancas[DESACTIVADA];
+                recursos->palanca.posicion = (Vector) {x1, y2-recursos->palanca.alto};
                 recursos->palanca.alto = al_get_bitmap_height(recursos->palanca.imagen);
                 recursos->palanca.ancho = al_get_bitmap_width(recursos->palanca.imagen);
-                recursos->palanca.posicion = (Vector) {x1, y2-recursos->palanca.alto};
-                al_draw_bitmap(recursos->palancas[0], recursos->palanca.posicion.x, recursos->palanca.posicion.y, 0);
+
+                if (woofson->posicion.x + woofson->ancho >= recursos->palanca.posicion.x && woofson->posicion.y + woofson->alto >= recursos->palanca.posicion.y &&
+                    woofson->posicion.x < recursos->palanca.posicion.x + recursos->palanca.ancho && woofson->posicion.y < recursos->palanca.posicion.y + recursos->palanca.alto)
+                {
+                    if (teclas[ALLEGRO_KEY_E])
+                    {
+                        if (!(*cambio_estado_procesado))
+                        {
+                            *cambio_estado_procesado = true;
+                            recursos->palanca.estado = recursos->palanca.estado == ACTIVADA ? DESACTIVADA : ACTIVADA;
+                            recursos->palanca.imagen = recursos->palancas[recursos->palanca.estado];
+                            recursos->palanca.alto = al_get_bitmap_height(recursos->palanca.imagen);
+                            recursos->palanca.ancho = al_get_bitmap_width(recursos->palanca.imagen);
+                        }
+                    }
+
+                    else
+                    {
+                        *cambio_estado_procesado = false;
+                    }
+                }
+
+                recursos->palanca.imagen = recursos->palancas[recursos->palanca.estado];
+                al_draw_bitmap(recursos->palanca.imagen, recursos->palanca.posicion.x, recursos->palanca.posicion.y, 0);
             }
         }
     }
