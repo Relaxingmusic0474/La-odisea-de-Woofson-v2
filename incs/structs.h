@@ -108,6 +108,7 @@ struct personaje
     bool inicializado;
     Bala balas[MAX_BALAS];
     Natural frames_para_prox_disparo;
+    bool victoria;
     // bool hay_obj_izq;
     // bool hay_obj_der;
     // bool hay_obj_sup;

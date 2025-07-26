@@ -80,6 +80,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
     }
 
     personaje->caminata = tipo!=WOOFSON && !personaje->estatico;  // Si el tipo de personaje es Woofson y/o el personaje es estático entonces parte quieto (sin caminar)
+    personaje->victoria = tipo==WOOFSON ? false : true;  // Se inicializa como que los enemigos estan ganando y Woofson perdiendo
     personaje->fps_en_caminata = 0;
     personaje->fps_en_ataque = 0;
     personaje->frames = frames[tipo_frame(tipo)];
@@ -301,7 +302,7 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
     ModoWoofson modo_ataque;
 
-    if (personaje->muerto)  // En caso de que el personaje esté muerto, no se podrá mover
+    if (personaje->muerto || personaje->victoria)  // En caso de que el personaje esté muerto, o en caso de victoria, no se podrá mover
     {
         return;
     }
@@ -616,6 +617,28 @@ Procedure morir(Personaje* personaje, Tecla* ultima_lateral, Etapa* etapa_actual
     }
 }
 
+
+Procedure determinar_victoria_woofson(Personaje* personaje, Personaje enemigos[MAX_ENEMIGOS], Puerta puerta)
+{
+    Natural i;
+    Natural nro_enemigos = nro_enemigos_activos(enemigos);
+
+    if (puerta.estado == ABIERTA)
+    {
+        if (personaje->posicion.x + personaje->ancho >= puerta.posicion.x + puerta.ancho / 2 && personaje->posicion.x < puerta.posicion.x + puerta.ancho / 2 &&
+            personaje->posicion.y + personaje->alto >= puerta.posicion.y && personaje->posicion.y < puerta.posicion.y + puerta.alto)
+        {
+            personaje->victoria = true;
+            
+            for (i=0; i<nro_enemigos; i++)
+            {
+                enemigos[i].victoria = false;  // Se rinden los enemigos
+            }
+        }
+    }
+}
+
+
 Procedure aplicar_danho(Personaje* personaje, Natural cantidad_danho)
 {
     if (personaje->subvida_actual <= cantidad_danho)
@@ -778,7 +801,7 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
     {
         if (atacante->balas[i].activa)
         {
-            atacante->balas[i].posicion.x += atacante->balas[i].velocidad.x;
+            atacante->balas[i].posicion.x += atacante->balas[i].velocidad.x;  // Si Woofson gana, las balas se detienen (a modo como de congelar el juego)
 
             if (atacante->balas[i].posicion.x - RADIO_AXIAL_X_BALA > ANCHO_VENTANA || atacante->balas[i].posicion.x + RADIO_AXIAL_X_BALA < 0)
             {
@@ -789,7 +812,7 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
             }
 
             // Verificar colisión con Woofson   
-            if (!victima->danhado)
+            if (!victima->danhado && (victima->tipo != WOOFSON || (victima->tipo == WOOFSON && !victima->victoria)))
             {
                 if (atacante->balas[i].posicion.x + RADIO_AXIAL_X_BALA > victima->posicion.x &&
                     atacante->balas[i].posicion.x - RADIO_AXIAL_X_BALA < victima->posicion.x + victima->ancho &&
@@ -1004,7 +1027,7 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
     
     nro_enemigos = nro_enemigos_activos(enemigos);
     
-    if (!(woofson->muerto && woofson->subvida_actual == 0))  // Si no ha perdido aún, se mueven las balas
+    if (!(woofson->muerto && woofson->subvida_actual == 0 && woofson->nro_vidas == 0))  // Si no ha perdido aún, se mueven las balas
     {
         if (hay_balas_activas(woofson->balas))
         {       
@@ -1023,7 +1046,7 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
         }
     }
     
-    if (!woofson->inicializado)
+    if (!woofson->inicializado || woofson->muerto)
     {
         return;
     }
