@@ -42,5 +42,6 @@ Procedure efectuar_disparo_de_enemigos(Personaje [MAX_ENEMIGOS], Personaje*, Map
 Natural nro_enemigos_activos(Personaje [MAX_ENEMIGOS]);
 bool woofson_puede_disparar(Personaje*);
 Procedure efectuar_disparo_de_woofson(Personaje*, Personaje [MAX_ENEMIGOS], Mapa);
+Procedure desactivar_enemigos(Personaje [MAX_ENEMIGOS]);
 
 #endif  // CHARACTERS_H

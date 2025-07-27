@@ -137,6 +137,7 @@ bool inicializar_menu(Menu* menu, TipoMenu tipo, Imagen fondo, ALLEGRO_FONT* fue
 Procedure mostrar_menu(Menu menu)
 {
     Rectangulo rect, rect_menu;
+    Menu menu_vacio = {0};
     float alto, ancho, x0, x1, y0, y1, porcentaje_x, porcentaje_y;
     extern Natural puntuacion;
     char texto_puntuacion[LARGO] = {'\0'};
@@ -156,16 +157,22 @@ Procedure mostrar_menu(Menu menu)
     // Aqui se muestra el fondo del menu (si es que no es NULL)
     if (menu.fondo != NULL)
     {
-        al_draw_scaled_bitmap(menu.fondo, 0, 0, al_get_bitmap_width(menu.fondo), al_get_bitmap_height(menu.fondo), (ANCHO_VENTANA-ancho)/2, (ALTO_VENTANA-alto)/2, ancho, alto, 0);
+        if (memcmp(&menu, &menu_vacio, sizeof(Menu)) != 0)
+        {
+            al_draw_scaled_bitmap(menu.fondo, 0, 0, al_get_bitmap_width(menu.fondo), al_get_bitmap_height(menu.fondo), (ANCHO_VENTANA-ancho)/2, (ALTO_VENTANA-alto)/2, ancho, alto, 0);
+        }
     }
 
     else  // Si el menú que se quiere mostrar, no tiene fondo (es decir, es el menú de ganar o perder), se dibuja el menú como un rectángulo
     {
-        rect_menu = dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, alto, ancho, 50.0, 50.0, true, CAFE);
-        dibujar_rectangulo_en_rectangulo(rect_menu, alto, ancho, 50.0, 50.0, false, AMARILLO);
+        if (memcmp(&menu, &menu_vacio, sizeof(Menu)) != 0)
+        {
+            rect_menu = dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, alto, ancho, 50.0, 50.0, true, CAFE);
+            dibujar_rectangulo_en_rectangulo(rect_menu, alto, ancho, 50.0, 50.0, false, AMARILLO);
+        }
     }
 
-    if (menu.tipo == NIVELES)  // Si es el menú de niveles, hace esto
+    if (memcmp(&menu, &menu_vacio, sizeof(Menu)) != 0 && menu.tipo == NIVELES)  // Si es el menú de niveles, hace esto
     {
         al_draw_filled_rectangle(x0 + ancho*0.10, y0 + alto*0.30, x0 + ancho*0.90, y0 + alto*0.70, GRIS);
         al_draw_filled_rectangle(x0 + ancho*0.30, y0 + alto*0.22, x0 + ancho*0.70, y0 + alto*0.38, AZUL);
@@ -174,7 +181,7 @@ Procedure mostrar_menu(Menu menu)
 
     else
     {
-        if (menu.tipo == PERDER)  // Si el menú es el menú de derrota
+        if (memcmp(&menu, &menu_vacio, sizeof(Menu)) != 0 && menu.tipo == PERDER)  // Si el menú es el menú de derrota
         {
             dibujar_texto_en_rectangulo("HAS PERDIDO", menu.rect_destino, 50.0, 15.0, menu.fuente, BLANCO);
             sprintf(texto_puntuacion, "Su puntuación: %hu", puntuacion);
@@ -183,7 +190,7 @@ Procedure mostrar_menu(Menu menu)
 
         else
         {
-            if (menu.tipo == GANAR)
+            if (memcmp(&menu, &menu_vacio, sizeof(Menu)) != 0 && menu.tipo == GANAR)
             {
                 dibujar_texto_en_rectangulo("FELICIDADES... HAS LOGRADO PASAR EL NIVEL", menu.rect_destino, 50.0, 15.0, menu.fuente, BLANCO);
                 sprintf(texto_puntuacion, "Su puntuación: %hu", puntuacion);
@@ -227,6 +234,8 @@ Procedure cambiar_menu(Menu* menu_actual, Menu menu_nuevo)
 
 Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual)
 {
+    Menu menu_vacio = {0};
+
     if (*etapa_actual == MENU_PRINCIPAL)
     {
         *nivel_actual = 0;
@@ -234,7 +243,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         if (opcion_clickeada == 0)  
         {
             *etapa_actual = MENU_NIVELES;
-            cambiar_menu(&recursos->menu_actual, recursos->menus[NIVELES]);  // +4 para que calze con el índice
+            cambiar_menu(&recursos->menu_actual, recursos->menus[NIVELES]);
             mostrar_menu(recursos->menu_actual);
         }
 
@@ -257,7 +266,6 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
     {
         if (opcion_clickeada == 5)
         {
-            printf("Hola\n");
             *nivel_actual = 0;
             *etapa_actual = MENU_PRINCIPAL;
             cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_PRINCIPAL+4]);
@@ -266,8 +274,10 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
 
         else
         {
-            recursos->menu_actual = (Menu) {0};
-
+            cambiar_menu(&recursos->menu_actual, menu_vacio);
+            inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, 
+                                 (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
+            
             switch (opcion_clickeada)
             {
                 case 0:
@@ -289,7 +299,6 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                     break;
 
                 case 3:
-                    printf("Hola... Entrando al nivel 4\n");
                     *nivel_actual = 4;
                     *etapa_actual = NIVEL4;
                     cambiar_musica(recursos, recursos->musicas[2]);
@@ -332,6 +341,10 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
 
             if (opcion_clickeada == 0)
             {
+                desactivar_enemigos(recursos->enemigos);
+                recursos->puerta.estado = CERRADA;
+                recursos->palanca.estado = DESACTIVADA;
+                puntuacion = 0;
                 *etapa_actual = MENU_PRINCIPAL;
                 cambiar_menu(&recursos->menu_actual, recursos->menus[PRINCIPAL]);
                 cambiar_musica(recursos, recursos->musicas[0]);
@@ -569,7 +582,8 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
             actualizar_rayos(recursos->rayos[(*nivel_actual)-1], recursos->cantidad_rayos[(*nivel_actual)-1], recursos->pje_principal, recursos->mapas[(*nivel_actual)-1]);
             mostrar_pantalla_datos(recursos->pje_principal, recursos->vida, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual);
         }
-        
+        char* menus[] = {"PRINCIPAL", "DE NIVELES", "DERROTA", "VICTORIA"};
+        printf("Menú actual: %s\n", menus[recursos->menu_actual.tipo]);
         mostrar_menu(recursos->menu_actual);
     }
 }

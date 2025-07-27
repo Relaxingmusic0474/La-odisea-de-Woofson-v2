@@ -104,7 +104,7 @@
 #define GIGANTE 36
 
 // Macros para los largos de cadena
-#define LARGO 30
+#define LARGO 35
 #define MAXLINEA 128
 
 // Macros para los colores

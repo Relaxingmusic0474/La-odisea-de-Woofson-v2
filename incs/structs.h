@@ -252,6 +252,7 @@ struct recursos
     Imagen palancas[NRO_ESTADOS];
     Puerta puerta;
     Palanca palanca;
+    Ranking rankings[NRO_NIVELES];  // 1 ranking por cada nivel
     //Imagen imagen_extraterrestre;
     //Personaje extraterrestres[MAX_EXTRATERRESTRES];
     // Personaje* enemigos[NRO_NIVELES];

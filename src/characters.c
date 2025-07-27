@@ -1093,3 +1093,14 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
         }
     }    
 }
+
+
+Procedure desactivar_enemigos(Personaje enemigos[MAX_ENEMIGOS])
+{
+    Natural i;
+
+    for (i=0; i<MAX_ENEMIGOS; i++)
+    {
+        enemigos[i].inicializado = false;
+    }
+}

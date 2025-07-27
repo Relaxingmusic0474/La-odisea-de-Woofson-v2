@@ -327,20 +327,6 @@ bool crear_recursos(Recursos* R)
         return false;
     }
 
-    /*
-    for (i=0; i<NRO_MENUS; i++)
-    {
-        exito = i==0 ? inicializar_menu_principal(&R->menus[i], R->fuentes[TIMES_NEW_ROMAN_GRANDE]) : 
-                       inicializar_menu_niveles(&R->menus[i], R->fuentes[COMFORTAA_LIGHT_GRANDE]);
-
-        if (!exito)
-        {
-            // printf("Error al cargar %s\n", i==0 ? "el menú principal" : "el menú de niveles");
-            return false;
-        }
-    }
-    */
-
     R->menu_actual = R->menus[0];  // Menú principal
 
     // Se crea la voz
