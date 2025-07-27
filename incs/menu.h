@@ -27,5 +27,6 @@ Rectangulo obtener_rectangulo(Rectangulo, float, float, float, float);
 Rectangulo dibujar_rectangulo_en_rectangulo(Rectangulo, float, float, float, float, bool, ALLEGRO_COLOR);
 Procedure mostrar_pantalla_datos(Personaje, ALLEGRO_BITMAP*, ALLEGRO_FONT*, ALLEGRO_FONT*, Natural);
 Procedure mostrar_fondo_nivel(Imagen [NRO_NIVELES], Natural, Natural);
+Procedure manejar_menu(Recursos*, ALLEGRO_EVENT*, Etapa*, Natural*, Natural, bool*, Tecla*);
 
 #endif  // MENU_H

@@ -11,7 +11,6 @@ int main()
     Etapa etapa_juego = MENU_PRINCIPAL;  /* Para capturar el estado actual del juego */
     Tecla ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;  /* Para que el personaje parta mirando a la derecha */
     Natural iteracion = 0, nivel_actual = 0;  /* Para controlar las iteraciones del juego */
-    Rectangulo rectangulo_derrota;
     extern bool teclas[ALLEGRO_KEY_MAX]; /* Para manejar las teclas que se presionan */
     bool cambio_estado_procesado = false;
 
@@ -19,8 +18,6 @@ int main()
     {
         return 1;
     }
-
-    printf("Hola\n");
     
     LOOP
     {
@@ -31,89 +28,11 @@ int main()
             break;  /* Se sale del loop si la ventana se cierra (el juego termina) */
         }
 
-        if (etapa_juego == MENU_PRINCIPAL)
+        if (etapa_juego == MENU_PRINCIPAL || etapa_juego == MENU_NIVELES || etapa_juego == DERROTA || etapa_juego == VICTORIA)
         {
-            if (evento.type == CLICK)
-            {
-                recursos.menu_actual.opcion_en_hover = obtener_opcion_en_hover(recursos.menu_actual);
-
-                if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
-                {
-                    redirigir_menu(&recursos, recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
-                }
-            }
-
-            else if (evento.type == ALLEGRO_EVENT_TIMER)
-            {
-                al_clear_to_color(NEGRO);
-                mostrar_menu(recursos.menu_actual);
-            }
+            manejar_menu(&recursos, &evento, &etapa_juego, &nivel_actual, iteracion, &cambio_estado_procesado, &ultima_tecla_lateral);
         }
-
-        else if (etapa_juego == MENU_NIVELES)
-        {
-            if (evento.type == CLICK)
-            {
-                recursos.menu_actual.opcion_en_hover = obtener_opcion_en_hover(recursos.menu_actual);
         
-                if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
-                {
-                    redirigir_menu(&recursos, recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
-                }
-            }
-
-            else if (evento.type == ALLEGRO_EVENT_TIMER)
-            {
-                al_clear_to_color(NEGRO);
-                mostrar_menu(recursos.menu_actual);
-            }
-        }
-
-        else if (etapa_juego == DERROTA)
-        {
-            if (evento.type == CLICK)
-            {
-                recursos.menu_actual.opcion_en_hover = obtener_opcion_en_hover(recursos.menu_actual);
-        
-                if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
-                {
-                    redirigir_menu(&recursos, recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
-                }
-            }
-
-            else if (evento.type == ALLEGRO_EVENT_TIMER)
-            {
-                al_clear_to_color(NEGRO);
-                dibujar_mapa(recursos.mapas[nivel_actual-1], &recursos, &cambio_estado_procesado, iteracion);  // Dibujamos el mapa del primer nivel
-                dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
-                morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto
-                actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                mostrar_menu(recursos.menu_actual);
-            }
-        }
-
-        else if (etapa_juego == VICTORIA)
-        {
-            if (evento.type == CLICK)
-            {
-                recursos.menu_actual.opcion_en_hover = obtener_opcion_en_hover(recursos.menu_actual);
-        
-                if (recursos.menu_actual.opcion_en_hover < recursos.menu_actual.nro_opciones)
-                {
-                    redirigir_menu(&recursos, recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
-                }
-            }
-
-            else if (evento.type == ALLEGRO_EVENT_TIMER)
-            {
-                al_clear_to_color(NEGRO);
-                dibujar_mapa(recursos.mapas[nivel_actual-1], &recursos, &cambio_estado_procesado, iteracion);  // Dibujamos el mapa del primer nivel
-                dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
-                actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                mostrar_menu(recursos.menu_actual);
-            }
-        }
-
         else
         {
             switch (evento.type)
@@ -149,60 +68,29 @@ int main()
                     
                     if (nivel_actual != 0)
                     {
-                        if (etapa_juego == DERROTA)
-                        {   
-                            //dibujar_mapa(recursos.mapas[nivel_actual-1], &recursos, &cambio_estado_procesado, iteracion);  // Dibujamos el mapa del primer nivel
-                            //dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
-                            //morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);  // Esta función se ejecuta solamente si el personaje figura como muerto
-                            //actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                            // mostrar_menu(recursos.menus[PERDER]);
-                            /*
-                            rectangulo_derrota = dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, 500, 1200, 50.0, 50.0, true, CAFE);
-                            dibujar_rectangulo_en_rectangulo(rectangulo_derrota, 500, 1200, 50.0, 50.0, false, AMARILLO);  // Se le añadirá un borde
-                            dibujar_texto_en_rectangulo("HAS PERDIDO", rectangulo_derrota, 50.0, 15.0, recursos.fuentes[TIMES_NEW_ROMAN_GIGANTE], BLANCO);
-                            */
-                        }
+                        mover_personaje(&recursos.pje_principal, recursos.mapas[nivel_actual-1], nivel_actual-1);  // Mueve al personaje según las teclas presionadas y considera lógica de salto
+                        efectuar_disparo_de_woofson(&recursos.pje_principal, recursos.enemigos, recursos.mapas[nivel_actual-1]);
+                        actualizar_estado_danho(&recursos.pje_principal);
+                        actualizar_estado_danho_enemigos(recursos.enemigos);
+                        dibujar_mapa(recursos.mapas[nivel_actual-1], &recursos, &cambio_estado_procesado, iteracion);  // Dibujamos el mapa del primer nivel
+                        dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
+                        actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
+                        detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);
+                        efectuar_disparo_de_enemigos(recursos.enemigos, &recursos.pje_principal, recursos.mapas[nivel_actual-1]);
+                        determinar_victoria_woofson(&recursos.pje_principal, recursos.enemigos, recursos.puerta, &etapa_juego);
 
-                        else if (etapa_juego == VICTORIA)
+                        if (recursos.pje_principal.victoria)
                         {
-                            //dibujar_mapa(recursos.mapas[nivel_actual-1], &recursos, &cambio_estado_procesado, iteracion);  // Dibujamos el mapa del primer nivel
-                            //dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
-                            //actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                            // mostrar_menu(recursos.menus[GANAR]);
-                            /*
-                            rectangulo_derrota = dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, 500, 1200, 50.0, 50.0, true, CAFE);
-                            dibujar_rectangulo_en_rectangulo(rectangulo_derrota, 500, 1200, 50.0, 50.0, false, AMARILLO);  // Se le añadirá un borde
-                            dibujar_texto_en_rectangulo("HAS PASADO DE NIVEL", rectangulo_derrota, 50.0, 15.0, recursos.fuentes[TIMES_NEW_ROMAN_GIGANTE], BLANCO);
-                            */
+                            etapa_juego = VICTORIA;
                         }
 
-                        else
+                        morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);
+
+                        if (recursos.pje_principal.nro_vidas == 0 && recursos.pje_principal.subvida_actual == 0)  // Perdió
                         {
-                            mover_personaje(&recursos.pje_principal, recursos.mapas[nivel_actual-1], nivel_actual-1);  // Mueve al personaje según las teclas presionadas y considera lógica de salto
-                            efectuar_disparo_de_woofson(&recursos.pje_principal, recursos.enemigos, recursos.mapas[nivel_actual-1]);
-                            actualizar_estado_danho(&recursos.pje_principal);
-                            actualizar_estado_danho_enemigos(recursos.enemigos);
-                            dibujar_mapa(recursos.mapas[nivel_actual-1], &recursos, &cambio_estado_procesado, iteracion);  // Dibujamos el mapa del primer nivel
-                            dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
-                            actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                            detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);
-                            efectuar_disparo_de_enemigos(recursos.enemigos, &recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                            determinar_victoria_woofson(&recursos.pje_principal, recursos.enemigos, recursos.puerta, &etapa_juego);
-
-                            if (recursos.pje_principal.victoria)
-                            {
-                                etapa_juego = VICTORIA;
-                                redirigir_menu(&recursos, recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
-                            }
-
-                            morir(&recursos.pje_principal, &ultima_tecla_lateral, &etapa_juego);
-
-                            if (recursos.pje_principal.nro_vidas == 0 && recursos.pje_principal.subvida_actual == 0)  // Perdió
-                            {
-                                etapa_juego = DERROTA;
-                                redirigir_menu(&recursos, recursos.menu_actual.opcion_en_hover, &etapa_juego, &nivel_actual);
-                            }
+                            etapa_juego = DERROTA;
                         }
+                        
 
                         mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[COMFORTAA_LIGHT_GIGANTE], 
                                                recursos.fuentes[TIMES_NEW_ROMAN_NORMAL], nivel_actual);

@@ -52,140 +52,6 @@ Procedure determinar_color_pantalla(Natural iteracion)
     al_clear_to_color(color);
 }
 
-/*
-bool inicializar_menu_principal(Menu* menu, ALLEGRO_FONT* fuente)
-{
-    Natural i;
-    char* textos_opciones_menu[] = {"JUGAR", "INSTRUCCIONES", "RANKING"};
-
-    menu->nro_opciones = sizeof(textos_opciones_menu) / sizeof(textos_opciones_menu[0]);
-
-    menu->opcion_en_hover = -1;
-
-    menu->opciones = (Boton *) malloc(menu->nro_opciones * sizeof(Boton));
-
-    if (!menu->opciones)
-    {
-        printf("Error de asignacion de memoria al inicializar el menu principal.\n");
-        return false;
-    }
-
-    for (i=0; i<menu->nro_opciones; i++)
-    {
-        menu->opciones[i].rectangulo.pos_inicial = (Vector) {ANCHO_VENTANA*0.55, ALTO_VENTANA*(0.50 + 0.15*i)};
-        menu->opciones[i].rectangulo.pos_final = (Vector) {ANCHO_VENTANA*0.80, ALTO_VENTANA*(0.62 + 0.15*i)};
-        strcpy(menu->opciones[i].texto, textos_opciones_menu[i]);
-    }
-        
-    menu->fondo = al_load_bitmap("assets/images/menu.jpg");
-
-    if (!menu->fondo)
-    {
-        printf("Error al cargar el fondo del menu principal.\n");
-        finalizar_menu(menu);
-        return false;
-    }
-
-    menu->fuente = fuente;
-
-    menu->finalizado = false;
-    printf("El menu principal ya esta inicializado.\n");
-
-    return true;
-}
-
-
-bool inicializar_menu_niveles(Menu* menu, ALLEGRO_FONT* fuente)
-{
-    Natural i;
-    char* textos_opciones_menu[] = {"1", "2", "3", "4", "5", "Volver atrás"}; 
-
-    menu->nro_opciones = sizeof(textos_opciones_menu) / sizeof(textos_opciones_menu[0]);
-
-    menu->opcion_en_hover = -1;
-
-    menu->opciones = (Boton *) malloc(menu->nro_opciones * sizeof(Boton));
-    
-    if (!menu->opciones)
-    {
-        printf("Error de asignacion de memoria al inicializar el menu de niveles.\n");
-        return false;
-    }
-
-    for (i=0; i<menu->nro_opciones; i++)
-    {
-        strcpy(menu->opciones[i].texto, textos_opciones_menu[i]);
-    }
-
-    for (i=0; i<NRO_NIVELES; i++)
-    {
-        menu->opciones[i].rectangulo.pos_inicial = (Vector) {ANCHO_VENTANA*(0.15 + 0.15*i), ALTO_VENTANA*0.44};
-        menu->opciones[i].rectangulo.pos_final = (Vector) {ANCHO_VENTANA*(0.25 + 0.15*i), ALTO_VENTANA*0.56};
-    }
-
-    menu->opciones[i].rectangulo.pos_inicial = (Vector) {ANCHO_VENTANA*0.05, ALTO_VENTANA*0.80};
-    menu->opciones[i].rectangulo.pos_final = (Vector) {ANCHO_VENTANA*0.20, ALTO_VENTANA*0.90};
-
-    menu->fondo = al_load_bitmap("assets/images/menu_niveles.png");
-
-    if (!menu->fondo)
-    {
-        printf("Error al cargar el fondo del menu de niveles.\n");
-        finalizar_menu(menu);
-        return false;
-    }
-
-    menu->fuente = fuente;
-    menu->fuente_sec = NULL;
-    menu->finalizado = false;
-    printf("El menu de niveles ya esta inicializado.\n");
-
-    return true;
-}
-
-
-bool inicializar_menu_derrota(Menu* menu, ALLEGRO_FONT* fuente_primaria, ALLEGRO_FONT* fuente_secundaria)
-{
-    Natural i;
-    float ancho, alto, x0, x1, y0, y1;
-    char* textos_opciones_menu[] = {"Reintentar", "Volver al menú principal"};
-
-    menu->nro_opciones = sizeof(textos_opciones_menu) / sizeof(textos_opciones_menu[0]);
-
-    menu->opcion_en_hover = -1;
-
-    menu->opciones = (Boton *) malloc(menu->nro_opciones * sizeof(Boton));
-
-    if (!menu->opciones)
-    {
-        printf("Error de asignacion de memoria al inicializar el menu de niveles.\n");
-        return false;
-    }
-
-    for (i=0; i<menu->nro_opciones; i++)
-    {
-        strcpy(menu->opciones[i].texto, textos_opciones_menu[i]);
-    }
-
-    x0 = RECTANGULO_MENU_RESULTADO.pos_inicial.x;
-    x1 = RECTANGULO_MENU_RESULTADO.pos_final.x;
-
-    y0 = RECTANGULO_MENU_RESULTADO.pos_inicial.y;
-    y1 = RECTANGULO_MENU_RESULTADO.pos_final.y;
-
-    ancho = x1 - x0;
-    alto = y1 - y0;
-
-    for (i=0; i<menu->opciones; i++) 
-    {
-        menu->opciones[i].rectangulo.pos_inicial = (Vector) {x0 + ancho*(0.20 + 0.35*i), y0 + alto*0.60};
-        menu->opciones[i].rectangulo.pos_final = (Vector) {x0 + ancho*(0.45 + 0.35*i), y0 + alto*0.80};
-    }
-
-
-}
-*/
-
 
 bool inicializar_menu(Menu* menu, TipoMenu tipo, Imagen fondo, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, char* textos_opciones[], Natural nro_opciones, Rectangulo rect_destino)
 {
@@ -368,7 +234,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         if (opcion_clickeada == 0)  
         {
             *etapa_actual = MENU_NIVELES;
-            cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_NIVELES+4]);  // +4 para que calze con el índice
+            cambiar_menu(&recursos->menu_actual, recursos->menus[NIVELES]);  // +4 para que calze con el índice
             mostrar_menu(recursos->menu_actual);
         }
 
@@ -391,6 +257,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
     {
         if (opcion_clickeada == 5)
         {
+            printf("Hola\n");
             *nivel_actual = 0;
             *etapa_actual = MENU_PRINCIPAL;
             cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_PRINCIPAL+4]);
@@ -422,6 +289,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                     break;
 
                 case 3:
+                    printf("Hola... Entrando al nivel 4\n");
                     *nivel_actual = 4;
                     *etapa_actual = NIVEL4;
                     cambiar_musica(recursos, recursos->musicas[2]);
@@ -444,12 +312,42 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         {
             cambiar_menu(&recursos->menu_actual, recursos->menus[PERDER]);
             mostrar_menu(recursos->menu_actual);
+
+            if (opcion_clickeada == 0)
+            {
+                // Lógica para reintentar el nivel
+            }
+
+            else
+            {
+                *etapa_actual = MENU_PRINCIPAL;
+                *nivel_actual = 0;
+            }
         }
 
         else if (*etapa_actual == VICTORIA)
         {
             cambiar_menu(&recursos->menu_actual, recursos->menus[GANAR]);
             mostrar_menu(recursos->menu_actual);
+
+            if (opcion_clickeada == 0)
+            {
+                *etapa_actual = MENU_PRINCIPAL;
+                cambiar_menu(&recursos->menu_actual, recursos->menus[PRINCIPAL]);
+                cambiar_musica(recursos, recursos->musicas[0]);
+                recursos->menu_actual.opcion_en_hover = -1;
+                *nivel_actual = 0;
+            }
+
+            else if (opcion_clickeada == 1)
+            {
+                // Lógica para entrar en el ranking
+            }
+
+            else
+            {
+                // Lógica para pasar al siguiente nivel
+            }
         }
     }
 
@@ -616,7 +514,7 @@ Procedure mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, 
 
     else if (nivel_actual == 3)  // Nivel en el cual tengo pensado añadir scroll (Por eso se está dibujando solo una parte de la imagen)
     {
-        al_draw_scaled_bitmap(fondos[NIVEL3], 0, 0, ANCHO_VENTANA, 8./9*ALTO_VENTANA, 0, 0, 
+        al_draw_scaled_bitmap(fondos[NIVEL3], 0, 0, ANCHO_VENTANA, ALTO_JUEGO, 0, 0, 
                               al_get_bitmap_width(fondos[NIVEL3]), al_get_bitmap_height(fondos[NIVEL3]), 0);
     }
 
@@ -627,5 +525,51 @@ Procedure mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, 
             al_draw_scaled_bitmap(fondos[nivel_actual-1], 0, 0, al_get_bitmap_width(fondos[nivel_actual-1]), 
                                   al_get_bitmap_height(fondos[nivel_actual-1]), 0, 0, ANCHO_VENTANA, ALTO_JUEGO, 0);
         }        
+    }
+}
+
+
+Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_actual, Natural* nivel_actual, Natural iteracion, bool* cambio_estado_procesado, Tecla* ultima_tecla_lateral)
+{
+    Menu menu_vacio = {0};
+
+    if (evento->type == CLICK)
+    {
+        recursos->menu_actual.opcion_en_hover = obtener_opcion_en_hover(recursos->menu_actual);
+
+        if (recursos->menu_actual.opcion_en_hover < recursos->menu_actual.nro_opciones)
+        {
+            redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual);
+
+            if (*etapa_actual != MENU_NIVELES || *nivel_actual != 0)
+            {
+                return;
+            }
+        }
+    }
+
+    else if (evento->type == ALLEGRO_EVENT_TIMER)
+    {
+        if (memcmp(&recursos->menu_actual, &menu_vacio, sizeof(Menu)) == 0)
+        {
+            recursos->menu_actual.opcion_en_hover = -1;
+
+            if (*etapa_actual == VICTORIA || *etapa_actual == DERROTA)
+            {
+                redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual);
+            }
+        }
+
+        if (*nivel_actual != 0)
+        {            
+            mostrar_fondo_nivel(recursos->fondos, *nivel_actual, iteracion);
+            dibujar_mapa(recursos->mapas[(*nivel_actual)-1], recursos, cambio_estado_procesado, iteracion);  // Dibujamos el mapa del primer nivel
+            dibujar_personaje(&recursos->pje_principal, *ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
+            morir(&recursos->pje_principal, ultima_tecla_lateral, etapa_actual);  // Esta función se ejecuta solamente si el personaje figura como muerto
+            actualizar_rayos(recursos->rayos[(*nivel_actual)-1], recursos->cantidad_rayos[(*nivel_actual)-1], recursos->pje_principal, recursos->mapas[(*nivel_actual)-1]);
+            mostrar_pantalla_datos(recursos->pje_principal, recursos->vida, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual);
+        }
+        
+        mostrar_menu(recursos->menu_actual);
     }
 }

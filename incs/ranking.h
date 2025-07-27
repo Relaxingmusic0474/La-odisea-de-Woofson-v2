@@ -3,5 +3,6 @@
 
 #include "allegro.h"
 
+Procedure mostrar_ranking();
 
 #endif  // RANKING_H
