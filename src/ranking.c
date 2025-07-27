@@ -1,3 +1,6 @@
+#ifndef RANKING_H
+#define RANKING_H
+
 #include "ranking.h"
 
-Natural puntuacion = 0;
+#endif  // RANKING_H

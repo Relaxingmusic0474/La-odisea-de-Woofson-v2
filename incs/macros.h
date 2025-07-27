@@ -2,9 +2,11 @@
 #define MACROS_H
 
 #include "allegro5/allegro_color.h"  // Para las macros de los colores (lineas 49 a 57)
+#include "stdlib.h"
 
 // Macros de funciones básicas útiles
 #define X_ENTRE_A_Y_B(x, A, B) (x >= A && x < B)
+#define NRO_ELEMS(array) (sizeof(array)/sizeof(array[0]))
 
 // Macros generales
 #define NOMBRE_JUEGO "La odisea de Woofson"
@@ -16,12 +18,13 @@
 #define ALTO_JUEGO (8./9  * ALTO_VENTANA)
 #define RECTANGULO_JUEGO (Rectangulo) {{0, 0}, {ANCHO_VENTANA, ALTO_JUEGO}}
 #define RECTANGULO_VENTANA (Rectangulo) {{0, 0}, {ANCHO_VENTANA, ALTO_VENTANA}}
+#define RECTANGULO_MENU_RESULTADO (obtener_rectangulo(RECTANGULO_JUEGO, 500, 1200, 50.0, 50.0))
 #define VECTOR_NULO (Vector) {0, 0}
 #define NRO_NIVELES 5
 #define MAX_DATOS 10
 #define NRO_COLORES 5
 #define NRO_BLOQUES 2 // Tipos distintos de bloques que se cargarán
-#define NRO_MENUS 2
+#define NRO_MENUS 4
 #define NRO_ESTADOS 2
 #define NRO_MUSICAS 3
 #define NRO_INSTANCIAS 8
@@ -101,7 +104,7 @@
 #define GIGANTE 36
 
 // Macros para los largos de cadena
-#define LARGO 25
+#define LARGO 30
 #define MAXLINEA 128
 
 // Macros para los colores

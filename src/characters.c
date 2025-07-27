@@ -770,7 +770,6 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[
     {
         if (personaje->tiempo_danho == 0)
         {
-            printf("Oh nooooo\n");
             aplicar_danho(personaje, DANHO_RAYO);
         }
     }
@@ -797,7 +796,6 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
 {
     Natural i;
     int fil, col;
-    extern Natural puntuacion;
 
     for (i=0; i<MAX_BALAS; i++)
     {

@@ -160,8 +160,12 @@ bool crear_recursos_allegro(Recursos* R)
 bool crear_recursos(Recursos* R)
 {
     Natural i, j;
+    char* textos_opciones_principal[] = {"JUGAR", "INSTRUCCIONES", "VER RANKING"};
+    char* textos_opciones_niveles[] = {"1", "2", "3", "4", "5", "Volver atrás"};
+    char* textos_opciones_ganar[] = {"Ir al menú principal", "Entrar en el ranking", "Ir al siguiente nivel"};
+    char* textos_opciones_perder[] = {"Reintentar nivel", "Ir al menú principal"};
     char ruta[40] = {'\0'};
-    bool exito = false;
+    //bool exito = false;
 
     if (!crear_recursos_allegro(R))
     {
@@ -260,7 +264,25 @@ bool crear_recursos(Recursos* R)
         memset(ruta, '\0', sizeof(ruta));
     }
 
-    /* Se cargan las fuentes */
+    // Se carga la imagen de fondo del menú principal
+    R->fondo_menu_principal = al_load_bitmap("assets/images/menu.jpg");
+
+    if (!R->fondo_menu_principal)
+    {
+        printf("Error al cargar el fondo del menú principal\n");
+        return false;
+    }
+
+    // Se carga la imagen de fondo del menú de niveles
+    R->fondo_menu_niveles = al_load_bitmap("assets/images/menu_niveles.png");
+
+    if (!R->fondo_menu_niveles)
+    {
+        printf("Error al cargar el fondo del menú de niveles\n");
+        return false;
+    }
+
+    // Se cargan las fuentes
     for (i=0; i<3; i++)
     {
         for (j=0; j<2; j++)
@@ -281,7 +303,31 @@ bool crear_recursos(Recursos* R)
         }
     }
 
-    /* Se cargan los menus */
+    if (!inicializar_menu(&R->menus[PRINCIPAL], PRINCIPAL, R->fondo_menu_principal, R->fuentes[TIMES_NEW_ROMAN_GRANDE], NULL, 
+                          textos_opciones_principal, NRO_ELEMS(textos_opciones_principal), RECTANGULO_VENTANA))
+    {
+        return false;
+    }
+    
+    if (!inicializar_menu(&R->menus[NIVELES], NIVELES, R->fondo_menu_niveles, R->fuentes[COMFORTAA_LIGHT_GRANDE], NULL, 
+                          textos_opciones_niveles, NRO_ELEMS(textos_opciones_niveles), RECTANGULO_VENTANA))
+    {
+        return false;
+    }
+    
+    if (!inicializar_menu(&R->menus[PERDER], PERDER, NULL, R->fuentes[TIMES_NEW_ROMAN_GIGANTE], R->fuentes[TIMES_NEW_ROMAN_GRANDE], 
+                          textos_opciones_perder, NRO_ELEMS(textos_opciones_perder), RECTANGULO_MENU_RESULTADO))
+    {
+        return false;
+    }
+    
+    if (!inicializar_menu(&R->menus[GANAR], GANAR, NULL, R->fuentes[TIMES_NEW_ROMAN_GIGANTE], R->fuentes[TIMES_NEW_ROMAN_GRANDE],
+                          textos_opciones_ganar, NRO_ELEMS(textos_opciones_ganar),RECTANGULO_MENU_RESULTADO))
+    {
+        return false;
+    }
+
+    /*
     for (i=0; i<NRO_MENUS; i++)
     {
         exito = i==0 ? inicializar_menu_principal(&R->menus[i], R->fuentes[TIMES_NEW_ROMAN_GRANDE]) : 
@@ -293,6 +339,7 @@ bool crear_recursos(Recursos* R)
             return false;
         }
     }
+    */
 
     R->menu_actual = R->menus[0];  // Menú principal
 
@@ -479,6 +526,18 @@ Procedure finalizar_allegro(Recursos* R)
             al_destroy_font(R->fuentes[i]);
             R->fuentes[i] = NULL;
         }
+    }
+
+    if (R->fondo_menu_niveles != NULL)
+    {
+        al_destroy_bitmap(R->fondo_menu_niveles);
+        R->fondo_menu_niveles = NULL;
+    }
+
+    if (R->fondo_menu_principal != NULL)
+    {
+        al_destroy_bitmap(R->fondo_menu_principal);
+        R->fondo_menu_principal = NULL;
     }
 
     // Se destruyen las palancas y las puertas

@@ -121,16 +121,19 @@ struct personaje
 struct boton
 {
     Rectangulo rectangulo;
-    char texto[15]; 
+    char texto[LARGO]; 
 }; 
 
 struct menu 
 { 
+    Rectangulo rect_destino;
     Imagen fondo; 
     ALLEGRO_FONT* fuente; 
+    ALLEGRO_FONT* fuente_sec;
     Boton* opciones;
     Natural nro_opciones;
     Natural opcion_en_hover;
+    TipoMenu tipo;
     bool finalizado;
 }; 
 
@@ -241,6 +244,8 @@ struct recursos
     EfectoSonido* sonido_rayo;  // Efecto de sonido del rayo
     Espina espina_actual;  // POSIBLEMENTE QUITE LAS ESPINAS
     Imagen fondos[NRO_NIVELES];
+    Imagen fondo_menu_principal;
+    Imagen fondo_menu_niveles;
     Imagen* frames[TIPOS_PERSONAJES];
     Personaje enemigos[MAX_ENEMIGOS];
     Imagen puertas[NRO_ESTADOS];

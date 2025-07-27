@@ -3,13 +3,12 @@
 
 #include "stdio.h"
 #include "stdbool.h"
-#include "dirent.h"
 #include "allegro_libraries.h"
 #include "macros.h"
 #include "enums.h"
 #include "structs.h"
 #include "types.h"
-#include "ranking.h"
+#include "score.h"
 #include "collisions.h"
 
 TipoFrame tipo_frame(TipoPersonaje);

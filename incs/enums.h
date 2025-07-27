@@ -114,4 +114,14 @@ enum estadoPalanca
 
 typedef enum estadoPalanca EstadoPalanca;
 
+enum tipoMenu
+{
+    PRINCIPAL,
+    NIVELES,
+    PERDER,
+    GANAR,
+};
+
+typedef enum tipoMenu TipoMenu;
+
 #endif  // ENUMS_H

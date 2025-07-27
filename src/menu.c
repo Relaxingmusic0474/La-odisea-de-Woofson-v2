@@ -52,15 +52,15 @@ Procedure determinar_color_pantalla(Natural iteracion)
     al_clear_to_color(color);
 }
 
-
+/*
 bool inicializar_menu_principal(Menu* menu, ALLEGRO_FONT* fuente)
 {
     Natural i;
     char* textos_opciones_menu[] = {"JUGAR", "INSTRUCCIONES", "RANKING"};
 
-    menu->nro_opciones = sizeof(textos_opciones_menu) / sizeof(textos_opciones_menu[0]);  /* Se calcula de forma dinámica el numero de opciones del menú */
+    menu->nro_opciones = sizeof(textos_opciones_menu) / sizeof(textos_opciones_menu[0]);
 
-    menu->opcion_en_hover = -1;  /* Se inicializa en la opcion -1 (que correspondería a USHRT_MAX) para evitar problemas */
+    menu->opcion_en_hover = -1;
 
     menu->opciones = (Boton *) malloc(menu->nro_opciones * sizeof(Boton));
 
@@ -87,6 +87,7 @@ bool inicializar_menu_principal(Menu* menu, ALLEGRO_FONT* fuente)
     }
 
     menu->fuente = fuente;
+
     menu->finalizado = false;
     printf("El menu principal ya esta inicializado.\n");
 
@@ -97,11 +98,11 @@ bool inicializar_menu_principal(Menu* menu, ALLEGRO_FONT* fuente)
 bool inicializar_menu_niveles(Menu* menu, ALLEGRO_FONT* fuente)
 {
     Natural i;
-    char* textos_opciones_menu[] = {"1", "2", "3", "4", "5", "Volver atrás"};  /* Se harán los botones de los niveles, más uno para volver para atrás */
+    char* textos_opciones_menu[] = {"1", "2", "3", "4", "5", "Volver atrás"}; 
 
-    menu->nro_opciones = sizeof(textos_opciones_menu) / sizeof(textos_opciones_menu[0]);  /* Se calcula de forma dinámica el numero de opciones del menú */
+    menu->nro_opciones = sizeof(textos_opciones_menu) / sizeof(textos_opciones_menu[0]);
 
-    menu->opcion_en_hover = -1;  /* Se inicializa en la opcion -1 (que corresponderia a USHRT_MAX) para evitar problemas */
+    menu->opcion_en_hover = -1;
 
     menu->opciones = (Boton *) malloc(menu->nro_opciones * sizeof(Boton));
     
@@ -116,13 +117,12 @@ bool inicializar_menu_niveles(Menu* menu, ALLEGRO_FONT* fuente)
         strcpy(menu->opciones[i].texto, textos_opciones_menu[i]);
     }
 
-    for (i=0; i<NRO_NIVELES; i++) /* Asignación de coordenadas para los botones de los niveles */
+    for (i=0; i<NRO_NIVELES; i++)
     {
         menu->opciones[i].rectangulo.pos_inicial = (Vector) {ANCHO_VENTANA*(0.15 + 0.15*i), ALTO_VENTANA*0.44};
         menu->opciones[i].rectangulo.pos_final = (Vector) {ANCHO_VENTANA*(0.25 + 0.15*i), ALTO_VENTANA*0.56};
     }
 
-    /* Coordenadas para el botón "Volver atrás" */
     menu->opciones[i].rectangulo.pos_inicial = (Vector) {ANCHO_VENTANA*0.05, ALTO_VENTANA*0.80};
     menu->opciones[i].rectangulo.pos_final = (Vector) {ANCHO_VENTANA*0.20, ALTO_VENTANA*0.90};
 
@@ -136,6 +136,7 @@ bool inicializar_menu_niveles(Menu* menu, ALLEGRO_FONT* fuente)
     }
 
     menu->fuente = fuente;
+    menu->fuente_sec = NULL;
     menu->finalizado = false;
     printf("El menu de niveles ya esta inicializado.\n");
 
@@ -143,22 +144,186 @@ bool inicializar_menu_niveles(Menu* menu, ALLEGRO_FONT* fuente)
 }
 
 
+bool inicializar_menu_derrota(Menu* menu, ALLEGRO_FONT* fuente_primaria, ALLEGRO_FONT* fuente_secundaria)
+{
+    Natural i;
+    float ancho, alto, x0, x1, y0, y1;
+    char* textos_opciones_menu[] = {"Reintentar", "Volver al menú principal"};
+
+    menu->nro_opciones = sizeof(textos_opciones_menu) / sizeof(textos_opciones_menu[0]);
+
+    menu->opcion_en_hover = -1;
+
+    menu->opciones = (Boton *) malloc(menu->nro_opciones * sizeof(Boton));
+
+    if (!menu->opciones)
+    {
+        printf("Error de asignacion de memoria al inicializar el menu de niveles.\n");
+        return false;
+    }
+
+    for (i=0; i<menu->nro_opciones; i++)
+    {
+        strcpy(menu->opciones[i].texto, textos_opciones_menu[i]);
+    }
+
+    x0 = RECTANGULO_MENU_RESULTADO.pos_inicial.x;
+    x1 = RECTANGULO_MENU_RESULTADO.pos_final.x;
+
+    y0 = RECTANGULO_MENU_RESULTADO.pos_inicial.y;
+    y1 = RECTANGULO_MENU_RESULTADO.pos_final.y;
+
+    ancho = x1 - x0;
+    alto = y1 - y0;
+
+    for (i=0; i<menu->opciones; i++) 
+    {
+        menu->opciones[i].rectangulo.pos_inicial = (Vector) {x0 + ancho*(0.20 + 0.35*i), y0 + alto*0.60};
+        menu->opciones[i].rectangulo.pos_final = (Vector) {x0 + ancho*(0.45 + 0.35*i), y0 + alto*0.80};
+    }
+
+
+}
+*/
+
+
+bool inicializar_menu(Menu* menu, TipoMenu tipo, Imagen fondo, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, char* textos_opciones[], Natural nro_opciones, Rectangulo rect_destino)
+{
+    Natural i;
+    float x0, x1, y0, y1, ancho, alto;
+    char* tipos_menu[] = {"principal", "de niveles", "de derrota", "de victoria"};
+
+    menu->tipo = tipo;
+    menu->nro_opciones = nro_opciones;
+    menu->opcion_en_hover = -1;
+
+    menu->opciones = (Boton *) malloc(menu->nro_opciones * sizeof(Boton));
+
+    if (!menu->opciones)
+    {
+        printf("Error de asignacion de memoria al inicializar el menu %s.\n", tipos_menu[menu->tipo]);
+        return false;
+    }
+
+    for (i=0; i<menu->nro_opciones; i++)
+    {
+        strcpy(menu->opciones[i].texto, textos_opciones[i]);
+    }
+
+    x0 = rect_destino.pos_inicial.x;
+    x1 = rect_destino.pos_final.x;
+
+    y0 = rect_destino.pos_inicial.y;
+    y1 = rect_destino.pos_final.y;
+
+    ancho = x1 - x0;
+    alto = y1 - y0;
+
+    if (menu->tipo == PRINCIPAL)  // Menú principal
+    {
+        for (i=0; i<menu->nro_opciones; i++)
+        {
+            menu->opciones[i].rectangulo.pos_inicial = (Vector) {x0 + ancho*0.55, y0 + alto*(0.50 + 0.15*i)};
+            menu->opciones[i].rectangulo.pos_final = (Vector) {x0 + ancho*0.80, y0 + alto*(0.62 + 0.15*i)};
+        }
+    }
+
+    else if (menu->tipo == NIVELES)  // Menú de niveles
+    {
+        for (i=0; i<NRO_NIVELES; i++)  // Asignación de coordenadas para los botones de los niveles
+        {
+            menu->opciones[i].rectangulo.pos_inicial = (Vector) {x0 + ancho*(0.15 + 0.15*i), y0 + alto*0.44};
+            menu->opciones[i].rectangulo.pos_final = (Vector) {x0 + ancho*(0.25 + 0.15*i), y0 + alto*0.56};
+        }
+
+        // Coordenadas para el botón "Volver atrás"
+        menu->opciones[i].rectangulo.pos_inicial = (Vector) {x0 + ancho*0.05, y0 + alto*0.80};
+        menu->opciones[i].rectangulo.pos_final = (Vector) {x0 + ancho*0.20, y0 + alto*0.90};
+    }
+
+    else if (menu->tipo == PERDER)  // Menú que se muestra al perder un nivel
+    {
+        for (i=0; i<menu->nro_opciones; i++)
+        {
+            menu->opciones[i].rectangulo.pos_inicial = (Vector) {x0 + ancho*(0.20 + 0.35*i), y0 + alto*0.60};
+            menu->opciones[i].rectangulo.pos_final = (Vector) {x0 + ancho*(0.45 + 0.35*i), y0 + alto*0.80};
+        }
+    }
+
+    else  // Menú que se muestra al ganar un nivel
+    {
+        for (i=0; i<menu->nro_opciones; i++)
+        {
+            menu->opciones[i].rectangulo.pos_inicial = (Vector) {x0 + ancho*(0.15 + 0.26*i), y0 + alto*0.60};
+            menu->opciones[i].rectangulo.pos_final = (Vector) {x0 + ancho*(0.33 + 0.26*i), y0 + alto*0.80};
+        }
+    }
+
+    menu->rect_destino = rect_destino;
+    menu->fondo = fondo;
+    menu->fuente = fuente;
+    menu->fuente_sec = fuente_sec;
+    menu->finalizado = false;
+    return true;
+}
+
+
 Procedure mostrar_menu(Menu menu)
 {
-    Rectangulo rect;
-    float alto, ancho, porcentaje_x, porcentaje_y;
+    Rectangulo rect, rect_menu;
+    float alto, ancho, x0, x1, y0, y1, porcentaje_x, porcentaje_y;
+    extern Natural puntuacion;
+    char texto_puntuacion[LARGO] = {'\0'};
     Natural i;
 
-    menu.opcion_en_hover = obtener_opcion_en_hover(menu);  /* Se obtiene la opcion por la que pasa el cursor (sin seleccionarla aun) */
+    menu.opcion_en_hover = obtener_opcion_en_hover(menu);  // Se obtiene la opcion por la que pasa el cursor (sin seleccionarla aun)
     
-    // Aqui se muestra el fondo del menu
-    al_draw_scaled_bitmap(menu.fondo, 0, 0, al_get_bitmap_width(menu.fondo), al_get_bitmap_height(menu.fondo), 0, 0, ANCHO_VENTANA, ALTO_VENTANA, 0);
+    x0 = menu.rect_destino.pos_inicial.x;
+    x1 = menu.rect_destino.pos_final.x;
 
-    if (menu.nro_opciones == NRO_NIVELES+1)
+    y0 = menu.rect_destino.pos_inicial.y;
+    y1 = menu.rect_destino.pos_final.y;
+
+    ancho = x1 - x0;
+    alto = y1 - y0;
+
+    // Aqui se muestra el fondo del menu (si es que no es NULL)
+    if (menu.fondo != NULL)
     {
-        al_draw_filled_rectangle(ANCHO_VENTANA*0.10, ALTO_VENTANA*0.30, ANCHO_VENTANA*0.90, ALTO_VENTANA*0.70, GRIS);
-        al_draw_filled_rectangle(ANCHO_VENTANA*0.30, ALTO_VENTANA*0.22, ANCHO_VENTANA*0.70, ALTO_VENTANA*0.38, AZUL);
-        al_draw_text(menu.fuente, BLANCO, ANCHO_VENTANA*0.50, ALTO_VENTANA*0.30, ALLEGRO_ALIGN_CENTRE, "SELECCIONE UN NIVEL:");
+        al_draw_scaled_bitmap(menu.fondo, 0, 0, al_get_bitmap_width(menu.fondo), al_get_bitmap_height(menu.fondo), (ANCHO_VENTANA-ancho)/2, (ALTO_VENTANA-alto)/2, ancho, alto, 0);
+    }
+
+    else  // Si el menú que se quiere mostrar, no tiene fondo (es decir, es el menú de ganar o perder), se dibuja el menú como un rectángulo
+    {
+        rect_menu = dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, alto, ancho, 50.0, 50.0, true, CAFE);
+        dibujar_rectangulo_en_rectangulo(rect_menu, alto, ancho, 50.0, 50.0, false, AMARILLO);
+    }
+
+    if (menu.tipo == NIVELES)  // Si es el menú de niveles, hace esto
+    {
+        al_draw_filled_rectangle(x0 + ancho*0.10, y0 + alto*0.30, x0 + ancho*0.90, y0 + alto*0.70, GRIS);
+        al_draw_filled_rectangle(x0 + ancho*0.30, y0 + alto*0.22, x0 + ancho*0.70, y0 + alto*0.38, AZUL);
+        al_draw_text(menu.fuente, BLANCO, x0 + ancho*0.50, y0 + alto*0.30, ALLEGRO_ALIGN_CENTRE, "SELECCIONE UN NIVEL:");
+    }
+
+    else
+    {
+        if (menu.tipo == PERDER)  // Si el menú es el menú de derrota
+        {
+            dibujar_texto_en_rectangulo("HAS PERDIDO", menu.rect_destino, 50.0, 15.0, menu.fuente, BLANCO);
+            sprintf(texto_puntuacion, "Su puntuación: %hu", puntuacion);
+            dibujar_texto_en_rectangulo(texto_puntuacion, menu.rect_destino, 50.0, 40.0, menu.fuente_sec ? menu.fuente_sec : menu.fuente, BLANCO);
+        }
+
+        else
+        {
+            if (menu.tipo == GANAR)
+            {
+                dibujar_texto_en_rectangulo("FELICIDADES... HAS LOGRADO PASAR EL NIVEL", menu.rect_destino, 50.0, 15.0, menu.fuente, BLANCO);
+                sprintf(texto_puntuacion, "Su puntuación: %hu", puntuacion);
+                dibujar_texto_en_rectangulo(texto_puntuacion, menu.rect_destino, 50.0, 40.0, menu.fuente_sec ? menu.fuente_sec : menu.fuente, BLANCO);
+            }
+        }
     }
 
     for (i=0; i<menu.nro_opciones; i++)
@@ -194,7 +359,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         if (opcion_clickeada == 0)  
         {
             *etapa_actual = MENU_NIVELES;
-            cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_NIVELES+4]);
+            cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_NIVELES+4]);  // +4 para que calze con el índice
             mostrar_menu(recursos->menu_actual);
         }
 
@@ -262,6 +427,21 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         }
     }
 
+    else
+    {
+        if (*etapa_actual == DERROTA)
+        {
+            cambiar_menu(&recursos->menu_actual, recursos->menus[PERDER]);
+            mostrar_menu(recursos->menu_actual);
+        }
+
+        else if (*etapa_actual == VICTORIA)
+        {
+            cambiar_menu(&recursos->menu_actual, recursos->menus[GANAR]);
+            mostrar_menu(recursos->menu_actual);
+        }
+    }
+
     return;
 }
 
@@ -273,9 +453,10 @@ Procedure finalizar_menu(Menu* menu)
     for (i=0; i<menu->nro_opciones; i++)
     {
         memset(menu->opciones[i].texto, '\0', sizeof(menu->opciones[i].texto));
-        menu->opciones[i].rectangulo = (Rectangulo) {{0, 0}, {0, 0}};
+        menu->opciones[i].rectangulo = (Rectangulo) {VECTOR_NULO, VECTOR_NULO};
     }
-    
+
+    menu->fuente_sec = NULL;
     menu->fuente = NULL;
 
     if (menu->opciones != NULL)
@@ -284,12 +465,8 @@ Procedure finalizar_menu(Menu* menu)
         menu->opciones = NULL;
     }
 
-    if (menu->fondo != NULL)
-    {
-        al_destroy_bitmap(menu->fondo);
-        menu->fondo = NULL;
-    }
-    
+    menu->fondo = NULL;
+    menu->rect_destino = (Rectangulo) {VECTOR_NULO, VECTOR_NULO};
     menu->nro_opciones = 0;
     menu->opcion_en_hover = -1;
     menu->finalizado = true;
@@ -323,7 +500,29 @@ Procedure dibujar_texto_en_rectangulo(char* texto, Rectangulo rectangulo, float 
 
 
 /**
- * Dibuja un rectángulo dentro de otro rectángulo ya definido previamente.
+ * @brief Función que obtiene datos de un rectángulo, pero sin dibujarlo.
+ * @param rect_destino Es el rectágulo sobre el cual estará el otro rectángulo (que será el de origen, que deberá ser más pequeño que éste).
+ * @param alto Es el alto en px que tendrá el rectángulo.
+ * @param ancho Es el ancho en px que tendrá el rectángulo.
+ * @param porcentaje_x Es el porcentaje medido horizontalmente en el cual estará centrado el rectángulo respecto del de destino.
+ * @param porcentaje_y Es el porcentaje medido verticalmente en el cual estará centrado el rectángulo respexto del de destino.
+ */
+Rectangulo obtener_rectangulo(Rectangulo rect_destino, float alto, float ancho, float porcentaje_x, float porcentaje_y)
+{
+    Rectangulo rect;
+
+    rect.pos_inicial.x = rect_destino.pos_inicial.x + porcentaje_x / 100 * (rect_destino.pos_final.x - rect_destino.pos_inicial.x) - ancho / 2;
+    rect.pos_inicial.y = rect_destino.pos_inicial.y + porcentaje_y / 100 * (rect_destino.pos_final.y - rect_destino.pos_inicial.y) - alto / 2;
+
+    rect.pos_final.x = rect_destino.pos_inicial.x + porcentaje_x / 100 * (rect_destino.pos_final.x - rect_destino.pos_inicial.x) + ancho / 2;
+    rect.pos_final.y = rect_destino.pos_inicial.y + porcentaje_y / 100 * (rect_destino.pos_final.y - rect_destino.pos_inicial.y) + alto / 2;
+
+    return rect;
+}
+
+
+/**
+ * @brief Dibuja un rectángulo dentro de otro rectángulo ya definido previamente.
  * @param rect_destino Es el rectágulo sobre el cual se dibujará el otro rectángulo (que será el de origen, que deberá ser más pequeño que éste).
  * @param alto Es el alto en px que tendrá el rectángulo que se quiere dibujar.
  * @param ancho Es el ancho en px que tendrá el rectángulo que se quiere dibujar.
@@ -336,11 +535,7 @@ Rectangulo dibujar_rectangulo_en_rectangulo(Rectangulo rect_destino, float alto,
 {
     Rectangulo rect;
 
-    rect.pos_inicial.x = rect_destino.pos_inicial.x + porcentaje_x / 100 * (rect_destino.pos_final.x - rect_destino.pos_inicial.x) - ancho / 2;
-    rect.pos_inicial.y = rect_destino.pos_inicial.y + porcentaje_y / 100 * (rect_destino.pos_final.y - rect_destino.pos_inicial.y) - alto / 2;
-
-    rect.pos_final.x = rect_destino.pos_inicial.x + porcentaje_x / 100 * (rect_destino.pos_final.x - rect_destino.pos_inicial.x) + ancho / 2;
-    rect.pos_final.y = rect_destino.pos_inicial.y + porcentaje_y / 100 * (rect_destino.pos_final.y - rect_destino.pos_inicial.y) + alto / 2;
+    rect = obtener_rectangulo(rect_destino, alto, ancho, porcentaje_x, porcentaje_y);
     
     if (relleno)
     {
