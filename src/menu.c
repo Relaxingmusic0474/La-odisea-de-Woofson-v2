@@ -334,8 +334,17 @@ Procedure mostrar_menu(Menu menu)
         porcentaje_x = (menu.opciones[i].rectangulo.pos_inicial.x + ancho/2)/ANCHO_VENTANA * 100;
         porcentaje_y = (menu.opciones[i].rectangulo.pos_inicial.y + alto/2)/ALTO_VENTANA * 100;
 
-        rect = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, ancho, porcentaje_x, porcentaje_y, false, menu.opcion_en_hover == i ? AZUL : NEGRO);
-        dibujar_texto_en_rectangulo(menu.opciones[i].texto, rect, 50.0, 50.0, menu.fuente, menu.opcion_en_hover == i ? AZUL : NEGRO);
+        if (menu.tipo == PRINCIPAL || menu.tipo == NIVELES)
+        {
+            rect = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, ancho, porcentaje_x, porcentaje_y, false, menu.opcion_en_hover == i ? AZUL : NEGRO);
+            dibujar_texto_en_rectangulo(menu.opciones[i].texto, rect, 50.0, 50.0, menu.fuente, menu.opcion_en_hover == i ? AZUL : NEGRO);
+        }
+
+        else
+        {
+            rect = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, ancho, porcentaje_x, porcentaje_y, false, menu.opcion_en_hover == i ? AZUL : BLANCO);
+            dibujar_texto_en_rectangulo(menu.opciones[i].texto, rect, 50.0, 50.0, menu.fuente_sec, menu.opcion_en_hover == i ? AZUL : BLANCO);
+        }
     }
 
     al_flip_display();  // Se muestra el menu
@@ -390,6 +399,8 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
 
         else
         {
+            recursos->menu_actual = (Menu) {0};
+
             switch (opcion_clickeada)
             {
                 case 0:

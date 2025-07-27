@@ -571,6 +571,11 @@ Procedure morir(Personaje* personaje, Tecla* ultima_lateral, Etapa* etapa_actual
 
     factor_escala = 1.5;
 
+    if (personaje->victoria)
+    {
+        return;
+    }
+
     if (personaje->muerto)
     {
         personaje->tiempo_muerte += 1./FPS;
