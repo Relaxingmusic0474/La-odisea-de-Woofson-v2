@@ -330,6 +330,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                 recursos->puerta.estado = CERRADA;
                 recursos->palanca.estado = DESACTIVADA;
                 puntuacion = 0;
+                desactivar_enemigos(recursos->enemigos);
                 inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, 
                                       (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
             }
@@ -378,7 +379,27 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
 
             else
             {
-                // Lógica para pasar al siguiente nivel
+                if (opcion_clickeada == 2)
+                {
+                    cambiar_menu(&recursos->menu_actual, menu_vacio);
+                    desactivar_enemigos(recursos->enemigos);
+                    inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, 
+                                      (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
+                    recursos->puerta.estado = CERRADA;
+                    recursos->palanca.estado = DESACTIVADA;
+                    puntuacion = 0;
+
+                    if (*nivel_actual != NRO_NIVELES)
+                    {
+                        *etapa_actual = (*nivel_actual - 1) + 1;
+                        (*nivel_actual)++;
+                    }
+
+                    if (*nivel_actual == 4)
+                    {
+                        cambiar_musica(recursos, recursos->musicas[2]);
+                    }
+                }
             }
         }
     }

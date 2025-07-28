@@ -104,6 +104,8 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
             personaje->danhado = true;  // Para que parta con cierta inmunidad antes de comenzar (parpadeo)
             personaje->tiempo_danho = 0;
+            personaje->direccion = 1;
+            personaje->bandera_dibujo = 0;
             inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
             break;
 
@@ -153,6 +155,7 @@ Procedure inicializar_salto(Personaje* personaje)
     personaje->salto.tiempo_en_salto = 0;  // Reinicia el tiempo de salto
     personaje->salto.impulso = IMPULSO_PERSONAJE;  // Si bien no es necesario, es una buena práctica para la legibilidad
     personaje->salto.altura_inicial = personaje->posicion.y;  // Reinicia la altura inicial del salto
+    personaje->salto.altura_choque = 0;
     return;
 }
 
