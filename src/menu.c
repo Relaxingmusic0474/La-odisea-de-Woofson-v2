@@ -245,21 +245,20 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         {
             *etapa_actual = MENU_NIVELES;
             cambiar_menu(&recursos->menu_actual, recursos->menus[NIVELES]);
-            mostrar_menu(recursos->menu_actual);
+            //mostrar_menu(recursos->menu_actual);
         }
 
         else if (opcion_clickeada == 1)
         {
-            al_clear_to_color(ROJO);
             *etapa_actual = INSTRUCCIONES;
             al_flip_display();
         }
 
         else
         {
-            al_clear_to_color(VERDE);
             *etapa_actual = RANKING;
-            al_flip_display();
+            cambiar_menu(&recursos->menu_actual, recursos->menus[NIVELES]);
+            //mostrar_menu(recursos->menu_actual);
         }
     }
 
@@ -269,7 +268,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         {
             *nivel_actual = 0;
             *etapa_actual = MENU_PRINCIPAL;
-            cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_PRINCIPAL+4]);
+            cambiar_menu(&recursos->menu_actual, recursos->menus[PRINCIPAL]);
             mostrar_menu(recursos->menu_actual);
         }
 
@@ -313,6 +312,49 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
             }
             
             al_flip_display();
+        }
+    }
+
+    else if (*etapa_actual == RANKING)
+    {
+        printf("Holaaaaaaaaaaaaaaaaaaaaaa\n");
+        if (opcion_clickeada == 5)
+        {
+            printf("Oh nooo\n");
+            *nivel_actual = 0;
+            *etapa_actual = MENU_PRINCIPAL;
+            cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_PRINCIPAL+4]);
+            mostrar_menu(recursos->menu_actual);
+        }
+
+        else
+        {
+            switch(opcion_clickeada)
+            {
+                case 0:
+                        printf("Hola\n");
+                        break;
+
+                case 1:
+                        printf("Hole\n");
+                        break;
+
+                case 2:
+                        printf("Holi\n");
+                        break;
+
+                case 3:
+                        printf("Holo\n");
+                        break;
+
+                case 4:
+                        printf("Holu\n");
+                        break;
+
+                default: 
+                        printf("Upps\n");
+                        break;
+            }
         }
     }
 
@@ -594,10 +636,6 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
         {
             redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual);
 
-            if (*etapa_actual != MENU_NIVELES || *nivel_actual != 0)
-            {
-                return;
-            }
         }
     }
 
@@ -622,8 +660,8 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
             actualizar_rayos(recursos->rayos[(*nivel_actual)-1], recursos->cantidad_rayos[(*nivel_actual)-1], recursos->pje_principal, recursos->mapas[(*nivel_actual)-1]);
             mostrar_pantalla_datos(recursos->pje_principal, recursos->vida, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual);
         }
-        // char* menus[] = {"PRINCIPAL", "DE NIVELES", "DERROTA", "VICTORIA"};
-        //printf("Menú actual: %s\n", menus[recursos->menu_actual.tipo]);
+        char* menus[] = {"PRINCIPAL", "DE NIVELES", "DERROTA", "VICTORIA"};
+        printf("Menú actual: %s\n", menus[recursos->menu_actual.tipo]);
         mostrar_menu(recursos->menu_actual);
     }
 }

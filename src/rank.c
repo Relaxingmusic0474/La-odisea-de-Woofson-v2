@@ -156,10 +156,5 @@ Procedure ingresar_nombre(char* nombre, size_t largo_max, ALLEGRO_FONT* fuente, 
 
 Procedure mostrar_ranking(Ranking ranking)
 {
-    Natural i;
-
-    for (i=0; i<MAX_DATOS; i++)
-    {
-        printf("%hu. %s -> %hu puntos\n", i+1, ranking.datos[i].nombre, ranking.datos[i].puntaje);
-    }
+    
 }
