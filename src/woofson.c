@@ -94,9 +94,7 @@ int main()
                         mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[COMFORTAA_LIGHT_GIGANTE], 
                                                recursos.fuentes[TIMES_NEW_ROMAN_NORMAL], nivel_actual);
                     }
-
-                    printf("Nivel actual: %hu\n", nivel_actual);
-
+                    
                     al_flip_display();
 
                     break;

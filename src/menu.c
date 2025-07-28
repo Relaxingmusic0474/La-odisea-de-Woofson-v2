@@ -326,12 +326,28 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
             if (opcion_clickeada == 0)
             {
                 // Lógica para reintentar el nivel
+                *etapa_actual = *nivel_actual - 1;
+                recursos->puerta.estado = CERRADA;
+                recursos->palanca.estado = DESACTIVADA;
+                puntuacion = 0;
+                inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, 
+                                      (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
             }
 
             else
             {
-                *etapa_actual = MENU_PRINCIPAL;
-                *nivel_actual = 0;
+                if (opcion_clickeada == 1)
+                {
+                    desactivar_enemigos(recursos->enemigos);
+                    recursos->puerta.estado = CERRADA;
+                    recursos->palanca.estado = DESACTIVADA;
+                    puntuacion = 0;
+                    *etapa_actual = MENU_PRINCIPAL;
+                    cambiar_menu(&recursos->menu_actual, recursos->menus[PRINCIPAL]);
+                    cambiar_musica(recursos, recursos->musicas[0]);
+                    recursos->menu_actual.opcion_en_hover = -1;
+                    *nivel_actual = 0;
+                }
             }
         }
 
@@ -585,8 +601,8 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
             actualizar_rayos(recursos->rayos[(*nivel_actual)-1], recursos->cantidad_rayos[(*nivel_actual)-1], recursos->pje_principal, recursos->mapas[(*nivel_actual)-1]);
             mostrar_pantalla_datos(recursos->pje_principal, recursos->vida, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual);
         }
-        char* menus[] = {"PRINCIPAL", "DE NIVELES", "DERROTA", "VICTORIA"};
-        printf("Menú actual: %s\n", menus[recursos->menu_actual.tipo]);
+        // char* menus[] = {"PRINCIPAL", "DE NIVELES", "DERROTA", "VICTORIA"};
+        //printf("Menú actual: %s\n", menus[recursos->menu_actual.tipo]);
         mostrar_menu(recursos->menu_actual);
     }
 }
