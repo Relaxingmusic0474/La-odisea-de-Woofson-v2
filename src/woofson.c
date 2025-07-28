@@ -104,6 +104,11 @@ int main()
         iteracion = (iteracion + 1) % 60;
     }
 
+    if (nivel_actual != 0)
+    {
+        mostrar_ranking(recursos.rankings[nivel_actual-1]);
+    }
+
     finalizar_allegro(&recursos);
     return 0;
 }

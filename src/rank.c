@@ -18,7 +18,7 @@ bool leer_ranking(Ranking* ranking, Natural nro_nivel)
 
     i = 0;
 
-    while (i < MAX_DATOS && fscanf(archivo_ranking, "%s %hu", ranking->datos[i].nombre, &ranking->datos[i].puntaje) == 2)
+    while (i < MAX_DATOS && fscanf(archivo_ranking, "%34[^\t]\t%hu\n", ranking->datos[i].nombre, &ranking->datos[i].puntaje) == 2)
     {
         ranking->datos[i].nro_nivel = nro_nivel;
         i++;
@@ -47,7 +47,7 @@ bool modificar_ranking(Ranking* ranking, Natural nro_nivel)
 
     for (i=0; i<MAX_DATOS; i++)
     {
-        fprintf(archivo_ranking, "%s %hu\n", ranking->datos[i].nombre, ranking->datos[i].puntaje);
+        fprintf(archivo_ranking, "%s\t%hu\n", ranking->datos[i].nombre, ranking->datos[i].puntaje);
     }
 
     fclose(archivo_ranking);
@@ -83,7 +83,7 @@ Procedure insertar_en_ranking(Ranking* ranking, char* nombre, Natural nivel)
 
     for (i=MAX_DATOS-1; i>0; i--)
     {
-        if (ranking->datos[i].puntaje < ranking->datos[i-1].puntaje)  // Puntuación es una variable global
+        if (ranking->datos[i].puntaje > ranking->datos[i-1].puntaje)
         {
             intercambiar_datos(&ranking->datos[i], &ranking->datos[i-1]);
         }
@@ -132,7 +132,7 @@ Procedure ingresar_nombre(char* nombre, size_t largo_max, ALLEGRO_FONT* fuente, 
                 nombre[len] = '\0';
             }
 
-            else if (isprint(tecla) && len < largo_max - 1)
+            else if (isprint(tecla) && tecla != '\t' && len < largo_max - 1)
             {
                 nombre[len++] = (char) tecla;
                 nombre[len] = '\0';
@@ -150,5 +150,16 @@ Procedure ingresar_nombre(char* nombre, size_t largo_max, ALLEGRO_FONT* fuente, 
             al_draw_text(fuente_sec, BLANCO, ANCHO_VENTANA/2, 0.62*ALTO_VENTANA - alto_texto_sec/2, ALLEGRO_ALIGN_CENTER, "Presione la tecla Enter para terminar");
             al_flip_display();
         }
+    }
+}
+
+
+Procedure mostrar_ranking(Ranking ranking)
+{
+    Natural i;
+
+    for (i=0; i<MAX_DATOS; i++)
+    {
+        printf("%hu. %s -> %hu puntos\n", i+1, ranking.datos[i].nombre, ranking.datos[i].puntaje);
     }
 }
