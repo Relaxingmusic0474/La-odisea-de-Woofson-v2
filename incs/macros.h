@@ -115,6 +115,7 @@
 #define BLANCO al_map_rgb(255, 255, 255)
 #define NEGRO al_map_rgb(0, 0, 0)
 #define GRIS al_map_rgb(205, 205, 205)
+#define GRIS_OSCURO al_map_rgb(130, 137, 143)
 #define CAFE al_map_rgb(111, 78, 55)
 #define AMARILLO al_map_rgb(255, 255, 0)
 #define ROSADO al_map_rgb(216, 84, 180)

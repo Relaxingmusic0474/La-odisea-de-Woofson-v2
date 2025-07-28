@@ -355,7 +355,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
 
             else if (opcion_clickeada == 1)
             {
-                ingresar_nombre(nombre, sizeof(nombre), recursos->fuentes[TIMES_NEW_ROMAN_GRANDE], recursos->cola_eventos);
+                ingresar_nombre(nombre, sizeof(nombre), recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_GRANDE], recursos->cola_eventos);
                 insertar_en_ranking(&recursos->rankings[(*nivel_actual)-1], nombre, *nivel_actual);
                 modificar_ranking(&recursos->rankings[(*nivel_actual)-1], *nivel_actual);
             }
