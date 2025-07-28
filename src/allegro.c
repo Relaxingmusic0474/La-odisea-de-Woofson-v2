@@ -401,6 +401,14 @@ bool crear_recursos(Recursos* R)
         R->cantidad_rayos[i] = detectar_rayos(R->mapas[i], R->rayos[i], MAX_RAYOS);
     }
 
+    for (i=0; i<NRO_NIVELES; i++)
+    {
+        if (!leer_ranking(&R->rankings[i], i+1))
+        {
+            return false;
+        }
+    }
+
     return true;
 }
 

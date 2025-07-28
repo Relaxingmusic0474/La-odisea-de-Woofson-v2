@@ -94,3 +94,47 @@ Procedure insertar_en_ranking(Ranking* ranking, char* nombre, Natural nivel)
         }
     }
 }
+
+
+Procedure ingresar_nombre(char* nombre, size_t largo_max, ALLEGRO_FONT* fuente, ALLEGRO_EVENT_QUEUE* cola_eventos)
+{
+    ALLEGRO_EVENT evento;
+    Tecla tecla;
+    size_t len = 0;
+    
+    nombre[0] = '\0';
+
+    LOOP
+    {
+        al_wait_for_event(cola_eventos, &evento);
+
+        if (evento.type == ALLEGRO_EVENT_KEY_CHAR)
+        {
+            tecla = evento.keyboard.unichar;
+
+            if (tecla == '\r' || tecla == '\n')  // Enter
+            {
+                break;
+            }
+
+            if (tecla == '\b' && len > 0)  // Borrado (backspace)
+            {
+                len--;
+                nombre[len] = '\0';
+            }
+
+            else if (isprint(tecla) && len < largo_max - 1)
+            {
+                nombre[len++] = (char) tecla;
+                nombre[len] = '\0';
+            }
+        }
+
+        if (evento.type == ALLEGRO_EVENT_TIMER || evento.type == ALLEGRO_EVENT_KEY_CHAR)
+        {
+            al_clear_to_color(NEGRO);
+            al_draw_textf(fuente, BLANCO, ANCHO_VENTANA/2, ALTO_VENTANA/2, ALLEGRO_ALIGN_CENTER, "Ingrese su nombre: %s", nombre);
+            al_flip_display();
+        }
+    }
+}

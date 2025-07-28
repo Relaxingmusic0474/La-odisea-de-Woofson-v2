@@ -235,6 +235,7 @@ Procedure cambiar_menu(Menu* menu_actual, Menu menu_nuevo)
 Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual)
 {
     Menu menu_vacio = {0};
+    char nombre[LARGO] = {'\0'};  // Para entrar al ranking
 
     if (*etapa_actual == MENU_PRINCIPAL)
     {
@@ -354,7 +355,9 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
 
             else if (opcion_clickeada == 1)
             {
-                // Lógica para entrar en el ranking
+                ingresar_nombre(nombre, sizeof(nombre), recursos->fuentes[TIMES_NEW_ROMAN_GRANDE], recursos->cola_eventos);
+                insertar_en_ranking(&recursos->rankings[(*nivel_actual)-1], nombre, *nivel_actual);
+                modificar_ranking(&recursos->rankings[(*nivel_actual)-1], *nivel_actual);
             }
 
             else

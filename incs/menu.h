@@ -10,6 +10,7 @@
 #include "macros.h"
 #include "load.h"
 #include "score.h"
+#include "rank.h"
 
 Vector obtener_posicion_mouse(void); 
 Natural obtener_opcion_en_hover(Menu);
