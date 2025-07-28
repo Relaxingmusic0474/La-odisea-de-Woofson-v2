@@ -305,7 +305,7 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
     ModoWoofson modo_ataque;
 
-    if (personaje->muerto || personaje->victoria)  // En caso de que el personaje esté muerto, o en caso de victoria, no se podrá mover
+    if (personaje->muerto || personaje->victoria || (personaje->nro_vidas == 0 && personaje->subvida_actual == 0))  // En caso de que el personaje esté muerto, o en caso de victoria, o en caso de que perdió, no se podrá mover
     {
         return;
     }

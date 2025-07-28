@@ -134,7 +134,7 @@ bool inicializar_menu(Menu* menu, TipoMenu tipo, Imagen fondo, ALLEGRO_FONT* fue
 }
 
 
-Procedure mostrar_menu(Menu menu)
+Procedure mostrar_menu(Menu menu, Etapa etapa_actual)
 {
     Rectangulo rect, rect_menu;
     Menu menu_vacio = {0};
@@ -144,7 +144,6 @@ Procedure mostrar_menu(Menu menu)
     Natural i;
 
     menu.opcion_en_hover = obtener_opcion_en_hover(menu);  // Se obtiene la opcion por la que pasa el cursor (sin seleccionarla aun)
-    
     x0 = menu.rect_destino.pos_inicial.x;
     x1 = menu.rect_destino.pos_final.x;
 
@@ -159,6 +158,7 @@ Procedure mostrar_menu(Menu menu)
     {
         if (memcmp(&menu, &menu_vacio, sizeof(Menu)) != 0)
         {
+            printf("HOLA... ETAPA ACTUAL: %d\n", etapa_actual);
             al_draw_scaled_bitmap(menu.fondo, 0, 0, al_get_bitmap_width(menu.fondo), al_get_bitmap_height(menu.fondo), (ANCHO_VENTANA-ancho)/2, (ALTO_VENTANA-alto)/2, ancho, alto, 0);
         }
     }
@@ -176,7 +176,7 @@ Procedure mostrar_menu(Menu menu)
     {
         al_draw_filled_rectangle(x0 + ancho*0.10, y0 + alto*0.30, x0 + ancho*0.90, y0 + alto*0.70, GRIS);
         al_draw_filled_rectangle(x0 + ancho*0.30, y0 + alto*0.22, x0 + ancho*0.70, y0 + alto*0.38, AZUL);
-        al_draw_text(menu.fuente, BLANCO, x0 + ancho*0.50, y0 + alto*0.30, ALLEGRO_ALIGN_CENTRE, "SELECCIONE UN NIVEL:");
+        al_draw_text(menu.fuente, BLANCO, x0 + ancho*0.50, y0 + alto*0.30, ALLEGRO_ALIGN_CENTRE, etapa_actual == MENU_NIVELES ? "SELECCIONE UN NIVEL:" : "SELECCIONE EL RANKING QUE DESEA VER:");
     }
 
     else
@@ -245,7 +245,6 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         {
             *etapa_actual = MENU_NIVELES;
             cambiar_menu(&recursos->menu_actual, recursos->menus[NIVELES]);
-            //mostrar_menu(recursos->menu_actual);
         }
 
         else if (opcion_clickeada == 1)
@@ -256,9 +255,8 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
 
         else
         {
-            *etapa_actual = RANKING;
+            *etapa_actual = MENU_RANKING;
             cambiar_menu(&recursos->menu_actual, recursos->menus[NIVELES]);
-            //mostrar_menu(recursos->menu_actual);
         }
     }
 
@@ -269,14 +267,12 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
             *nivel_actual = 0;
             *etapa_actual = MENU_PRINCIPAL;
             cambiar_menu(&recursos->menu_actual, recursos->menus[PRINCIPAL]);
-            mostrar_menu(recursos->menu_actual);
         }
 
         else
         {
             cambiar_menu(&recursos->menu_actual, menu_vacio);
-            inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, 
-                                 (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
+            inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
             
             switch (opcion_clickeada)
             {
@@ -315,47 +311,24 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         }
     }
 
-    else if (*etapa_actual == RANKING)
+    else if (*etapa_actual == MENU_RANKING)
     {
-        printf("Holaaaaaaaaaaaaaaaaaaaaaa\n");
         if (opcion_clickeada == 5)
         {
-            printf("Oh nooo\n");
             *nivel_actual = 0;
             *etapa_actual = MENU_PRINCIPAL;
             cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_PRINCIPAL+4]);
-            mostrar_menu(recursos->menu_actual);
         }
 
         else
         {
-            switch(opcion_clickeada)
-            {
-                case 0:
-                        printf("Hola\n");
-                        break;
-
-                case 1:
-                        printf("Hole\n");
-                        break;
-
-                case 2:
-                        printf("Holi\n");
-                        break;
-
-                case 3:
-                        printf("Holo\n");
-                        break;
-
-                case 4:
-                        printf("Holu\n");
-                        break;
-
-                default: 
-                        printf("Upps\n");
-                        break;
-            }
+            *etapa_actual = RANKING;
         }
+    }
+
+    else if (*etapa_actual == RANKING)
+    {
+        mostrar_ranking(&recursos->rankings[opcion_clickeada], recursos->fuentes[COMFORTAA_LIGHT_GRANDE], 0, 0);
     }
 
     else
@@ -363,7 +336,6 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         if (*etapa_actual == DERROTA)
         {
             cambiar_menu(&recursos->menu_actual, recursos->menus[PERDER]);
-            mostrar_menu(recursos->menu_actual);
 
             if (opcion_clickeada == 0)
             {
@@ -373,14 +345,14 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                 recursos->palanca.estado = DESACTIVADA;
                 puntuacion = 0;
                 desactivar_enemigos(recursos->enemigos);
-                inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, 
-                                      (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
+                inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
             }
 
             else
             {
                 if (opcion_clickeada == 1)
                 {
+                    // Logica para volver al menú principal
                     desactivar_enemigos(recursos->enemigos);
                     recursos->puerta.estado = CERRADA;
                     recursos->palanca.estado = DESACTIVADA;
@@ -397,10 +369,10 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         else if (*etapa_actual == VICTORIA)
         {
             cambiar_menu(&recursos->menu_actual, recursos->menus[GANAR]);
-            mostrar_menu(recursos->menu_actual);
 
             if (opcion_clickeada == 0)
             {
+                // Lógica para volver al menú principal
                 desactivar_enemigos(recursos->enemigos);
                 recursos->puerta.estado = CERRADA;
                 recursos->palanca.estado = DESACTIVADA;
@@ -414,6 +386,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
 
             else if (opcion_clickeada == 1)
             {
+                // Se solicitan los datos para ingresarse en el ranking
                 ingresar_nombre(nombre, sizeof(nombre), recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_GRANDE], recursos->cola_eventos);
                 insertar_en_ranking(&recursos->rankings[(*nivel_actual)-1], nombre, *nivel_actual);
                 modificar_ranking(&recursos->rankings[(*nivel_actual)-1], *nivel_actual);
@@ -426,7 +399,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                     cambiar_menu(&recursos->menu_actual, menu_vacio);
                     desactivar_enemigos(recursos->enemigos);
                     inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, 
-                                      (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
+                                         (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
                     recursos->puerta.estado = CERRADA;
                     recursos->palanca.estado = DESACTIVADA;
                     puntuacion = 0;
@@ -660,8 +633,7 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
             actualizar_rayos(recursos->rayos[(*nivel_actual)-1], recursos->cantidad_rayos[(*nivel_actual)-1], recursos->pje_principal, recursos->mapas[(*nivel_actual)-1]);
             mostrar_pantalla_datos(recursos->pje_principal, recursos->vida, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual);
         }
-        char* menus[] = {"PRINCIPAL", "DE NIVELES", "DERROTA", "VICTORIA"};
-        printf("Menú actual: %s\n", menus[recursos->menu_actual.tipo]);
-        mostrar_menu(recursos->menu_actual);
+        
+        mostrar_menu(recursos->menu_actual, *etapa_actual);
     }
 }

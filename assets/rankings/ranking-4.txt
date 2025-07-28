@@ -1,10 +1,10 @@
 Motita	50
+cc	50
 Coco	40
+Motita	40
 Moti Moti	30
 Moti Moti	30
+Holi	30
 XD	20
 PilliPilli	10
-----	0
-----	0
-----	0
 ----	0

@@ -55,6 +55,7 @@ enum etapa
     NIVEL5,
     DERROTA,
     VICTORIA,
+    MENU_RANKING,
 };
 
 typedef enum etapa Etapa;

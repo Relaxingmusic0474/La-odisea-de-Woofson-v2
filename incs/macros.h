@@ -64,7 +64,6 @@
 #define PALANCA 9  // Palanca para abrir o cerrar la puerta
 
 // Macros para las caracteristicas del personaje
-#define POSICION_INICIAL_WOOFSON (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-personaje.alto}
 #define VELOCIDAD_MAXIMA_PERSONAJE 8
 #define MAX_TIEMPO_INMUNE 1.5  // Máximo tiempo en que el personaje no puede recibir un daño adicional
 #define TIEMPO_MUERTE 2.0  // Tiempo que se tomará el personaje en morir, para volver a comenzar desde su posicion inicial

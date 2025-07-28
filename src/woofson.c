@@ -28,7 +28,7 @@ int main()
             break;  /* Se sale del loop si la ventana se cierra (el juego termina) */
         }
 
-        if (etapa_juego == MENU_PRINCIPAL || etapa_juego == MENU_NIVELES || etapa_juego == RANKING || etapa_juego == VICTORIA || etapa_juego == DERROTA)
+        if (etapa_juego == MENU_PRINCIPAL || etapa_juego == MENU_NIVELES || etapa_juego == MENU_RANKING || etapa_juego == RANKING || etapa_juego == VICTORIA || etapa_juego == DERROTA)
         {
             manejar_menu(&recursos, &evento, &etapa_juego, &nivel_actual, iteracion, &cambio_estado_procesado, &ultima_tecla_lateral);
         }
@@ -104,10 +104,6 @@ int main()
         iteracion = (iteracion + 1) % 60;
     }
 
-    if (nivel_actual != 0)
-    {
-        mostrar_ranking(recursos.rankings[nivel_actual-1]);
-    }
 
     finalizar_allegro(&recursos);
     return 0;
