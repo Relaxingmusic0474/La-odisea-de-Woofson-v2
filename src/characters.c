@@ -191,7 +191,6 @@ Procedure determinar_como_dibujar_personaje(Personaje* personaje, Natural ultima
  */
 Procedure dibujar_personaje(Personaje* personaje, Natural ultima_tecla_lateral, Natural iteracion)
 {
-    extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
     Natural var;
 
     if (!personaje->inicializado)
@@ -277,8 +276,6 @@ Procedure actualizar_frame(Personaje* personaje, ModoWoofson modo)
  */
 bool es_posible_mover_personaje_lateralmente(Personaje *personaje, Mapa mapa)
 {
-    extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
-
     if (teclas[ALLEGRO_KEY_LEFT] && !hay_colision_izquierda(personaje, mapa)) //&& !personaje->hay_obj_izq)
     {
         return true;  // Puede moverse a la izquierda
@@ -302,7 +299,6 @@ bool es_posible_mover_personaje_lateralmente(Personaje *personaje, Mapa mapa)
  */
 Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 {
-    extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
     ModoWoofson modo_ataque;
 
     if (personaje->muerto || personaje->victoria || (personaje->nro_vidas == 0 && personaje->subvida_actual == 0))  // En caso de que el personaje esté muerto, o en caso de victoria, o en caso de que perdió, no se podrá mover
@@ -1008,7 +1004,6 @@ bool woofson_puede_disparar(Personaje* woofson)
     Natural i;
     Natural id_frames_disparo[] = {23, 24, 25, 26, 27, 28, 29};
     Natural nro_frames_disparo;
-    extern bool teclas[ALLEGRO_KEY_MAX];
 
     if (!woofson->inicializado || woofson->frames_para_prox_disparo != 0 || !teclas[ALLEGRO_KEY_SPACE])
     {

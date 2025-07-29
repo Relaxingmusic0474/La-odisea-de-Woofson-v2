@@ -4,7 +4,7 @@
 #include "load.h"
 #include "debug.h"
 
-int main()
+int main()  // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PARECER)
 {
     Recursos recursos = {0};  /* Se inicializan los recursos del juego */
     ALLEGRO_EVENT evento; /* Ṕara agregar los eventos que vayan ocurriendo a la cola de eventos */
@@ -77,8 +77,7 @@ int main()
                         actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
                         detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);
                         efectuar_disparo_de_enemigos(recursos.enemigos, &recursos.pje_principal, recursos.mapas[nivel_actual-1]);
-                        determinar_victoria_woofson(&recursos.pje_principal, recursos.enemigos, recursos.puerta, &etapa_juego);
-
+                        
                         if (recursos.pje_principal.victoria)
                         {
                             etapa_juego = VICTORIA;
@@ -90,12 +89,14 @@ int main()
                         {
                             etapa_juego = DERROTA;
                         }
-
+                        
+                        determinar_victoria_woofson(&recursos.pje_principal, recursos.enemigos, recursos.puerta, &etapa_juego);
                         mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[COMFORTAA_LIGHT_GIGANTE], 
                                                recursos.fuentes[TIMES_NEW_ROMAN_NORMAL], nivel_actual);
                     }
                     
                     al_flip_display();
+                    mostrar_estados_actuales(etapa_juego, nivel_actual);
 
                     break;
             }            

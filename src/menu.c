@@ -158,8 +158,10 @@ Procedure mostrar_menu(Menu menu, Etapa etapa_actual)
     {
         if (memcmp(&menu, &menu_vacio, sizeof(Menu)) != 0)
         {
-            printf("HOLA... ETAPA ACTUAL: %d\n", etapa_actual);
-            al_draw_scaled_bitmap(menu.fondo, 0, 0, al_get_bitmap_width(menu.fondo), al_get_bitmap_height(menu.fondo), (ANCHO_VENTANA-ancho)/2, (ALTO_VENTANA-alto)/2, ancho, alto, 0);
+            if (menu.tipo != NIVELES || (menu.tipo == NIVELES && etapa_actual != RANKING))
+            {
+                al_draw_scaled_bitmap(menu.fondo, 0, 0, al_get_bitmap_width(menu.fondo), al_get_bitmap_height(menu.fondo), (ANCHO_VENTANA-ancho)/2, (ALTO_VENTANA-alto)/2, ancho, alto, 0);
+            }
         }
     }
 
@@ -181,20 +183,23 @@ Procedure mostrar_menu(Menu menu, Etapa etapa_actual)
 
     else
     {
-        if (memcmp(&menu, &menu_vacio, sizeof(Menu)) != 0 && menu.tipo == PERDER)  // Si el menú es el menú de derrota
+        if (memcmp(&menu, &menu_vacio, sizeof(Menu)) != 0)  // Si el menú es el menú de derrota
         {
-            dibujar_texto_en_rectangulo("HAS PERDIDO", menu.rect_destino, 50.0, 15.0, menu.fuente, BLANCO);
-            sprintf(texto_puntuacion, "Su puntuación: %hu", puntuacion);
-            dibujar_texto_en_rectangulo(texto_puntuacion, menu.rect_destino, 50.0, 40.0, menu.fuente_sec ? menu.fuente_sec : menu.fuente, BLANCO);
-        }
-
-        else
-        {
-            if (memcmp(&menu, &menu_vacio, sizeof(Menu)) != 0 && menu.tipo == GANAR)
+            if (etapa_actual == DERROTA)
             {
-                dibujar_texto_en_rectangulo("FELICIDADES... HAS LOGRADO PASAR EL NIVEL", menu.rect_destino, 50.0, 15.0, menu.fuente, BLANCO);
+                dibujar_texto_en_rectangulo("HAS PERDIDO", menu.rect_destino, 50.0, 15.0, menu.fuente, BLANCO);
                 sprintf(texto_puntuacion, "Su puntuación: %hu", puntuacion);
                 dibujar_texto_en_rectangulo(texto_puntuacion, menu.rect_destino, 50.0, 40.0, menu.fuente_sec ? menu.fuente_sec : menu.fuente, BLANCO);
+            }
+
+            else
+            {
+                if (etapa_actual == VICTORIA)
+                {
+                    dibujar_texto_en_rectangulo("FELICIDADES... HAS LOGRADO PASAR EL NIVEL", menu.rect_destino, 50.0, 15.0, menu.fuente, BLANCO);
+                    sprintf(texto_puntuacion, "Su puntuación: %hu", puntuacion);
+                    dibujar_texto_en_rectangulo(texto_puntuacion, menu.rect_destino, 50.0, 40.0, menu.fuente_sec ? menu.fuente_sec : menu.fuente, BLANCO);
+                }
             }
         }
     }
@@ -273,7 +278,8 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         {
             cambiar_menu(&recursos->menu_actual, menu_vacio);
             inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
-            
+            memset((bool *) teclas, false, sizeof(teclas));
+
             switch (opcion_clickeada)
             {
                 case 0:
@@ -317,7 +323,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         {
             *nivel_actual = 0;
             *etapa_actual = MENU_PRINCIPAL;
-            cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_PRINCIPAL+4]);
+            cambiar_menu(&recursos->menu_actual, recursos->menus[PRINCIPAL]);
         }
 
         else
@@ -340,12 +346,16 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
             if (opcion_clickeada == 0)
             {
                 // Lógica para reintentar el nivel
+                cambiar_menu(&recursos->menu_actual, menu_vacio);
                 *etapa_actual = *nivel_actual - 1;
                 recursos->puerta.estado = CERRADA;
                 recursos->palanca.estado = DESACTIVADA;
                 puntuacion = 0;
                 desactivar_enemigos(recursos->enemigos);
+                memset((bool *) teclas, false, sizeof(teclas));
                 inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
+                al_set_sample_instance_position(recursos->musica_actual->instancia, 0); // La reinicia
+                al_play_sample_instance(recursos->musica_actual->instancia);  
             }
 
             else
@@ -400,6 +410,8 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                     desactivar_enemigos(recursos->enemigos);
                     inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, 
                                          (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
+                    //al_flush_event_queue(recursos->cola_eventos);  // BORRA COLA DE EVENTOS
+                    memset((bool *) teclas, false, sizeof(teclas));
                     recursos->puerta.estado = CERRADA;
                     recursos->palanca.estado = DESACTIVADA;
                     puntuacion = 0;
@@ -413,6 +425,12 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                     if (*nivel_actual == 4)
                     {
                         cambiar_musica(recursos, recursos->musicas[2]);
+                    }
+
+                    else
+                    {
+                        al_set_sample_instance_position(recursos->musica_actual->instancia, 0); // La reinicia
+                        al_play_sample_instance(recursos->musica_actual->instancia);  
                     }
                 }
             }
@@ -608,7 +626,6 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
         if (recursos->menu_actual.opcion_en_hover < recursos->menu_actual.nro_opciones)
         {
             redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual);
-
         }
     }
 
@@ -633,7 +650,7 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
             actualizar_rayos(recursos->rayos[(*nivel_actual)-1], recursos->cantidad_rayos[(*nivel_actual)-1], recursos->pje_principal, recursos->mapas[(*nivel_actual)-1]);
             mostrar_pantalla_datos(recursos->pje_principal, recursos->vida, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual);
         }
-        
+    
         mostrar_menu(recursos->menu_actual, *etapa_actual);
     }
 }

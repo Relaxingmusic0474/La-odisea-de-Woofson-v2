@@ -94,3 +94,11 @@ Procedure imprimir_posicion_balas(Bala balas[MAX_BALAS])
 
     printf("\n");
 }
+
+Procedure mostrar_estados_actuales(Etapa etapa_actual, Natural nivel_actual)
+{
+    char* etapas[] = {"MENU PRINCIPAL", "MENU NIVELES", "INSTRUCCIONES", "RANKING", "NIVEL 1", "NIVEL 2", "NIVEL 3", "NIVEL 4", "NIVEL 5", "DERROTA", "VICTORIA", "MENU RANKING"};
+
+    printf("Etapa actual: %s\n", etapas[etapa_actual+4]);
+    printf("Nivel actual: %hu\n\n", nivel_actual);
+}

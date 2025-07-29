@@ -15,6 +15,8 @@
 #include "characters.h"
 #include "traps.h"
 
+extern bool teclas[ALLEGRO_KEY_MAX];
+
 bool inicializar_allegro();
 bool crear_recursos_allegro(Recursos*);
 bool inicializar_todo(Recursos*);
