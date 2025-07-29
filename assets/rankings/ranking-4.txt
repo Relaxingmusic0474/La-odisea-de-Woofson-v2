@@ -1,10 +1,11 @@
 Moti Moti	140
+120
 Motita	110
 Moti Moti	90
+Holi	60
 Motita	50
 cc	50
 Yo	50
 Coco	40
 Motita	40
-Moti Moti	30
-Moti Moti	30
+	10

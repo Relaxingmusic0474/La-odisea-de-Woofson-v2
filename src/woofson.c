@@ -28,10 +28,16 @@ int main()  // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PAREC
             break;  /* Se sale del loop si la ventana se cierra (el juego termina) */
         }
 
-        if (etapa_juego == MENU_PRINCIPAL || etapa_juego == MENU_NIVELES || etapa_juego == MENU_RANKING || etapa_juego == RANKING || etapa_juego == VICTORIA || etapa_juego == DERROTA)
+        if (etapa_juego == MENU_PRINCIPAL || etapa_juego == MENU_NIVELES || etapa_juego == MENU_RANKING ||  etapa_juego == VICTORIA || etapa_juego == DERROTA)
         {
             manejar_menu(&recursos, &evento, &etapa_juego, &nivel_actual, iteracion, &cambio_estado_procesado, &ultima_tecla_lateral);
         }
+
+        else if (etapa_juego == RANKING)
+        {
+            
+        }
+        
         
         else
         {
@@ -77,6 +83,7 @@ int main()  // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PAREC
                         actualizar_rayos(recursos.rayos[nivel_actual-1], recursos.cantidad_rayos[nivel_actual-1], recursos.pje_principal, recursos.mapas[nivel_actual-1]);
                         detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual-1]);
                         efectuar_disparo_de_enemigos(recursos.enemigos, &recursos.pje_principal, recursos.mapas[nivel_actual-1]);
+                        determinar_victoria_woofson(&recursos.pje_principal, recursos.enemigos, recursos.puerta, &etapa_juego);
                         
                         if (recursos.pje_principal.victoria)
                         {
@@ -90,20 +97,19 @@ int main()  // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PAREC
                             etapa_juego = DERROTA;
                         }
                         
-                        determinar_victoria_woofson(&recursos.pje_principal, recursos.enemigos, recursos.puerta, &etapa_juego);
                         mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.fuentes[COMFORTAA_LIGHT_GIGANTE], 
                                                recursos.fuentes[TIMES_NEW_ROMAN_NORMAL], nivel_actual);
                     }
                     
                     al_flip_display();
-                    mostrar_estados_actuales(etapa_juego, nivel_actual);
-
                     break;
-            }            
+            }                        
         }
 
         iteracion = (iteracion + 1) % 60;
     }
+    
+    
 
 
     finalizar_allegro(&recursos);

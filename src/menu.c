@@ -237,6 +237,43 @@ Procedure cambiar_menu(Menu* menu_actual, Menu menu_nuevo)
 }
 
 
+Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actual, Etapa etapa_deseada)
+{
+    cambiar_menu(&recursos->menu_actual, menu);
+    //recursos->menu_actual.opcion_en_hover = -1;
+    inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, (Vector){ANCHO_VENTANA * 0.1, ALTURA_PISO - al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
+    memset((bool *) teclas, false, sizeof(teclas));
+    recursos->puerta.estado = CERRADA;
+    recursos->palanca.estado = DESACTIVADA;
+    puntuacion = 0;
+    desactivar_enemigos(recursos->enemigos);
+    *etapa_actual = etapa_deseada;
+}
+
+
+Procedure detener_efectos_de_sonido(Recursos* recursos)
+{
+    Natural i, j;
+
+    for (i=0; i<NRO_NIVELES; i++)
+    {
+        for (j=0; j<NRO_INSTANCIAS;j++)
+        {
+            if (recursos->rayos[i][j].efecto_sonido_ya_empezado)
+            {
+                al_stop_sample_instance(recursos->rayos[i][j].efecto_sonido->instancias[j]);
+
+                if (j==NRO_INSTANCIAS-1)
+                {
+                    recursos->rayos[i][j].efecto_sonido_ya_empezado = false;
+                    recursos->rayos[i][j].efecto_sonido_ya_detenido = true;
+                }
+            }   
+        }   
+    }
+}
+
+
 Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual)
 {
     Menu menu_vacio = {0};
@@ -271,44 +308,30 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         {
             *nivel_actual = 0;
             *etapa_actual = MENU_PRINCIPAL;
+            detener_efectos_de_sonido(recursos);
             cambiar_menu(&recursos->menu_actual, recursos->menus[PRINCIPAL]);
         }
 
         else
         {
             cambiar_menu(&recursos->menu_actual, menu_vacio);
+            
             inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
             memset((bool *) teclas, false, sizeof(teclas));
+
+            *nivel_actual = opcion_clickeada+1;
+            *etapa_actual = (Etapa) opcion_clickeada;
 
             switch (opcion_clickeada)
             {
                 case 0:
-                    *nivel_actual = 1;
-                    *etapa_actual = NIVEL1;
-                    cambiar_musica(recursos, recursos->musicas[1]);
-                    break;
-
                 case 1:
-                    *nivel_actual = 2;
-                    *etapa_actual = NIVEL2;
-                    cambiar_musica(recursos, recursos->musicas[1]);
-                    break;
-
                 case 2:
-                    *nivel_actual = 3;
-                    *etapa_actual = NIVEL3;
                     cambiar_musica(recursos, recursos->musicas[1]);
                     break;
 
                 case 3:
-                    *nivel_actual = 4;
-                    *etapa_actual = NIVEL4;
-                    cambiar_musica(recursos, recursos->musicas[2]);
-                    break;
-
                 case 4:
-                    *nivel_actual = 5;
-                    *etapa_actual = NIVEL5;
                     cambiar_musica(recursos, recursos->musicas[2]);
                     break;
             }
@@ -323,6 +346,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         {
             *nivel_actual = 0;
             *etapa_actual = MENU_PRINCIPAL;
+            detener_efectos_de_sonido(recursos);
             cambiar_menu(&recursos->menu_actual, recursos->menus[PRINCIPAL]);
         }
 
@@ -343,35 +367,21 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         {
             cambiar_menu(&recursos->menu_actual, recursos->menus[PERDER]);
 
-            if (opcion_clickeada == 0)
+            if (opcion_clickeada == 0)  // Lógica para REINTENTAR el nivel
             {
-                // Lógica para reintentar el nivel
-                cambiar_menu(&recursos->menu_actual, menu_vacio);
-                *etapa_actual = *nivel_actual - 1;
-                recursos->puerta.estado = CERRADA;
-                recursos->palanca.estado = DESACTIVADA;
-                puntuacion = 0;
-                desactivar_enemigos(recursos->enemigos);
-                memset((bool *) teclas, false, sizeof(teclas));
-                inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
-                al_set_sample_instance_position(recursos->musica_actual->instancia, 0); // La reinicia
+                resetear_estado_juego(recursos, menu_vacio, etapa_actual, *nivel_actual-1);
+                al_set_sample_instance_position(recursos->musica_actual->instancia, 0); // Reinicia la música
                 al_play_sample_instance(recursos->musica_actual->instancia);  
             }
 
             else
             {
-                if (opcion_clickeada == 1)
+                if (opcion_clickeada == 1)  // Logica para volver al MENÚ PRINCIPAL
                 {
-                    // Logica para volver al menú principal
-                    desactivar_enemigos(recursos->enemigos);
-                    recursos->puerta.estado = CERRADA;
-                    recursos->palanca.estado = DESACTIVADA;
-                    puntuacion = 0;
-                    *etapa_actual = MENU_PRINCIPAL;
-                    cambiar_menu(&recursos->menu_actual, recursos->menus[PRINCIPAL]);
-                    cambiar_musica(recursos, recursos->musicas[0]);
-                    recursos->menu_actual.opcion_en_hover = -1;
+                    resetear_estado_juego(recursos, recursos->menus[PRINCIPAL], etapa_actual, MENU_PRINCIPAL);
                     *nivel_actual = 0;
+                    detener_efectos_de_sonido(recursos);
+                    cambiar_musica(recursos, recursos->musicas[0]);
                 }
             }
         }
@@ -380,18 +390,12 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         {
             cambiar_menu(&recursos->menu_actual, recursos->menus[GANAR]);
 
-            if (opcion_clickeada == 0)
+            if (opcion_clickeada == 0)  // Lógica para volver al menú principal
             {
-                // Lógica para volver al menú principal
-                desactivar_enemigos(recursos->enemigos);
-                recursos->puerta.estado = CERRADA;
-                recursos->palanca.estado = DESACTIVADA;
-                puntuacion = 0;
-                *etapa_actual = MENU_PRINCIPAL;
-                cambiar_menu(&recursos->menu_actual, recursos->menus[PRINCIPAL]);
-                cambiar_musica(recursos, recursos->musicas[0]);
-                recursos->menu_actual.opcion_en_hover = -1;
+                resetear_estado_juego(recursos, recursos->menus[PRINCIPAL], etapa_actual, MENU_PRINCIPAL);
                 *nivel_actual = 0;
+                detener_efectos_de_sonido(recursos);
+                cambiar_musica(recursos, recursos->musicas[0]);
             }
 
             else if (opcion_clickeada == 1)
@@ -406,20 +410,10 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
             {
                 if (opcion_clickeada == 2)
                 {
-                    cambiar_menu(&recursos->menu_actual, menu_vacio);
-                    desactivar_enemigos(recursos->enemigos);
-                    inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, 
-                                         (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
-                    //al_flush_event_queue(recursos->cola_eventos);  // BORRA COLA DE EVENTOS
-                    memset((bool *) teclas, false, sizeof(teclas));
-                    recursos->puerta.estado = CERRADA;
-                    recursos->palanca.estado = DESACTIVADA;
-                    puntuacion = 0;
-
                     if (*nivel_actual != NRO_NIVELES)
                     {
-                        *etapa_actual = (*nivel_actual - 1) + 1;
-                        (*nivel_actual)++;
+                        resetear_estado_juego(recursos, menu_vacio, etapa_actual, (*nivel_actual-1)+1);
+                        *nivel_actual = *nivel_actual + 1;
                     }
 
                     if (*nivel_actual == 4)
