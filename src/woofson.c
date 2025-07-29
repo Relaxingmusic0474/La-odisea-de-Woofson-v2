@@ -10,7 +10,7 @@ int main()  // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PAREC
     ALLEGRO_EVENT evento; /* Ṕara agregar los eventos que vayan ocurriendo a la cola de eventos */
     Etapa etapa_juego = MENU_PRINCIPAL;  /* Para capturar el estado actual del juego */
     Tecla ultima_tecla_lateral = ALLEGRO_KEY_RIGHT;  /* Para que el personaje parta mirando a la derecha */
-    Natural iteracion = 0, nivel_actual = 0;  /* Para controlar las iteraciones del juego */
+    Natural iteracion = 0, nivel_actual = 0; //, ranking_a_mostrar = -1;  /* Para controlar las iteraciones del juego */
     extern bool teclas[ALLEGRO_KEY_MAX]; /* Para manejar las teclas que se presionan */
     bool cambio_estado_procesado = false;
 
@@ -28,17 +28,11 @@ int main()  // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PAREC
             break;  /* Se sale del loop si la ventana se cierra (el juego termina) */
         }
 
-        if (etapa_juego == MENU_PRINCIPAL || etapa_juego == MENU_NIVELES || etapa_juego == MENU_RANKING ||  etapa_juego == VICTORIA || etapa_juego == DERROTA)
+        if (etapa_juego == MENU_PRINCIPAL || etapa_juego == MENU_NIVELES || etapa_juego == MENU_RANKING || etapa_juego == RANKING || etapa_juego == VICTORIA || etapa_juego == DERROTA)
         {
-            manejar_menu(&recursos, &evento, &etapa_juego, &nivel_actual, iteracion, &cambio_estado_procesado, &ultima_tecla_lateral);
+            manejar_menu(&recursos, &evento, &etapa_juego, &nivel_actual, iteracion, &cambio_estado_procesado, &ultima_tecla_lateral);//, &ranking_a_mostrar);
         }
 
-        else if (etapa_juego == RANKING)
-        {
-            
-        }
-        
-        
         else
         {
             switch (evento.type)

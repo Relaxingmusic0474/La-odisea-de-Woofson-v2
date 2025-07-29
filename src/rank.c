@@ -152,29 +152,3 @@ Procedure ingresar_nombre(char* nombre, size_t largo_max, ALLEGRO_FONT* fuente, 
         }
     }
 }
-
-Procedure mostrar_ranking(Ranking* ranking, ALLEGRO_FONT* fuente, float x_inicial, float y_inicial)
-{
-    Natural i;
-    Datos* data;
-    char buffer[MAXLINEA] = {'\0'};
-
-    for (i=0; i<MAX_DATOS; i++)
-    {
-        data = &ranking->datos[i];
-
-        if (strlen(data->nombre) == 0)
-        {
-            snprintf(buffer, sizeof(buffer), "----\t0");
-        }
-
-        else
-        {
-            snprintf(buffer, sizeof(buffer), "%s\t%d", data->nombre, data->puntaje);
-        }
-
-        al_draw_text(fuente, BLANCO, x_inicial, y_inicial + i * 30, 0, buffer);
-    }
-    
-    al_flip_display();
-}

@@ -116,13 +116,19 @@ bool inicializar_menu(Menu* menu, TipoMenu tipo, Imagen fondo, ALLEGRO_FONT* fue
         }
     }
 
-    else  // Menú que se muestra al ganar un nivel
+    else if (menu->tipo == GANAR)  // Menú que se muestra al ganar un nivel
     {
         for (i=0; i<menu->nro_opciones; i++)
         {
             menu->opciones[i].rectangulo.pos_inicial = (Vector) {x0 + ancho*(0.15 + 0.26*i), y0 + alto*0.60};
             menu->opciones[i].rectangulo.pos_final = (Vector) {x0 + ancho*(0.33 + 0.26*i), y0 + alto*0.80};
         }
+    }
+
+    else  // Menú que funciona como un ranking (Solo tiene la opción de Volver atrás)
+    {    
+        menu->opciones[0].rectangulo.pos_inicial = (Vector) {x0 + ancho*0.05, y0 + alto*0.80};
+        menu->opciones[0].rectangulo.pos_final = (Vector) {x0 + ancho*0.20, y0 + alto*0.90};
     }
 
     menu->rect_destino = rect_destino;
@@ -165,12 +171,15 @@ Procedure mostrar_menu(Menu menu, Etapa etapa_actual)
         }
     }
 
-    else  // Si el menú que se quiere mostrar, no tiene fondo (es decir, es el menú de ganar o perder), se dibuja el menú como un rectángulo
+    else  // Si el menú que se quiere mostrar, no tiene fondo (es decir, es el menú de ganar o perder, o de ranking), se dibuja el menú como un rectángulo
     {
-        if (memcmp(&menu, &menu_vacio, sizeof(Menu)) != 0)
+        if (menu.tipo != MENU_RANK)
         {
-            rect_menu = dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, alto, ancho, 50.0, 50.0, true, CAFE);
-            dibujar_rectangulo_en_rectangulo(rect_menu, alto, ancho, 50.0, 50.0, false, AMARILLO);
+            if (memcmp(&menu, &menu_vacio, sizeof(Menu)) != 0)
+            {
+                rect_menu = dibujar_rectangulo_en_rectangulo(RECTANGULO_JUEGO, alto, ancho, 50.0, 50.0, true, CAFE);
+                dibujar_rectangulo_en_rectangulo(rect_menu, alto, ancho, 50.0, 50.0, false, AMARILLO);
+            }
         }
     }
 
@@ -231,6 +240,63 @@ Procedure mostrar_menu(Menu menu, Etapa etapa_actual)
 }
 
 
+Procedure mostrar_ranking(Menu* menu, Ranking* ranking)
+{
+    Natural i;
+    Rectangulo datos[3][MAX_DATOS];
+    float alto, x0, y0, x1, y1, xm, ym, ancho_total, alto_total, alto_fuente;
+    // Datos* data;
+    char pos[5] = {'\0'};
+    char pje[5] = {'\0'};
+    //char buffer[MAXLINEA] = {'\0'};
+
+    menu->opcion_en_hover = obtener_opcion_en_hover(*menu);  // Se obtiene la opcion por la que pasa el cursor (sin seleccionarla aun)
+
+    x0 = menu->rect_destino.pos_inicial.x;
+    x1 = menu->rect_destino.pos_final.x;
+
+    y0 = menu->rect_destino.pos_inicial.y;
+    y1 = menu->rect_destino.pos_final.y;
+
+    ancho_total = x1 - x0;
+    alto_total = y1 - y0;
+
+    dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, ALTO_VENTANA, ANCHO_VENTANA, 50.0, 50.0, true, MORADO);
+    dibujar_texto_en_rectangulo("RANKING", RECTANGULO_VENTANA, 50.0, 10.0, menu->fuente, BLANCO);
+
+    alto = 0.6/MAX_DATOS * ALTO_VENTANA;
+
+    for (i=0; i<MAX_DATOS; i++)
+    {
+        datos[0][i] = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.08*ANCHO_VENTANA, 16.5, 17.0 + 5./4*alto/ALTO_VENTANA*i, true, ROJO);
+        dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.08*ANCHO_VENTANA, 16.5, 17.0 + 5./4*alto/ALTO_VENTANA*i, false, AMARILLO);
+        sprintf(pos, "%hu", i+1);
+        dibujar_texto_en_rectangulo(pos, datos[0][i], 50.0, 50.0, menu->fuente, AZUL);
+        datos[1][i] = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.49*ANCHO_VENTANA, 45.0, 17.0 + 5./4*alto/ALTO_VENTANA*i, true, GRIS_OSCURO);
+        dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.49*ANCHO_VENTANA, 45.0, 17.0 + 5./4*alto/ALTO_VENTANA*i, false, AMARILLO);
+        dibujar_texto_en_rectangulo(ranking->datos[i].nombre, datos[1][i], 50.0, 50.0, menu->fuente_sec, AZUL);
+        datos[2][i] = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.18*ANCHO_VENTANA, 78.5, 17.0 + 5./4*alto/ALTO_VENTANA*i, true, GRIS_OSCURO);
+        dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.18*ANCHO_VENTANA, 78.5, 17.0 + 5./4*alto/ALTO_VENTANA*i, false, AMARILLO);
+        snprintf(pje, sizeof(pje), "%hu", ranking->datos[i].puntaje);
+        dibujar_texto_en_rectangulo(pje, datos[2][i], 50.0, 50.0, menu->fuente_sec, AZUL);
+        memset(pos, '\0', sizeof(pos));
+        memset(pje, '\0', sizeof(pje));
+    }
+
+    al_draw_rectangle(menu->opciones[0].rectangulo.pos_inicial.x, menu->opciones[0].rectangulo.pos_inicial.y, menu->opciones[0].rectangulo.pos_final.x,
+                      menu->opciones[0].rectangulo.pos_final.y, menu->opcion_en_hover == 0 ? VERDE : BLANCO, 2.0);
+
+    xm = (menu->opciones[0].rectangulo.pos_inicial.x + menu->opciones[0].rectangulo.pos_final.x) / 2;
+    ym = (menu->opciones[0].rectangulo.pos_inicial.y + menu->opciones[0].rectangulo.pos_final.y) / 2;
+
+    alto_fuente = al_get_font_line_height(menu->fuente_sec);
+
+    al_draw_text(menu->fuente_sec, menu->opcion_en_hover == 0 ? VERDE : BLANCO, xm, (ym-alto_fuente/2), ALLEGRO_ALIGN_CENTRE, menu->opciones[0].texto);    
+
+    al_flip_display();
+}
+
+
 Procedure cambiar_menu(Menu* menu_actual, Menu menu_nuevo)
 {
     *menu_actual = menu_nuevo;
@@ -274,7 +340,7 @@ Procedure detener_efectos_de_sonido(Recursos* recursos)
 }
 
 
-Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual)
+Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual)//, Natural* ranking_a_mostrar)
 {
     Menu menu_vacio = {0};
     char nombre[LARGO] = {'\0'};  // Para entrar al ranking
@@ -353,12 +419,18 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         else
         {
             *etapa_actual = RANKING;
+            //*ranking_a_mostrar = opcion_clickeada;
+            cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_RANK]);
         }
     }
 
     else if (*etapa_actual == RANKING)
     {
-        mostrar_ranking(&recursos->rankings[opcion_clickeada], recursos->fuentes[COMFORTAA_LIGHT_GRANDE], 0, 0);
+        if (opcion_clickeada == 0)
+        {
+            *etapa_actual = MENU_RANKING;   
+            cambiar_menu(&recursos->menu_actual, recursos->menus[NIVELES]);
+        }
     }
 
     else
@@ -402,6 +474,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
             {
                 // Se solicitan los datos para ingresarse en el ranking
                 ingresar_nombre(nombre, sizeof(nombre), recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_GRANDE], recursos->cola_eventos);
+                normalizar_ranking(&recursos->rankings[(*nivel_actual)-1]);
                 insertar_en_ranking(&recursos->rankings[(*nivel_actual)-1], nombre, *nivel_actual);
                 modificar_ranking(&recursos->rankings[(*nivel_actual)-1], *nivel_actual);
             }
@@ -609,7 +682,7 @@ Procedure mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, 
 }
 
 
-Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_actual, Natural* nivel_actual, Natural iteracion, bool* cambio_estado_procesado, Tecla* ultima_tecla_lateral)
+Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_actual, Natural* nivel_actual, Natural iteracion, bool* cambio_estado_procesado, Tecla* ultima_tecla_lateral)//, Natural* ranking_a_mostrar)
 {
     Menu menu_vacio = {0};
 
@@ -619,7 +692,7 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
 
         if (recursos->menu_actual.opcion_en_hover < recursos->menu_actual.nro_opciones)
         {
-            redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual);
+            redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual);//, ranking_a_mostrar);
         }
     }
 
@@ -631,7 +704,7 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
 
             if (*etapa_actual == VICTORIA || *etapa_actual == DERROTA)
             {
-                redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual);
+                redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual);//, ranking_a_mostrar);
             }
         }
 
@@ -645,6 +718,15 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
             mostrar_pantalla_datos(recursos->pje_principal, recursos->vida, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual);
         }
     
-        mostrar_menu(recursos->menu_actual, *etapa_actual);
+        if (*etapa_actual == RANKING)
+        {
+            mostrar_ranking(&recursos->menu_actual, &recursos->rankings[3]);
+        }
+
+        else
+        {
+            mostrar_menu(recursos->menu_actual, *etapa_actual);
+        }
+
     }
 }

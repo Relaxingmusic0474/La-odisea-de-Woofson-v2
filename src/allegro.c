@@ -164,6 +164,7 @@ bool crear_recursos(Recursos* R)
     char* textos_opciones_niveles[] = {"1", "2", "3", "4", "5", "Volver atrás"};
     char* textos_opciones_ganar[] = {"Ir al menú principal", "Entrar en el ranking", "Ir al siguiente nivel"};
     char* textos_opciones_perder[] = {"Reintentar nivel", "Ir al menú principal"};
+    char* textos_opciones_ranking[] = {"Volver atrás"};
     char ruta[40] = {'\0'};
     //bool exito = false;
 
@@ -322,7 +323,13 @@ bool crear_recursos(Recursos* R)
     }
     
     if (!inicializar_menu(&R->menus[GANAR], GANAR, NULL, R->fuentes[TIMES_NEW_ROMAN_GIGANTE], R->fuentes[TIMES_NEW_ROMAN_GRANDE],
-                          textos_opciones_ganar, NRO_ELEMS(textos_opciones_ganar),RECTANGULO_MENU_RESULTADO))
+                          textos_opciones_ganar, NRO_ELEMS(textos_opciones_ganar), RECTANGULO_MENU_RESULTADO))
+    {
+        return false;
+    }
+
+    if (!inicializar_menu(&R->menus[MENU_RANK], MENU_RANK, NULL, R->fuentes[COMFORTAA_LIGHT_GIGANTE], R->fuentes[TIMES_NEW_ROMAN_GRANDE], 
+                          textos_opciones_ranking, NRO_ELEMS(textos_opciones_ranking), RECTANGULO_JUEGO))
     {
         return false;
     }

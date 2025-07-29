@@ -121,6 +121,7 @@ enum tipoMenu
     NIVELES,
     PERDER,
     GANAR,
+    MENU_RANK,
 };
 
 typedef enum tipoMenu TipoMenu;
