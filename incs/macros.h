@@ -62,6 +62,7 @@
 #define _MONSTRUO 7  // Caso similar
 #define PUERTA 8  // Puerta para pasar de nivel
 #define PALANCA 9  // Palanca para abrir o cerrar la puerta
+#define CHARCO 10  // Otro tipo de trampa
 
 // Macros para las caracteristicas del personaje
 #define VELOCIDAD_MAXIMA_PERSONAJE 8
@@ -114,12 +115,14 @@
 #define BLANCO al_map_rgb(255, 255, 255)
 #define NEGRO al_map_rgb(0, 0, 0)
 #define GRIS al_map_rgb(205, 205, 205)
+#define GRIS_SEMIOSCURO al_map_rgb(185, 185, 185)
 #define GRIS_OSCURO al_map_rgb(130, 137, 143)
 #define CAFE al_map_rgb(111, 78, 55)
 #define AMARILLO al_map_rgb(255, 255, 0)
 #define ROSADO al_map_rgb(216, 84, 180)
 #define MORADO al_map_rgb(128, 0, 128)
 #define NARANJO al_map_rgb(255, 165, 0)
+#define TURQUESA al_map_rgb(93, 193, 185)
 
 // Macros de estilo personal de programacion (para hacerlo mas legible para mi)
 #define LOOP while (1)

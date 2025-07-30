@@ -328,8 +328,8 @@ bool crear_recursos(Recursos* R)
         return false;
     }
 
-    if (!inicializar_menu(&R->menus[MENU_RANK], MENU_RANK, NULL, R->fuentes[COMFORTAA_LIGHT_GIGANTE], R->fuentes[TIMES_NEW_ROMAN_GRANDE], 
-                          textos_opciones_ranking, NRO_ELEMS(textos_opciones_ranking), RECTANGULO_JUEGO))
+    if (!inicializar_menu(&R->menus[MENU_RANK], MENU_RANK, NULL, R->fuentes[COMFORTAA_LIGHT_GIGANTE], R->fuentes[COMFORTAA_LIGHT_GRANDE], 
+                          textos_opciones_ranking, NRO_ELEMS(textos_opciones_ranking), RECTANGULO_VENTANA))
     {
         return false;
     }

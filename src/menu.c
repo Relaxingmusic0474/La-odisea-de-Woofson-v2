@@ -103,8 +103,8 @@ bool inicializar_menu(Menu* menu, TipoMenu tipo, Imagen fondo, ALLEGRO_FONT* fue
         }
 
         // Coordenadas para el botón "Volver atrás"
-        menu->opciones[i].rectangulo.pos_inicial = (Vector) {x0 + ancho*0.05, y0 + alto*0.80};
-        menu->opciones[i].rectangulo.pos_final = (Vector) {x0 + ancho*0.20, y0 + alto*0.90};
+        menu->opciones[i].rectangulo.pos_inicial = (Vector) {x0 + ancho*0.05, y0 + alto*0.83};
+        menu->opciones[i].rectangulo.pos_final = (Vector) {x0 + ancho*0.20, y0 + alto*0.92};
     }
 
     else if (menu->tipo == PERDER)  // Menú que se muestra al perder un nivel
@@ -127,8 +127,8 @@ bool inicializar_menu(Menu* menu, TipoMenu tipo, Imagen fondo, ALLEGRO_FONT* fue
 
     else  // Menú que funciona como un ranking (Solo tiene la opción de Volver atrás)
     {    
-        menu->opciones[0].rectangulo.pos_inicial = (Vector) {x0 + ancho*0.05, y0 + alto*0.80};
-        menu->opciones[0].rectangulo.pos_final = (Vector) {x0 + ancho*0.20, y0 + alto*0.90};
+        menu->opciones[0].rectangulo.pos_inicial = (Vector) {x0 + ancho*0.05, y0 + alto*0.83};
+        menu->opciones[0].rectangulo.pos_final = (Vector) {x0 + ancho*0.20, y0 + alto*0.92};
     }
 
     menu->rect_destino = rect_destino;
@@ -244,7 +244,7 @@ Procedure mostrar_ranking(Menu* menu, Ranking* ranking)
 {
     Natural i;
     Rectangulo datos[3][MAX_DATOS];
-    float alto, x0, y0, x1, y1, xm, ym, ancho_total, alto_total, alto_fuente;
+    float alto, sep, x0, y0, x1, y1, xm, ym, ancho_total, alto_total, alto_fuente;
     // Datos* data;
     char pos[5] = {'\0'};
     char pje[5] = {'\0'};
@@ -262,36 +262,37 @@ Procedure mostrar_ranking(Menu* menu, Ranking* ranking)
     alto_total = y1 - y0;
 
     dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, ALTO_VENTANA, ANCHO_VENTANA, 50.0, 50.0, true, MORADO);
-    dibujar_texto_en_rectangulo("RANKING", RECTANGULO_VENTANA, 50.0, 10.0, menu->fuente, BLANCO);
+    dibujar_texto_en_rectangulo("RANKING", RECTANGULO_VENTANA, 50.0, 7.5, menu->fuente, BLANCO);
 
-    alto = 0.6/MAX_DATOS * ALTO_VENTANA;
+    alto = 0.5 / MAX_DATOS * ALTO_VENTANA;
+    sep = alto / 4;
 
     for (i=0; i<MAX_DATOS; i++)
     {
-        datos[0][i] = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.08*ANCHO_VENTANA, 16.5, 17.0 + 5./4*alto/ALTO_VENTANA*i, true, ROJO);
-        dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.08*ANCHO_VENTANA, 16.5, 17.0 + 5./4*alto/ALTO_VENTANA*i, false, AMARILLO);
+        datos[0][i] = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.08*ANCHO_VENTANA, 16.5, 17.0 + 100*(alto+sep)/ALTO_VENTANA*i, true, ROJO);
+        dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.08*ANCHO_VENTANA, 16.5, 17.0 + 100*(alto+sep)/ALTO_VENTANA*i, false, AMARILLO);
         sprintf(pos, "%hu", i+1);
-        dibujar_texto_en_rectangulo(pos, datos[0][i], 50.0, 50.0, menu->fuente, AZUL);
-        datos[1][i] = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.49*ANCHO_VENTANA, 45.0, 17.0 + 5./4*alto/ALTO_VENTANA*i, true, GRIS_OSCURO);
-        dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.49*ANCHO_VENTANA, 45.0, 17.0 + 5./4*alto/ALTO_VENTANA*i, false, AMARILLO);
-        dibujar_texto_en_rectangulo(ranking->datos[i].nombre, datos[1][i], 50.0, 50.0, menu->fuente_sec, AZUL);
-        datos[2][i] = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.18*ANCHO_VENTANA, 78.5, 17.0 + 5./4*alto/ALTO_VENTANA*i, true, GRIS_OSCURO);
-        dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.18*ANCHO_VENTANA, 78.5, 17.0 + 5./4*alto/ALTO_VENTANA*i, false, AMARILLO);
+        dibujar_texto_en_rectangulo(pos, datos[0][i], 50.0, 50.0, menu->fuente, NEGRO);
+        datos[1][i] = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.49*ANCHO_VENTANA, 45.0, 17.0 + 100*(alto+sep)/ALTO_VENTANA*i, true, GRIS_SEMIOSCURO);
+        dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.49*ANCHO_VENTANA, 45.0, 17.0 + 100*(alto+sep)/ALTO_VENTANA*i, false, AMARILLO);
+        dibujar_texto_en_rectangulo(ranking->datos[i].nombre, datos[1][i], 50.0, 50.0, menu->fuente_sec, NEGRO);
+        datos[2][i] = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.18*ANCHO_VENTANA, 78.5, 17.0 + 100*(alto+sep)/ALTO_VENTANA*i, true, GRIS_SEMIOSCURO);
+        dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, alto, 0.18*ANCHO_VENTANA, 78.5, 17.0 + 100*(alto+sep)/ALTO_VENTANA*i, false, AMARILLO);
         snprintf(pje, sizeof(pje), "%hu", ranking->datos[i].puntaje);
-        dibujar_texto_en_rectangulo(pje, datos[2][i], 50.0, 50.0, menu->fuente_sec, AZUL);
+        dibujar_texto_en_rectangulo(pje, datos[2][i], 50.0, 50.0, menu->fuente_sec, NEGRO);
         memset(pos, '\0', sizeof(pos));
         memset(pje, '\0', sizeof(pje));
     }
 
     al_draw_rectangle(menu->opciones[0].rectangulo.pos_inicial.x, menu->opciones[0].rectangulo.pos_inicial.y, menu->opciones[0].rectangulo.pos_final.x,
-                      menu->opciones[0].rectangulo.pos_final.y, menu->opcion_en_hover == 0 ? VERDE : BLANCO, 2.0);
+                      menu->opciones[0].rectangulo.pos_final.y, menu->opcion_en_hover == 0 ? AZUL : BLANCO, 2.0);
 
     xm = (menu->opciones[0].rectangulo.pos_inicial.x + menu->opciones[0].rectangulo.pos_final.x) / 2;
     ym = (menu->opciones[0].rectangulo.pos_inicial.y + menu->opciones[0].rectangulo.pos_final.y) / 2;
 
     alto_fuente = al_get_font_line_height(menu->fuente_sec);
 
-    al_draw_text(menu->fuente_sec, menu->opcion_en_hover == 0 ? VERDE : BLANCO, xm, (ym-alto_fuente/2), ALLEGRO_ALIGN_CENTRE, menu->opciones[0].texto);    
+    al_draw_text(menu->fuente_sec, menu->opcion_en_hover == 0 ? AZUL : BLANCO, xm, (ym-alto_fuente/2), ALLEGRO_ALIGN_CENTRE, menu->opciones[0].texto);    
 
     al_flip_display();
 }
@@ -474,7 +475,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
             {
                 // Se solicitan los datos para ingresarse en el ranking
                 ingresar_nombre(nombre, sizeof(nombre), recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_GRANDE], recursos->cola_eventos);
-                normalizar_ranking(&recursos->rankings[(*nivel_actual)-1]);
+                //normalizar_ranking(&recursos->rankings[(*nivel_actual)-1]);
                 insertar_en_ranking(&recursos->rankings[(*nivel_actual)-1], nombre, *nivel_actual);
                 modificar_ranking(&recursos->rankings[(*nivel_actual)-1], *nivel_actual);
             }

@@ -5,6 +5,7 @@ bool leer_ranking(Ranking* ranking, Natural nro_nivel)
     Natural i;
     FILE* archivo_ranking = NULL;
     char nombre_archivo[LARGO] = {'\0'};
+    size_t tamanho;
 
     sprintf(nombre_archivo, "assets/rankings/ranking-%hu.txt", nro_nivel);
 
@@ -15,16 +16,40 @@ bool leer_ranking(Ranking* ranking, Natural nro_nivel)
         printf("Error al abrir en modo de lectura el archivo del ranking del nivel %hu\n", nro_nivel);
         return false;
     }
+    
+    // memset(ranking, 0, sizeof(Ranking));  // Limpiamos
+    
+/*
+    while (i<MAX_DATOS && !feof(archivo_ranking))
+    {
+        leer_entrada_datos(archivo_ranking, &ranking->datos[i]);
+
+        if (ranking->datos[i].nombre[0] != '\0')
+        {
+            i++;
+        }
+    }
+    */
 
     i = 0;
 
-    while (i < MAX_DATOS && fscanf(archivo_ranking, "%34[^\t]\t%hu\n", ranking->datos[i].nombre, &ranking->datos[i].puntaje) == 2)
+    while (i < MAX_DATOS)
     {
+        if (fscanf(archivo_ranking, "%34[^\t]\t%hu", ranking->datos[i].nombre, &ranking->datos[i].puntaje) != 2)
+        {
+            strcpy(ranking->datos[i].nombre, "----");
+            ranking->datos[i].puntaje = 0;
+        }
+
         ranking->datos[i].nro_nivel = nro_nivel;
         i++;
     }
-
+    
     fclose(archivo_ranking);
+
+    printf("%s", ranking->datos[0].nombre);
+    printf("%hu", ranking->datos[0].puntaje);
+    
     return true;
 }
 
@@ -47,8 +72,35 @@ bool modificar_ranking(Ranking* ranking, Natural nro_nivel)
 
     for (i=0; i<MAX_DATOS; i++)
     {
-        fprintf(archivo_ranking, "%s\t%hu\n", ranking->datos[i].nombre, ranking->datos[i].puntaje);
+        if (ranking->datos[i].nombre[0] == '\0')
+        {
+            if (i == MAX_DATOS-1)
+            {
+                fprintf(archivo_ranking, "----\t0");
+            }
+
+            else
+            {
+                fprintf(archivo_ranking, "----\t0\n");
+            }
+        }
+
+        else
+        {
+            if (i == MAX_DATOS-1)
+            {
+                fprintf(archivo_ranking, "%s\t%hu", ranking->datos[i].nombre, ranking->datos[i].puntaje);
+            }
+
+            else
+            {
+                fprintf(archivo_ranking, "%s\t%hu\n", ranking->datos[i].nombre, ranking->datos[i].puntaje);
+            }
+        }
     }
+
+    printf("'%s'\n", ranking->datos[0].nombre);
+    printf("Largo: %lu\n", strlen(ranking->datos[0].nombre));
 
     fclose(archivo_ranking);
     return true;
@@ -75,10 +127,10 @@ Procedure insertar_en_ranking(Ranking* ranking, char* nombre, Natural nivel)
     }
 
     strcpy(data.nombre, nombre);
+    data.nombre[LARGO-1] = '\0';
     data.puntaje = puntuacion;
     data.nro_nivel = nivel;
 
-    memset(ranking->datos[MAX_DATOS-1].nombre, '\0', sizeof(ranking->datos[MAX_DATOS-1].nombre));
     ranking->datos[MAX_DATOS-1] = data;
 
     for (i=MAX_DATOS-1; i>0; i--)
