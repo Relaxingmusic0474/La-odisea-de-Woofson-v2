@@ -386,7 +386,7 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
 Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, Natural iteracion)
 {
     Natural i=0, j=0;
-    Natural id_enemigo = 0;
+    Natural id_enemigo = 0, id_pocion = 0;
     Entero flag = 0;
     Personaje* woofson = &recursos->pje_principal;
     Imagen bloque_cafe = recursos->bloques[0];
@@ -579,6 +579,35 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
 
                 recursos->palanca.imagen = recursos->palancas[recursos->palanca.estado];
                 al_draw_bitmap(recursos->palanca.imagen, recursos->palanca.posicion.x, recursos->palanca.posicion.y, 0);
+            }
+
+            if (mapa.mapa[i][j] == POCION)
+            {
+                if (i==mapa.nro_filas-1 || (i<mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i+1][j] == BLOQUE_RAYO)))
+                {
+                    if (id_pocion < MAX_POCIONES)
+                    {
+                        if (!recursos->pociones[id_pocion].tomada)  // Si aun no ha sido tomada se dibuja
+                        {
+                            al_draw_bitmap(recursos->pociones[id_pocion].imagen, (x1+x2-al_get_bitmap_width(recursos->pociones[id_pocion].imagen))/2, 
+                                           y2-al_get_bitmap_height(recursos->pociones[id_pocion].imagen), 0);
+
+                            if (woofson->posicion.x + woofson->ancho >= (x1+x2-al_get_bitmap_width(recursos->pociones[id_pocion].imagen))/2 && 
+                                woofson->posicion.y + woofson->alto >= y2-al_get_bitmap_height(recursos->pociones[id_pocion].imagen) &&
+                                woofson->posicion.x < (x1+x2+al_get_bitmap_width(recursos->pociones[id_pocion].imagen))/2 &&
+                                woofson->posicion.y < y2)
+                            {
+                                if (teclas[ALLEGRO_KEY_E])
+                                {
+                                    recursos->pociones[id_pocion].tomada = true;
+                                    woofson->nro_vidas++;
+                                }
+                            }
+                        }
+                    }    
+                }
+
+                id_pocion++;
             }
         }
     }

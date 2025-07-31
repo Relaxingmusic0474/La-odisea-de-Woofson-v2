@@ -22,6 +22,7 @@
 #define VECTOR_NULO (Vector) {0, 0}
 #define NRO_NIVELES 5
 #define MAX_DATOS 10
+#define MAX_POCIONES 2
 #define NRO_COLORES 5
 #define NRO_BLOQUES 2 // Tipos distintos de bloques que se cargarán
 #define NRO_MENUS 5
@@ -63,6 +64,8 @@
 #define PUERTA 8  // Puerta para pasar de nivel
 #define PALANCA 9  // Palanca para abrir o cerrar la puerta
 #define CHARCO 10  // Otro tipo de trampa
+#define POCION 11  // Poción para aumentar la vida de Woofson
+#define MUNICION 12  // Para que Woofson recoja municiones cuando le falten
 
 // Macros para las caracteristicas del personaje
 #define VELOCIDAD_MAXIMA_PERSONAJE 8

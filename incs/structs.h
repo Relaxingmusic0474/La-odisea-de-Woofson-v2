@@ -24,6 +24,7 @@ typedef struct regresionLineal RegresionLineal;
 typedef struct espina Espina;
 typedef struct palanca Palanca;
 typedef struct puerta Puerta;
+typedef struct pocion Pocion;
 typedef struct datos Datos;
 typedef struct ranking Ranking;
 typedef struct eventos Eventos;
@@ -201,6 +202,12 @@ struct puerta
     float ancho;
 };
 
+struct pocion
+{
+    Imagen imagen;
+    bool tomada;
+};
+
 struct datos
 {
     char nombre[LARGO];
@@ -250,8 +257,11 @@ struct recursos
     Personaje enemigos[MAX_ENEMIGOS];
     Imagen puertas[NRO_ESTADOS];
     Imagen palancas[NRO_ESTADOS];
+    Imagen pocion;
+    Imagen municiones;
     Puerta puerta;
     Palanca palanca;
+    Pocion pociones[MAX_POCIONES];
     Ranking rankings[NRO_NIVELES];  // 1 ranking por cada nivel
     //Imagen imagen_extraterrestre;
     //Personaje extraterrestres[MAX_EXTRATERRESTRES];

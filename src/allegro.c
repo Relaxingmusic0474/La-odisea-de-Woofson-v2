@@ -265,6 +265,28 @@ bool crear_recursos(Recursos* R)
         memset(ruta, '\0', sizeof(ruta));
     }
 
+    R->pocion = al_load_bitmap("assets/images/pocion.png");
+
+    if (!R->pocion)
+    {
+        printf("Error al cargar la imagen de la pocion\n");
+        return false;
+    }
+
+    for (i=0; i<MAX_POCIONES; i++)
+    {
+        R->pociones[i].imagen = R->pocion;
+        R->pociones[i].tomada = false;  // Aun no es tomada por Woofson
+    }
+
+    R->municiones = al_load_bitmap("assets/images/balas.png");
+
+    if (!R->municiones)
+    {
+        printf("Error al cargar la imagen de las municiones\n");
+        return false;
+    }
+
     // Se carga la imagen de fondo del menú principal
     R->fondo_menu_principal = al_load_bitmap("assets/images/menu.jpg");
 
@@ -539,6 +561,18 @@ Procedure finalizar_allegro(Recursos* R)
     {
         al_destroy_bitmap(R->fondo_menu_principal);
         R->fondo_menu_principal = NULL;
+    }
+
+    if (R->municiones != NULL)
+    {
+        al_destroy_bitmap(R->municiones);
+        R->municiones = NULL;
+    }
+
+    if (R->pocion != NULL)
+    {
+        al_destroy_bitmap(R->pocion);
+        R->pocion = NULL;
     }
 
     // Se destruyen las palancas y las puertas
