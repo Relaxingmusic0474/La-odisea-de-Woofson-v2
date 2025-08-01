@@ -39,7 +39,7 @@ Natural nro_balas_disponibles(Bala [MAX_BALAS]);
 Procedure mover_balas_activas(Personaje*, Personaje*, Mapa, ALLEGRO_COLOR);
 bool puede_disparar_horizontalmente(Personaje, Personaje, Mapa);
 Procedure efectuar_disparo_de_enemigo(Personaje*, Personaje*, Mapa);
-Procedure efectuar_disparo_de_enemigos(Personaje [MAX_ENEMIGOS], Personaje*, Mapa);
+Procedure efectuar_disparo_de_enemigos(Personaje [MAX_ENEMIGOS], Personaje*, Mapa, Imagen);
 Natural nro_enemigos_activos(Personaje [MAX_ENEMIGOS]);
 bool woofson_puede_disparar(Personaje*);
 Procedure efectuar_disparo_de_woofson(Personaje*, Personaje [MAX_ENEMIGOS], Mapa);

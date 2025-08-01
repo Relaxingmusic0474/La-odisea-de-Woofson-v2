@@ -92,6 +92,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
     personaje->tiempo_muerte = 0;
     personaje->frames_para_prox_disparo = 0;
     personaje->subvida_actual = 100;  // Todos tendrán subvida de 100 inicialmente
+    personaje->fuego = (Fuego) {0};
 
     switch (tipo)
     {
@@ -112,6 +113,9 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
         case DRAGON:
             personaje->velocidad.x = VELOCIDAD_DRAGONES;
             personaje->velocidad.y = 0;  // Inicialmente no está en salto
+            personaje->en_ataque = true;
+            personaje->fps_en_ataque = 0;
+            personaje->frames_para_prox_disparo = 0;
             personaje->nro_vidas = 1;
             personaje->en_plataforma = false;
             personaje->danhado = false;
@@ -460,7 +464,10 @@ Procedure mover_enemigo_dinamico(Personaje* enemigo, Mapa mapa)
     
     if (enemigo->tipo == DRAGON)
     {
-        enemigo->posicion.y += amplitud_dragon * sin((float) enemigo->fps_en_caminata / 12);
+        if (!hay_colision_superior(enemigo, mapa) && !hay_colision_inferior(enemigo, mapa))
+        {
+            enemigo->posicion.y += amplitud_dragon * sin((float) enemigo->fps_en_caminata / 12);
+        }
     }
 
     if (enemigo->fps_en_caminata % 8 == 0)
@@ -1011,8 +1018,94 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
     }
 }
 
+Procedure lanzar_fuego(Personaje* dragon, Personaje* woofson, Imagen imagen_fuego)
+{      
+    float porcentajes_boca[] = {18.0, 6.7, 20.0, 39.5, 44.4, 57.0, 45.0, 40.0, 20.8, 18.8};
 
-Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Personaje* woofson, Mapa mapa)
+    if (!dragon->en_ataque)
+    {   
+        dragon->frames_para_prox_disparo--;
+
+        if (dragon->frames_para_prox_disparo == 0)
+        {
+            dragon->en_ataque = true;
+            dragon->fps_en_ataque = 0;
+        }
+
+        else
+        {
+            return;
+        }
+    }
+
+    if (dragon->fps_en_ataque >= 200)
+    {
+        dragon->en_ataque = false;
+        dragon->fps_en_ataque = 0;
+        dragon->frames_para_prox_disparo = MAX_FRAMES_ESPERA_DRAGON;
+        return;
+    }
+
+    if (dragon->muerto)
+    {
+        return;
+    }
+    
+    dragon->fuego.imagen = imagen_fuego;
+    dragon->fuego.alto = al_get_bitmap_height(dragon->fuego.imagen);
+    dragon->fuego.ancho = al_get_bitmap_width(dragon->fuego.imagen);
+    dragon->fuego.porcentaje_progreso = dragon->fps_en_ataque <= 100 ? dragon->fps_en_ataque : 200 - dragon->fps_en_ataque;
+
+    if (dragon->direccion == -1)
+    {
+        dragon->fuego.posicion.x = dragon->posicion.x - dragon->fuego.porcentaje_progreso / 100 * dragon->fuego.ancho;  // Si va hacia la izquierda
+    }
+
+    else
+    {
+        dragon->fuego.posicion.x = dragon->posicion.x + dragon->ancho;// + fuego.porcentaje_progreso / 100 * fuego.ancho;
+    }
+    
+    dragon->fuego.posicion.y = dragon->posicion.y + porcentajes_boca[dragon->id_nro_frame] / 100 * dragon->alto;  // 0.2f ya que por ahi esta su boca
+
+    al_draw_scaled_bitmap(dragon->fuego.imagen, dragon->bandera_dibujo == 0 ? 0 : dragon->fuego.ancho * (100 - dragon->fuego.porcentaje_progreso) / 100,
+                          0, dragon->fuego.ancho * dragon->fuego.porcentaje_progreso / 100, dragon->fuego.alto, dragon->fuego.posicion.x,
+                          dragon->fuego.posicion.y, dragon->fuego.ancho * dragon->fuego.porcentaje_progreso / 100,
+                          dragon->fuego.alto * dragon->fuego.porcentaje_progreso / 100, dragon->bandera_dibujo == 0 ? 0 : ALLEGRO_FLIP_HORIZONTAL);
+
+    if (dragon->direccion == 1)
+    {
+        if (woofson->posicion.x > dragon->fuego.posicion.x && woofson->posicion.x < dragon->fuego.posicion.x + dragon->fuego.ancho * dragon->fuego.porcentaje_progreso / 100 &&
+            woofson->posicion.y > dragon->fuego.posicion.y && woofson->posicion.y < dragon->fuego.posicion.y + dragon->fuego.alto * dragon->fuego.porcentaje_progreso / 100)
+        {
+            if (!woofson->danhado)
+            {
+                woofson->danhado = true;
+                woofson->tiempo_danho = 0;
+                aplicar_danho(woofson, DANHO_FUEGO);
+            }
+        }
+    }
+
+    else
+    {
+        if (woofson->posicion.x > dragon->fuego.posicion.x + dragon->fuego.ancho * (100 - dragon->fuego.porcentaje_progreso) / 100 && 
+            woofson->posicion.x < dragon->fuego.posicion.x + dragon->fuego.ancho &&
+            woofson->posicion.y > dragon->fuego.posicion.y && woofson->posicion.y < dragon->fuego.posicion.y + dragon->fuego.alto * dragon->fuego.porcentaje_progreso / 100)
+        {
+            if (!woofson->danhado)
+            {
+                woofson->danhado = true;
+                woofson->tiempo_danho = 0;
+                aplicar_danho(woofson, DANHO_FUEGO);
+            }
+        }
+    }
+    
+    dragon->fps_en_ataque++;
+}
+
+Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Personaje* woofson, Mapa mapa, Imagen fuego)
 {
     Natural i, cantidad_enemigos;
 
@@ -1020,7 +1113,12 @@ Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Persona
 
     for (i=0; i<cantidad_enemigos; i++)
     {
-        if (enemigos[i].tipo != DRAGON)
+        if (enemigos[i].tipo == DRAGON)
+        {
+            lanzar_fuego(&enemigos[i], woofson, fuego);
+        }
+
+        else
         {
             efectuar_disparo_de_enemigo(&enemigos[i], woofson, mapa);
         }

@@ -33,7 +33,7 @@ bool hay_colision_superior(Personaje* personaje, Mapa mapa)
         return true;
     }
     
-    return hay_bloque_arriba(personaje, mapa);
+    return personaje->tipo != DRAGON && hay_bloque_arriba(personaje, mapa);
 }
 
 
@@ -95,7 +95,7 @@ bool hay_colision_inferior(Personaje* personaje, Mapa mapa)
         return true;
     }
 
-    return hay_bloque_debajo(personaje, mapa);
+    return personaje->tipo != DRAGON && hay_bloque_debajo(personaje, mapa);
 }
 
 

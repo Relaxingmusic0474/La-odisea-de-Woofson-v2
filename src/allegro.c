@@ -293,6 +293,14 @@ bool crear_recursos(Recursos* R)
         R->municiones[i].tomada = false;
     }
 
+    R->fuego = al_load_bitmap("assets/images/fuego.png");
+
+    if (!R->fuego)
+    {
+        printf("Error al cargar la imagen del fuego\n");
+        return false;
+    }
+
     // Se carga la imagen de fondo del menú principal
     R->fondo_menu_principal = al_load_bitmap("assets/images/menu.jpg");
 
@@ -567,6 +575,12 @@ Procedure finalizar_allegro(Recursos* R)
     {
         al_destroy_bitmap(R->fondo_menu_principal);
         R->fondo_menu_principal = NULL;
+    }
+
+    if (R->fuego != NULL)
+    {
+        al_destroy_bitmap(R->fuego);
+        R->fuego = NULL;
     }
 
     if (R->municion != NULL)

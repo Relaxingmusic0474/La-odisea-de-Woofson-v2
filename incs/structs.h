@@ -26,6 +26,7 @@ typedef struct palanca Palanca;
 typedef struct puerta Puerta;
 typedef struct pocion Pocion;
 typedef struct municion Municion;
+typedef struct fuego Fuego;
 typedef struct datos Datos;
 typedef struct ranking Ranking;
 typedef struct eventos Eventos;
@@ -83,6 +84,15 @@ struct arma
     FormaAtaque ataque;
 };
 
+struct fuego
+{
+    Imagen imagen;
+    Vector posicion;
+    float porcentaje_progreso;
+    float alto;
+    float ancho;
+};
+
 struct personaje
 {
     TipoPersonaje tipo;
@@ -117,6 +127,7 @@ struct personaje
     bool bala_recargable;
     Natural frames_para_prox_disparo;
     bool victoria;
+    Fuego fuego;  // Aplica solo para el dragón
 
     // bool hay_obj_izq;
     // bool hay_obj_der;
@@ -220,6 +231,8 @@ struct municion
     bool tomada;
 };
 
+
+
 struct datos
 {
     char nombre[LARGO];
@@ -267,14 +280,15 @@ struct recursos
     Imagen fondo_menu_niveles;
     Imagen* frames[TIPOS_PERSONAJES];
     Personaje enemigos[MAX_ENEMIGOS];
+    Puerta puerta;
+    Palanca palanca;
     Imagen puertas[NRO_ESTADOS];
     Imagen palancas[NRO_ESTADOS];
     Imagen pocion;
     Imagen municion;
-    Puerta puerta;
-    Palanca palanca;
     Pocion pociones[MAX_POCIONES];
     Municion municiones[MAX_MUNICIONES];
+    Imagen fuego;
     Ranking rankings[NRO_NIVELES];  // 1 ranking por cada nivel
     //Imagen imagen_extraterrestre;
     //Personaje extraterrestres[MAX_EXTRATERRESTRES];
