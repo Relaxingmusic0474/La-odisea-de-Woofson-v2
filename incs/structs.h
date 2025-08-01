@@ -25,6 +25,7 @@ typedef struct espina Espina;
 typedef struct palanca Palanca;
 typedef struct puerta Puerta;
 typedef struct pocion Pocion;
+typedef struct municion Municion;
 typedef struct datos Datos;
 typedef struct ranking Ranking;
 typedef struct eventos Eventos;
@@ -67,6 +68,8 @@ struct bala
     Vector velocidad;
     Entero direccion;  // 1 si es hacia la derecha y -1 si es hacia la izquierda
     bool activa;
+    bool disponible;
+    float frames_para_disponibilidad;  // Este campo solo cobra sentido si es que las balas son recargables con el tiempo (personaje->bala_recargable == true)
 };
 
 union formaAtaque
@@ -110,8 +113,11 @@ struct personaje
     bool estatico;
     bool inicializado;
     Bala balas[MAX_BALAS];
+    Natural balas_disponibles;
+    bool bala_recargable;
     Natural frames_para_prox_disparo;
     bool victoria;
+
     // bool hay_obj_izq;
     // bool hay_obj_der;
     // bool hay_obj_sup;
@@ -208,6 +214,12 @@ struct pocion
     bool tomada;
 };
 
+struct municion
+{
+    Imagen imagen;
+    bool tomada;
+};
+
 struct datos
 {
     char nombre[LARGO];
@@ -258,10 +270,11 @@ struct recursos
     Imagen puertas[NRO_ESTADOS];
     Imagen palancas[NRO_ESTADOS];
     Imagen pocion;
-    Imagen municiones;
+    Imagen municion;
     Puerta puerta;
     Palanca palanca;
     Pocion pociones[MAX_POCIONES];
+    Municion municiones[MAX_MUNICIONES];
     Ranking rankings[NRO_NIVELES];  // 1 ranking por cada nivel
     //Imagen imagen_extraterrestre;
     //Personaje extraterrestres[MAX_EXTRATERRESTRES];

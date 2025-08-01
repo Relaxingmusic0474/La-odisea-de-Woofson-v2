@@ -138,6 +138,9 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
     for (i=0; i<MAX_BALAS; i++)
     {
         personaje->balas[i] = (Bala) {0};
+        personaje->balas[i].disponible = true;
+        personaje->bala_recargable = true;
+        personaje->balas[i].frames_para_disponibilidad = 0;
     }
 
     personaje->inicializado = true;
@@ -796,6 +799,22 @@ bool hay_balas_activas(Bala balas[MAX_BALAS])
 }
 
 
+Natural nro_balas_disponibles(Bala balas[MAX_BALAS])
+{
+    Natural i, disponibles = 0;
+
+    for (i=0; i<MAX_BALAS; i++)
+    {
+        if (balas[i].disponible)
+        {
+            disponibles++;
+        }
+    }
+
+    return disponibles;
+}
+
+
 Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa, ALLEGRO_COLOR color)
 {
     Natural i;
@@ -1005,7 +1024,7 @@ bool woofson_puede_disparar(Personaje* woofson)
     Natural id_frames_disparo[] = {23, 24, 25, 26, 27, 28, 29};
     Natural nro_frames_disparo;
 
-    if (!woofson->inicializado || woofson->frames_para_prox_disparo != 0 || !teclas[ALLEGRO_KEY_SPACE])
+    if (!woofson->inicializado || woofson->frames_para_prox_disparo != 0 || nro_balas_disponibles(woofson->balas) == 0 || !teclas[ALLEGRO_KEY_SPACE])
     {
         return false;
     }
@@ -1058,14 +1077,32 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
     {
         woofson->frames_para_prox_disparo--;
     }
+
+    if (woofson->bala_recargable)
+    {
+        for (i=0; i<MAX_BALAS; i++)
+        {
+            if (woofson->balas[i].frames_para_disponibilidad > 0)
+            {
+                woofson->balas[i].frames_para_disponibilidad--;
+
+                if (woofson->balas[i].frames_para_disponibilidad == 0)
+                {
+                    woofson->balas[i].disponible = true;
+                }
+            }
+        }
+    }
     
     if (woofson_puede_disparar(woofson))
     {
         for (i=0; i<MAX_BALAS; i++)  // Buscamos una bala disponible en el arreglo de balas del enemigo
         {
-            if (!woofson->balas[i].activa) //enemigo->balas[i].velocidad.x == 0 && enemigo->balas[i].velocidad.y == 0)
+            if (/*!woofson->balas[i].activa && */woofson->balas[i].disponible) //enemigo->balas[i].velocidad.x == 0 && enemigo->balas[i].velocidad.y == 0)
             {
                 woofson->balas[i].activa = true;
+                woofson->balas[i].disponible = false;
+                woofson->balas[i].frames_para_disponibilidad = MAX_FRAMES_ESPERA_RECARGA;
 
                 // Inicializar posición y dirección de la bala
                 woofson->balas[i].posicion = (Vector) {woofson->bandera_dibujo == 0 ? woofson->posicion.x + woofson->ancho : woofson->posicion.x, 

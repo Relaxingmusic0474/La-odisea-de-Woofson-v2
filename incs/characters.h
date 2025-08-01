@@ -35,6 +35,7 @@ Procedure actualizar_estado_danho_enemigos(Personaje [MAX_ENEMIGOS]);
 Procedure detectar_si_personaje_en_zona_de_rayo(Personaje*, Rayo [MAX_RAYOS]);
 bool puede_disparar_horizontalmente(Personaje, Personaje, Mapa);
 bool hay_balas_activas(Bala [MAX_BALAS]);
+Natural nro_balas_disponibles(Bala [MAX_BALAS]);
 Procedure mover_balas_activas(Personaje*, Personaje*, Mapa, ALLEGRO_COLOR);
 bool puede_disparar_horizontalmente(Personaje, Personaje, Mapa);
 Procedure efectuar_disparo_de_enemigo(Personaje*, Personaje*, Mapa);

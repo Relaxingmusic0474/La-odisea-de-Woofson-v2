@@ -385,8 +385,8 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
  */
 Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, Natural iteracion)
 {
-    Natural i=0, j=0;
-    Natural id_enemigo = 0, id_pocion = 0;
+    Natural i=0, j=0, k=0;
+    Natural id_enemigo = 0, id_pocion = 0, id_municion = 0;
     Entero flag = 0;
     Personaje* woofson = &recursos->pje_principal;
     Imagen bloque_cafe = recursos->bloques[0];
@@ -604,10 +604,43 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                                 }
                             }
                         }
-                    }    
+                    }
                 }
 
                 id_pocion++;
+            }
+
+            if (mapa.mapa[i][j] == MUNICION)
+            {
+                if (i==mapa.nro_filas-1 || (i<mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i+1][j] == BLOQUE_RAYO)))
+                {
+                    if (id_municion < MAX_MUNICIONES)
+                    {
+                        if (!recursos->municiones[id_municion].tomada)
+                        {
+                            al_draw_bitmap(recursos->municiones[id_municion].imagen, (x1+x2-al_get_bitmap_width(recursos->municiones[id_municion].imagen))/2, 
+                                           y2-al_get_bitmap_height(recursos->municiones[id_municion].imagen), 0);
+
+                            if (woofson->posicion.x + woofson->ancho >= (x1+x2-al_get_bitmap_width(recursos->municiones[id_municion].imagen))/2 && 
+                                woofson->posicion.y + woofson->alto >= y2-al_get_bitmap_height(recursos->municiones[id_municion].imagen) &&
+                                woofson->posicion.x < (x1+x2+al_get_bitmap_width(recursos->municiones[id_municion].imagen))/2 &&
+                                woofson->posicion.y < y2 && woofson->balas_disponibles == 0 && woofson->bala_recargable == false)
+                            {
+                                if (teclas[ALLEGRO_KEY_E])
+                                {
+                                    for (k=0; k<MAX_BALAS; k++)
+                                    {
+                                        woofson->balas[k].disponible = true;
+                                        woofson->balas[k].frames_para_disponibilidad = 0;
+                                        recursos->municiones[id_municion].tomada = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                id_municion++;
             }
         }
     }

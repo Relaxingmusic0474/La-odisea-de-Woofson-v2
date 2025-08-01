@@ -5,7 +5,7 @@ bool leer_ranking(Ranking* ranking, Natural nro_nivel)
     Natural i;
     FILE* archivo_ranking = NULL;
     char nombre_archivo[LARGO] = {'\0'};
-    size_t tamanho;
+    //size_t tamanho;
 
     sprintf(nombre_archivo, "assets/rankings/ranking-%hu.txt", nro_nivel);
 
@@ -98,9 +98,6 @@ bool modificar_ranking(Ranking* ranking, Natural nro_nivel)
             }
         }
     }
-
-    printf("'%s'\n", ranking->datos[0].nombre);
-    printf("Largo: %lu\n", strlen(ranking->datos[0].nombre));
 
     fclose(archivo_ranking);
     return true;

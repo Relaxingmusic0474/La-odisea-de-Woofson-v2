@@ -7,7 +7,6 @@
 #include "structs.h"
 #include "score.h"
 #include "ctype.h"
-#include "read_input.h"
 
 bool leer_ranking(Ranking*, Natural);  // Lee el ranking de un cierto nivel
 void normalizar_ranking(Ranking* ranking);

@@ -279,12 +279,18 @@ bool crear_recursos(Recursos* R)
         R->pociones[i].tomada = false;  // Aun no es tomada por Woofson
     }
 
-    R->municiones = al_load_bitmap("assets/images/balas.png");
+    R->municion = al_load_bitmap("assets/images/balas.png");
 
-    if (!R->municiones)
+    if (!R->municion)
     {
         printf("Error al cargar la imagen de las municiones\n");
         return false;
+    }
+
+    for (i=0; i<MAX_MUNICIONES; i++)
+    {
+        R->municiones[i].imagen = R->municion;
+        R->municiones[i].tomada = false;
     }
 
     // Se carga la imagen de fondo del menú principal
@@ -563,10 +569,10 @@ Procedure finalizar_allegro(Recursos* R)
         R->fondo_menu_principal = NULL;
     }
 
-    if (R->municiones != NULL)
+    if (R->municion != NULL)
     {
-        al_destroy_bitmap(R->municiones);
-        R->municiones = NULL;
+        al_destroy_bitmap(R->municion);
+        R->municion = NULL;
     }
 
     if (R->pocion != NULL)

@@ -244,7 +244,7 @@ Procedure mostrar_ranking(Menu* menu, Ranking* ranking)
 {
     Natural i;
     Rectangulo datos[3][MAX_DATOS];
-    float alto, sep, x0, y0, x1, y1, xm, ym, ancho_total, alto_total, alto_fuente;
+    float alto, sep, x0, y0, x1, y1, xm, ym, alto_fuente;
     // Datos* data;
     char pos[5] = {'\0'};
     char pje[5] = {'\0'};
@@ -258,8 +258,8 @@ Procedure mostrar_ranking(Menu* menu, Ranking* ranking)
     y0 = menu->rect_destino.pos_inicial.y;
     y1 = menu->rect_destino.pos_final.y;
 
-    ancho_total = x1 - x0;
-    alto_total = y1 - y0;
+    // ancho_total = x1 - x0;
+    //alto_total = y1 - y0;
 
     dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, ALTO_VENTANA, ANCHO_VENTANA, 50.0, 50.0, true, MORADO);
     dibujar_texto_en_rectangulo("RANKING", RECTANGULO_VENTANA, 50.0, 7.5, menu->fuente, BLANCO);
@@ -306,8 +306,9 @@ Procedure cambiar_menu(Menu* menu_actual, Menu menu_nuevo)
 
 Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actual, Etapa etapa_deseada)
 {
+    Natural i;
+
     cambiar_menu(&recursos->menu_actual, menu);
-    //recursos->menu_actual.opcion_en_hover = -1;
     inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, (Vector){ANCHO_VENTANA * 0.1, ALTURA_PISO - al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
     memset((bool *) teclas, false, sizeof(teclas));
     recursos->puerta.estado = CERRADA;
@@ -315,6 +316,11 @@ Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actu
     puntuacion = 0;
     desactivar_enemigos(recursos->enemigos);
     *etapa_actual = etapa_deseada;
+
+    for (i=0; i<MAX_POCIONES; i++)
+    {
+        recursos->pociones[i].tomada = false;
+    }
 }
 
 
@@ -382,7 +388,6 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         else
         {
             cambiar_menu(&recursos->menu_actual, menu_vacio);
-            
             inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
             memset((bool *) teclas, false, sizeof(teclas));
 
@@ -395,11 +400,13 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                 case 1:
                 case 2:
                     cambiar_musica(recursos, recursos->musicas[1]);
+                    recursos->pje_principal.bala_recargable = true;
                     break;
 
                 case 3:
                 case 4:
                     cambiar_musica(recursos, recursos->musicas[2]);
+                    recursos->pje_principal.bala_recargable = false;
                     break;
             }
             
@@ -475,7 +482,6 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
             {
                 // Se solicitan los datos para ingresarse en el ranking
                 ingresar_nombre(nombre, sizeof(nombre), recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_GRANDE], recursos->cola_eventos);
-                //normalizar_ranking(&recursos->rankings[(*nivel_actual)-1]);
                 insertar_en_ranking(&recursos->rankings[(*nivel_actual)-1], nombre, *nivel_actual);
                 modificar_ranking(&recursos->rankings[(*nivel_actual)-1], *nivel_actual);
             }
@@ -493,6 +499,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                     if (*nivel_actual == 4)
                     {
                         cambiar_musica(recursos, recursos->musicas[2]);
+                        recursos->pje_principal.bala_recargable = false;
                     }
 
                     else
@@ -614,10 +621,10 @@ Rectangulo dibujar_rectangulo_en_rectangulo(Rectangulo rect_destino, float alto,
 }
 
 
-Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, Natural nivel_actual)
+Procedure mostrar_pantalla_datos(Personaje personaje, Imagen vida, Imagen municion, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, Natural nivel_actual)
 {
     Natural i;
-    Natural alto_linea, alto_barras;
+    Natural alto_linea, alto_barras, ancho_barras;
     Rectangulo rectangulo_datos;
     Rectangulo rectangulo_subvidas;
     extern Natural puntuacion;
@@ -634,28 +641,47 @@ Procedure mostrar_pantalla_datos(Personaje personaje, ALLEGRO_BITMAP* vida, ALLE
 
     dibujar_rectangulo(rectangulo_datos, GRIS);
     sprintf(texto_nro_nivel, "Lvl %hu", nivel_actual);
-    dibujar_texto_en_rectangulo(texto_nro_nivel, rectangulo_datos, 5.0, 50.0, fuente, NEGRO);
-    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 10.0, 50.0, false, NEGRO);  // Esto es equivalente a dibujar una línea (una de las dimensiones es 0)
-    dibujar_imagen_en_rectangulo(vida, rectangulo_datos, 12.5, 35.0);  // Se dibuja el corazón en un 5% en x y un 50% en y del rectángulo
+    dibujar_texto_en_rectangulo(texto_nro_nivel, rectangulo_datos, 4.0, 50.0, fuente, NEGRO);
+    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 8.0, 50.0, false, NEGRO);  // Esto es equivalente a dibujar una línea (una de las dimensiones es 0)
+    dibujar_imagen_en_rectangulo(vida, rectangulo_datos, 9.5, 35.0);  // Se dibuja el corazón en un 5% en x y un 50% en y del rectángulo
     sprintf(texto_nro_vidas, "× %hu", personaje.nro_vidas);
-    dibujar_texto_en_rectangulo(texto_nro_vidas, rectangulo_datos, 18.0, 35.0, fuente, NEGRO);
-    dibujar_texto_en_rectangulo("VIDAS", rectangulo_datos, 16.3, 75.0, fuente_sec, NEGRO);
-    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 22.5, 50.0, false, NEGRO);
-    rectangulo_subvidas = dibujar_rectangulo_en_rectangulo(rectangulo_datos, 50, 800, 50.0, 35.0, false, NEGRO);
-    dibujar_texto_en_rectangulo("BARRA DE VIDA", rectangulo_datos, 50.0, 75.0, fuente_sec, NEGRO);
+    dibujar_texto_en_rectangulo(texto_nro_vidas, rectangulo_datos, 14.5, 35.0, fuente, NEGRO);
+    dibujar_texto_en_rectangulo("VIDAS", rectangulo_datos, 13.0, 75.0, fuente_sec, NEGRO);
+    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 18.0, 50.0, false, NEGRO);
+    rectangulo_subvidas = dibujar_rectangulo_en_rectangulo(rectangulo_datos, 40, 600, 38.5, 35.0, false, NEGRO);
+    dibujar_texto_en_rectangulo("BARRA DE VIDA", rectangulo_datos, 38.5, 75.0, fuente_sec, NEGRO);
 
-    alto_barras = 0.85 * (rectangulo_subvidas.pos_final.y - rectangulo_subvidas.pos_inicial.y);
+    alto_barras = 0.850 * (rectangulo_subvidas.pos_final.y - rectangulo_subvidas.pos_inicial.y);
+    ancho_barras = 0.007 * (rectangulo_subvidas.pos_final.x - rectangulo_subvidas.pos_inicial.x);
 
     for (i=0; i<personaje.subvida_actual; i++)
     {
-        dibujar_rectangulo_en_rectangulo(rectangulo_subvidas, alto_barras, 6.0, 0.625 + 99.375 / 100 * i, 50.0, true, VERDE_OSCURO);
+        dibujar_rectangulo_en_rectangulo(rectangulo_subvidas, alto_barras, ancho_barras, 0.8 + 98.4/99 * i, 50.0, true, VERDE_OSCURO);
     }
 
-    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 78.0, 50.0, false, NEGRO);
-    dibujar_texto_en_rectangulo("PUNTUACIÓN", rectangulo_datos, 84.0, 75.0, fuente_sec, NEGRO);
+    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 59.0, 50.0, false, NEGRO);
+
+    if (nivel_actual >= 4)
+    {
+        al_draw_scaled_bitmap(municion, 0, 0, personaje.balas_disponibles*al_get_bitmap_width(municion)/MAX_BALAS, al_get_bitmap_height(municion), 
+                              62.0/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), 75.0*(float)personaje.balas_disponibles/MAX_BALAS, 50.0, 0);
+    }
+
+    else
+    {
+        al_draw_tinted_scaled_bitmap(municion, AMARILLO, 0, 0, al_get_bitmap_width(municion), al_get_bitmap_height(municion),
+                                     62.0/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), 75.0, 50.0, 0);
+
+        al_draw_line(61.5/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), 62.0/100*ANCHO_VENTANA+75, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO)+50, ROJO, 4.0);
+        al_draw_line(61.5/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO)+50, 62.0/100*ANCHO_VENTANA+75, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), ROJO, 4.0);
+    }
+    
+    dibujar_texto_en_rectangulo("MUNICIONES", rectangulo_datos, 64.5, 75.0, fuente_sec, NEGRO);
+    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 70.0, 50.0, false, NEGRO);
+    dibujar_texto_en_rectangulo("PUNTUACIÓN", rectangulo_datos, 75.0, 75.0, fuente_sec, NEGRO);
     sprintf(texto_puntuacion, "%hu", puntuacion);
-    dibujar_texto_en_rectangulo(texto_puntuacion, rectangulo_datos, 84.0, 35.0, fuente, NEGRO);
-    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 90.0, 50.0, false, NEGRO);   
+    dibujar_texto_en_rectangulo(texto_puntuacion, rectangulo_datos, 75.0, 35.0, fuente, NEGRO);
+    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 80.0, 50.0, false, NEGRO);   
 }
 
 
@@ -716,7 +742,7 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
             dibujar_personaje(&recursos->pje_principal, *ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
             morir(&recursos->pje_principal, ultima_tecla_lateral, etapa_actual);  // Esta función se ejecuta solamente si el personaje figura como muerto
             actualizar_rayos(recursos->rayos[(*nivel_actual)-1], recursos->cantidad_rayos[(*nivel_actual)-1], recursos->pje_principal, recursos->mapas[(*nivel_actual)-1]);
-            mostrar_pantalla_datos(recursos->pje_principal, recursos->vida, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual);
+            mostrar_pantalla_datos(recursos->pje_principal, recursos->vida, recursos->municion, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual);
         }
     
         if (*etapa_actual == RANKING)
