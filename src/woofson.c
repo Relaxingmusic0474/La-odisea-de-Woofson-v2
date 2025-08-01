@@ -71,10 +71,10 @@ int main() // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PARECE
                     efectuar_disparo_de_woofson(&recursos.pje_principal, recursos.enemigos, recursos.mapas[nivel_actual - 1]);
                     actualizar_estado_danho(&recursos.pje_principal);
                     actualizar_estado_danho_enemigos(recursos.enemigos);
-                    dibujar_mapa(recursos.mapas[nivel_actual - 1], &recursos, &cambio_estado_procesado, iteracion); // Dibujamos el mapa del primer nivel
-                    dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);                    // Dibuja el personaje en su posición actual
+                    dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
                     actualizar_rayos(recursos.rayos[nivel_actual - 1], recursos.cantidad_rayos[nivel_actual - 1], recursos.pje_principal, recursos.mapas[nivel_actual - 1]);
                     detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual - 1]);
+                    dibujar_mapa(recursos.mapas[nivel_actual - 1], &recursos, &cambio_estado_procesado, iteracion);  // Dibujamos el mapa del primer nivel
                     efectuar_disparo_de_enemigos(recursos.enemigos, &recursos.pje_principal, recursos.mapas[nivel_actual - 1]);
                     determinar_victoria_woofson(&recursos.pje_principal, recursos.enemigos, recursos.puerta, &etapa_juego);
 

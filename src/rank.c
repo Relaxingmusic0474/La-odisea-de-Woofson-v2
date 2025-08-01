@@ -16,20 +16,6 @@ bool leer_ranking(Ranking* ranking, Natural nro_nivel)
         printf("Error al abrir en modo de lectura el archivo del ranking del nivel %hu\n", nro_nivel);
         return false;
     }
-    
-    // memset(ranking, 0, sizeof(Ranking));  // Limpiamos
-    
-/*
-    while (i<MAX_DATOS && !feof(archivo_ranking))
-    {
-        leer_entrada_datos(archivo_ranking, &ranking->datos[i]);
-
-        if (ranking->datos[i].nombre[0] != '\0')
-        {
-            i++;
-        }
-    }
-    */
 
     i = 0;
 
@@ -46,9 +32,6 @@ bool leer_ranking(Ranking* ranking, Natural nro_nivel)
     }
     
     fclose(archivo_ranking);
-
-    printf("%s", ranking->datos[0].nombre);
-    printf("%hu", ranking->datos[0].puntaje);
     
     return true;
 }
@@ -72,8 +55,13 @@ bool modificar_ranking(Ranking* ranking, Natural nro_nivel)
 
     for (i=0; i<MAX_DATOS; i++)
     {
+        char nombre_seguro[LARGO] = {'\0'};
+
+
+
         if (ranking->datos[i].nombre[0] == '\0')
         {
+            /*
             if (i == MAX_DATOS-1)
             {
                 fprintf(archivo_ranking, "----\t0");
@@ -83,10 +71,13 @@ bool modificar_ranking(Ranking* ranking, Natural nro_nivel)
             {
                 fprintf(archivo_ranking, "----\t0\n");
             }
+                */
+            strcpy(nombre_seguro, "----");
         }
 
         else
         {
+            /*
             if (i == MAX_DATOS-1)
             {
                 fprintf(archivo_ranking, "%s\t%hu", ranking->datos[i].nombre, ranking->datos[i].puntaje);
@@ -96,7 +87,12 @@ bool modificar_ranking(Ranking* ranking, Natural nro_nivel)
             {
                 fprintf(archivo_ranking, "%s\t%hu\n", ranking->datos[i].nombre, ranking->datos[i].puntaje);
             }
+                */
+            strncpy(nombre_seguro, ranking->datos[i].nombre, LARGO-1);
+            nombre_seguro[LARGO-1] = '\0';
         }
+
+        fprintf(archivo_ranking, "%s\t%hu\n", nombre_seguro, ranking->datos[i].puntaje);
     }
 
     fclose(archivo_ranking);

@@ -479,7 +479,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                             recursos->enemigos[id_enemigo].posicion_inicial.y = mapa.alto_bloque*(i+1) - alto_enemigo - 1;
 
                             inicializar_personaje(&recursos->enemigos[id_enemigo], mapa.mapa[i][j] <= EXTRATERRESTRE_DINAMICO ? EXTRATERRESTRE : MONSTRUO, recursos->frames, 
-                                                  (Vector) {mapa.ancho_bloque*j, mapa.alto_bloque*(i+1) - alto_enemigo - 1}, mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO ? true : false);
+                                                  recursos->enemigos[id_enemigo].posicion_inicial, mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO ? true : false);
                         }
 
                         else  // Si ya estaba inicializado
@@ -527,6 +527,45 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 }
 
                 id_enemigo++;
+            }
+
+            if (mapa.mapa[i][j] == _DRAGON)
+            {
+                if (id_enemigo < MAX_ENEMIGOS)
+                {
+                    if (!recursos->enemigos[id_enemigo].inicializado)
+                    {
+                        alto_enemigo = al_get_bitmap_height(recursos->frames[FRAME_DRAGON][0]);
+
+                        recursos->enemigos[id_enemigo].posicion_inicial.x = mapa.ancho_bloque*j;
+                        recursos->enemigos[id_enemigo].posicion_inicial.y = mapa.alto_bloque*(i+1) - alto_enemigo - 1;
+
+                        inicializar_personaje(&recursos->enemigos[id_enemigo], DRAGON, recursos->frames, 
+                                              recursos->enemigos[id_enemigo].posicion_inicial, false);
+                    }
+
+                    else
+                    {
+                        if (j > 0.5*mapa.nro_columnas)
+                        {
+                            recursos->enemigos[id_enemigo].direccion = -1;
+                            recursos->enemigos[id_enemigo].bandera_dibujo = 0;
+                        }
+
+                        else
+                        {
+                            recursos->enemigos[id_enemigo].direccion = 1;
+                            recursos->enemigos[id_enemigo].bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;
+                        }
+                    }
+
+                    if (!recursos->enemigos[id_enemigo].muerto)
+                    {
+                        dibujar_personaje(&recursos->enemigos[id_enemigo], 0, iteracion);
+                    }
+                }
+
+
             }
 
             if (mapa.mapa[i][j] == PUERTA)
@@ -642,6 +681,8 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
 
                 id_municion++;
             }
+        
+            
         }
     }
 

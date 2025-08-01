@@ -1,5 +1,9 @@
 #include "menu.h"
 
+/**
+ * @brief Función que obtiene la posición del mouse.
+ * @return Un vector 2D que representa la posición actual del cursor.
+ */
 Vector obtener_posicion_mouse()
 {
     ALLEGRO_MOUSE_STATE estado_mouse;
@@ -14,6 +18,11 @@ Vector obtener_posicion_mouse()
 }
 
 
+/**
+ * @brief Función que obtiene la opción sobrevolada (número entre 0 y N-1) en un menú de N opciones.
+ * @param menu Es el menú del cual se desea saber la opción que es sobrevolada con el cursor.
+ * @return Un número natural entre 0 y N-1 que representa el identificador de la opción sobrevolada (si es que hay alguna), y -1 en caso contrario.
+ */
 Natural obtener_opcion_en_hover(Menu menu)
 {
     Vector posicion_mouse = obtener_posicion_mouse();
@@ -33,13 +42,13 @@ Natural obtener_opcion_en_hover(Menu menu)
 
 
 /**
- * Función que determina el color de la pantalla según la iteración del juego.
+ * @brief Función que determina el color de la pantalla según la iteración del juego (se utiliza en el primer nivel).
  * @param iteracion Es el número de iteración del juego, que se incrementa cada frame.
  */
 Procedure determinar_color_pantalla(Natural iteracion)
 {
     ALLEGRO_COLOR lista_colores[NRO_COLORES] = {AZUL, ROSADO, MORADO, VERDE_OSCURO, ROJO};
-    static Natural i = 0;  // Estática para que ignore el valor inicial
+    static Natural i = 0;  // Estática para que ignore el valor inicial de la segunda llamada en adelante
     ALLEGRO_COLOR color = lista_colores[i];
 
     if (iteracion % 30 == 0)
@@ -53,6 +62,17 @@ Procedure determinar_color_pantalla(Natural iteracion)
 }
 
 
+/**
+ * @brief Función que inicializa un determinado menú.
+ * @param menu Es el puntero al menú que se desea inicializar (puntero para que se pueda inicializar o modificar sus parámetros).
+ * @param tipo Es el tipo de menú (enum) que se desea inicializar.
+ * @param fondo Es la imagen de fondo que tendrá el menú (si no se quiere fondo, se pasa NULL).
+ * @param fuente Es la fuente principal con la se escribirá el menú.
+ * @param fuente_sec Es la fuente secundaria que se usará para el menú (no siempre se usan dos fuentes, así que si se usa solo una, este parámetro es NULL).
+ * @param texto_opciones Es un arreglo de cadenas que representa el texto que irá en cada una de las opciones del menú.
+ * @param rect_destino Es el rectángulo sobre el cuál se implementará el menú (usualmente ocupa toda la ventana).
+ * @return true si se inicializa correctamente el menú, false si hay algún error en su inicialización (usualmente debido a errores de asignación de memoria).
+ */
 bool inicializar_menu(Menu* menu, TipoMenu tipo, Imagen fondo, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, char* textos_opciones[], Natural nro_opciones, Rectangulo rect_destino)
 {
     Natural i;
@@ -140,12 +160,17 @@ bool inicializar_menu(Menu* menu, TipoMenu tipo, Imagen fondo, ALLEGRO_FONT* fue
 }
 
 
+/**
+ * @brief Función que muestra un cierto menú de acuerdo también a la etapa del juego.
+ * @param menu Es el menú que se desea mostrar (lo lógico es que se muestre el menú actual).
+ * @param etapa_actual Es la etapa actual del juego (enum).
+ */
 Procedure mostrar_menu(Menu menu, Etapa etapa_actual)
 {
     Rectangulo rect, rect_menu;
     Menu menu_vacio = {0};
     float alto, ancho, x0, x1, y0, y1, porcentaje_x, porcentaje_y;
-    extern Natural puntuacion;
+    // extern Natural puntuacion;
     char texto_puntuacion[LARGO] = {'\0'};
     Natural i;
 
@@ -240,26 +265,20 @@ Procedure mostrar_menu(Menu menu, Etapa etapa_actual)
 }
 
 
+/**
+ * @brief Función que muestra un determinado ranking de juego.
+ * @param menu Un puntero al menú que se quiere mostrar (un ranking también es un menú solo que es especial).
+ * @param ranking Es la estructura de ranking, que además incluye los datos de los jugadores y sus puntuaciones.
+ */
 Procedure mostrar_ranking(Menu* menu, Ranking* ranking)
 {
     Natural i;
     Rectangulo datos[3][MAX_DATOS];
-    float alto, sep, x0, y0, x1, y1, xm, ym, alto_fuente;
-    // Datos* data;
+    float alto, sep, xm, ym, alto_fuente;
     char pos[5] = {'\0'};
     char pje[5] = {'\0'};
-    //char buffer[MAXLINEA] = {'\0'};
 
     menu->opcion_en_hover = obtener_opcion_en_hover(*menu);  // Se obtiene la opcion por la que pasa el cursor (sin seleccionarla aun)
-
-    x0 = menu->rect_destino.pos_inicial.x;
-    x1 = menu->rect_destino.pos_final.x;
-
-    y0 = menu->rect_destino.pos_inicial.y;
-    y1 = menu->rect_destino.pos_final.y;
-
-    // ancho_total = x1 - x0;
-    //alto_total = y1 - y0;
 
     dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, ALTO_VENTANA, ANCHO_VENTANA, 50.0, 50.0, true, MORADO);
     dibujar_texto_en_rectangulo("RANKING", RECTANGULO_VENTANA, 50.0, 7.5, menu->fuente, BLANCO);
@@ -298,12 +317,24 @@ Procedure mostrar_ranking(Menu* menu, Ranking* ranking)
 }
 
 
+/**
+ * @brief Función que cambia el menú que se debe mostrar actualmente (se usa harto en la función redirigir_menu())
+ * @param menu_actual Un puntero al menú actual (el que se estaba mostrando).
+ * @param menu_nuevo El menú que se quiere mostrar ahora.
+ */
 Procedure cambiar_menu(Menu* menu_actual, Menu menu_nuevo)
 {
     *menu_actual = menu_nuevo;
 }
 
 
+/**
+ * @brief Función que reinicia el estado del juego.
+ * @param recursos Un puntero a la estructura con todos los recursos esenciales del juego.
+ * @param menu El menú que se desea que se muestre.
+ * @param etapa_actual Un puntero a la etapa actual del juego (a veces al resetear el estado del juego la etapa actual debe cambiar).
+ * @param etapa_deseada La etapa a la que se desea cambiar.
+ */
 Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actual, Etapa etapa_deseada)
 {
     Natural i;
@@ -321,9 +352,18 @@ Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actu
     {
         recursos->pociones[i].tomada = false;
     }
+
+    for (i=0; i<MAX_MUNICIONES; i++)
+    {
+        recursos->municiones[i].tomada = false;
+    }
 }
 
 
+/**
+ * @brief Función que detiene los efectos de sonido utilizados en el juego.
+ * @param recursos Un puntero a la estructura recursos, que contiene los recursos esenciales para el juego (incluye los efectos de sonido).
+ */
 Procedure detener_efectos_de_sonido(Recursos* recursos)
 {
     Natural i, j;
@@ -347,6 +387,13 @@ Procedure detener_efectos_de_sonido(Recursos* recursos)
 }
 
 
+/**
+ * @brief Función que redirige el menú (cambia el menú actual) y además resetea y reconfigura parámetros de acuerdo al menú mostrado.
+ * @param recursos Es un puntero a la estructura que contiene los recursos del juego.
+ * @param opcion_clickeada Es el identificador de la opción que se clickea con el mouse (depende de eso la redirección será distinta).
+ * @param etapa_actual Es el puntero a la etapa actual del juego (cambia al cambiar de menú).
+ * @param nivel_actual Es el puntero al nivel actual del juego (en algunos casos cambia al cambiar de menú).
+ */
 Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual)//, Natural* ranking_a_mostrar)
 {
     Menu menu_vacio = {0};
@@ -427,8 +474,8 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         else
         {
             *etapa_actual = RANKING;
-            //*ranking_a_mostrar = opcion_clickeada;
             cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_RANK]);
+            mostrar_ranking(&recursos->menu_actual, &recursos->rankings[opcion_clickeada]);
         }
     }
 
@@ -504,8 +551,11 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
 
                     else
                     {
-                        al_set_sample_instance_position(recursos->musica_actual->instancia, 0); // La reinicia
-                        al_play_sample_instance(recursos->musica_actual->instancia);  
+                        if (*nivel_actual != NRO_NIVELES)
+                        {
+                            al_set_sample_instance_position(recursos->musica_actual->instancia, 0); // La reinicia
+                            al_play_sample_instance(recursos->musica_actual->instancia);  
+                        }
                     }
                 }
             }
@@ -516,6 +566,10 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
 }
 
 
+/**
+ * @brief Función que finaliza un menú, liberando sus recursos y reseteando algunos valores.
+ * @param menu El puntero al menú que se desea finalizar.
+ */
 Procedure finalizar_menu(Menu* menu)
 {   
     Natural i;
@@ -661,7 +715,7 @@ Procedure mostrar_pantalla_datos(Personaje personaje, Imagen vida, Imagen munici
 
     dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 59.0, 50.0, false, NEGRO);
 
-    if (nivel_actual >= 4)
+    if (nivel_actual >= 3)
     {
         al_draw_scaled_bitmap(municion, 0, 0, personaje.balas_disponibles*al_get_bitmap_width(municion)/MAX_BALAS, al_get_bitmap_height(municion), 
                               62.0/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), 75.0*(float)personaje.balas_disponibles/MAX_BALAS, 50.0, 0);
@@ -691,13 +745,13 @@ Procedure mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, 
     {
         determinar_color_pantalla(iteracion);
     }
-
+/*
     else if (nivel_actual == 3)  // Nivel en el cual tengo pensado añadir scroll (Por eso se está dibujando solo una parte de la imagen)
     {
         al_draw_scaled_bitmap(fondos[NIVEL3], 0, 0, ANCHO_VENTANA, ALTO_JUEGO, 0, 0, 
                               al_get_bitmap_width(fondos[NIVEL3]), al_get_bitmap_height(fondos[NIVEL3]), 0);
     }
-
+*/
     else
     {
         if (nivel_actual != 0)
@@ -745,12 +799,7 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
             mostrar_pantalla_datos(recursos->pje_principal, recursos->vida, recursos->municion, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual);
         }
     
-        if (*etapa_actual == RANKING)
-        {
-            mostrar_ranking(&recursos->menu_actual, &recursos->rankings[3]);
-        }
-
-        else
+        if (*etapa_actual != RANKING)
         {
             mostrar_menu(recursos->menu_actual, *etapa_actual);
         }

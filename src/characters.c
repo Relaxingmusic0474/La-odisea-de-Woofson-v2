@@ -91,6 +91,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
     personaje->muerto = false;
     personaje->tiempo_muerte = 0;
     personaje->frames_para_prox_disparo = 0;
+    personaje->subvida_actual = 100;  // Todos tendrán subvida de 100 inicialmente
 
     switch (tipo)
     {
@@ -99,7 +100,6 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             personaje->en_ataque = false;
             personaje->velocidad = VECTOR_NULO;  // Inicialmente no se mueve ni salta, ya que eso lo deberá hacer con las teclas
             personaje->nro_vidas = VIDAS_INICIALES;
-            personaje->subvida_actual = 100;
             personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
             personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
             personaje->danhado = true;  // Para que parta con cierta inmunidad antes de comenzar (parpadeo)
@@ -112,7 +112,11 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
         case DRAGON:
             personaje->velocidad.x = VELOCIDAD_DRAGONES;
             personaje->velocidad.y = 0;  // Inicialmente no está en salto
-
+            personaje->nro_vidas = 1;
+            personaje->en_plataforma = false;
+            personaje->danhado = false;
+            personaje->tiempo_danho = 0;
+            // EN EL CASO DEL DRAGÓN, COMO VOLARÁ, NO SERÁ NECESARIO INICIALIZAR EL SALTO
             break;
 
         case EXTRATERRESTRE:
@@ -126,7 +130,6 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             personaje->danhado = false;
             personaje->tiempo_danho = 0;
             inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
-
             break;
 
         case MONSTRUO:
@@ -320,7 +323,7 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 
             if (personaje->fps_en_ataque % 8 == 0)  // Actualiza el frame de pelea cada 8 frames
             {
-                modo_ataque = nivel <= NIVEL3 ? PELEA : DISPARO;
+                modo_ataque = nivel <= NIVEL2 ? PELEA : DISPARO;
                 actualizar_frame(personaje, modo_ataque);  // Actualiza el frame del personaje si está en pelea
             }
         }
