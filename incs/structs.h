@@ -85,7 +85,7 @@ struct arma
 
 struct personaje
 {
-    char tipo;
+    TipoPersonaje tipo;
     Natural cantidad_frames;
     Imagen* frames;  // Arreglo de imágenes para las animaciones del personaje
     Imagen imagen;  // Imagen actual del personaje

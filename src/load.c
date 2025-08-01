@@ -535,7 +535,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 {
                     if (!recursos->enemigos[id_enemigo].inicializado)
                     {
-                        alto_enemigo = al_get_bitmap_height(recursos->frames[FRAME_DRAGON][0]);
+                        alto_enemigo = 0.7 * al_get_bitmap_height(recursos->frames[FRAME_DRAGON][0]);
 
                         recursos->enemigos[id_enemigo].posicion_inicial.x = mapa.ancho_bloque*j;
                         recursos->enemigos[id_enemigo].posicion_inicial.y = mapa.alto_bloque*(i+1) - alto_enemigo - 1;
@@ -557,6 +557,8 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                             recursos->enemigos[id_enemigo].direccion = 1;
                             recursos->enemigos[id_enemigo].bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;
                         }
+
+                        mover_enemigo_dinamico(&recursos->enemigos[id_enemigo], mapa);
                     }
 
                     if (!recursos->enemigos[id_enemigo].muerto)
@@ -565,7 +567,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                     }
                 }
 
-
+                id_enemigo++;
             }
 
             if (mapa.mapa[i][j] == PUERTA)

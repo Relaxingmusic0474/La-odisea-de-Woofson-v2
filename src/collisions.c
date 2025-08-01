@@ -151,11 +151,22 @@ bool hay_colision_izquierda(Personaje* personaje, Mapa mapa)
 {
     if (personaje->posicion.x < 0)
     {
+        if (personaje->tipo == DRAGON)
+        {
+            if (personaje->posicion.x < -personaje->ancho)
+            {
+                personaje->muerto = true;
+                personaje->tiempo_muerte = 0;
+            }
+            
+            return false;
+        }
+        
         personaje->posicion.x = 0;  // Ajusta la posición del personaje al borde izquierdo de la ventana
         return true;
     }
 
-    return hay_bloque_izquierda(personaje, mapa);
+    return personaje->tipo != DRAGON && hay_bloque_izquierda(personaje, mapa);
 }
 
 
@@ -210,11 +221,22 @@ bool hay_colision_derecha(Personaje* personaje, Mapa mapa)
 {
     if (personaje->posicion.x + personaje->ancho - 1 > ANCHO_VENTANA)
     {
+        if (personaje->tipo == DRAGON)
+        {
+            if (personaje->posicion.x > ANCHO_VENTANA + personaje->ancho)
+            {
+                personaje->muerto = true;
+                personaje->tiempo_muerte = 0;
+            }
+
+            return false;
+        }
+
         personaje->posicion.x = ANCHO_VENTANA - personaje->ancho;  // Ajusta la posición del personaje al borde derecho de la ventana
         return true;
     }
 
-    return hay_bloque_derecha(personaje, mapa);
+    return personaje->tipo != DRAGON && hay_bloque_derecha(personaje, mapa);
 }
 
 

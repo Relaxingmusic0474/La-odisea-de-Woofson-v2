@@ -116,6 +116,8 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             personaje->en_plataforma = false;
             personaje->danhado = false;
             personaje->tiempo_danho = 0;
+            personaje->ancho *= 0.7;
+            personaje->alto *= 0.7;
             // EN EL CASO DEL DRAGÓN, COMO VOLARÁ, NO SERÁ NECESARIO INICIALIZAR EL SALTO
             break;
 
@@ -215,13 +217,15 @@ Procedure dibujar_personaje(Personaje* personaje, Natural ultima_tecla_lateral, 
 
         if (var & 1)
         {
-            al_draw_bitmap(personaje->imagen, personaje->posicion.x, personaje->posicion.y, personaje->bandera_dibujo);
+            al_draw_scaled_bitmap(personaje->imagen, 0, 0, al_get_bitmap_width(personaje->imagen), al_get_bitmap_height(personaje->imagen), 
+                                  personaje->posicion.x, personaje->posicion.y, personaje->ancho, personaje->alto, personaje->bandera_dibujo);
         }
     }
 
     else
     {
-        al_draw_bitmap(personaje->imagen, personaje->posicion.x, personaje->posicion.y, personaje->bandera_dibujo);   
+        al_draw_scaled_bitmap(personaje->imagen, 0, 0, al_get_bitmap_width(personaje->imagen), al_get_bitmap_height(personaje->imagen), 
+                              personaje->posicion.x, personaje->posicion.y, personaje->ancho, personaje->alto, personaje->bandera_dibujo);
     }
 }
 
@@ -264,11 +268,17 @@ Procedure actualizar_frame(Personaje* personaje, ModoWoofson modo)
         personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_EXTRATERRESTRE;
     }
 
+    else if (personaje->tipo == DRAGON)
+    {
+        personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_DRAGON;
+    }
+
     if (personaje->frames[personaje->id_nro_frame])  // Verifica si hay un frame siguiente para evitar errores de acceso a memoria
     {
         personaje->imagen = personaje->frames[personaje->id_nro_frame];  // Cambia al siguiente frame de animación
-        personaje->alto = al_get_bitmap_height(personaje->imagen);  // Actualiza el alto del personaje
-        personaje->ancho = al_get_bitmap_width(personaje->imagen);  // Actualiza el ancho del personaje
+
+        personaje->alto = al_get_bitmap_height(personaje->imagen) * (personaje->tipo == DRAGON ? 0.7 : 1);  // Actualiza el alto del personaje
+        personaje->ancho = al_get_bitmap_width(personaje->imagen) * (personaje->tipo == DRAGON ? 0.7 : 1);  // Actualiza el ancho del personaje
     }
 }
 
@@ -434,6 +444,8 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 
 Procedure mover_enemigo_dinamico(Personaje* enemigo, Mapa mapa)
 {
+    float amplitud_dragon = 2;
+
     if (enemigo->estatico || enemigo->muerto)  // No tiene sentido mover un enemigo estático o que ya murió
     {
         return;
@@ -445,23 +457,31 @@ Procedure mover_enemigo_dinamico(Personaje* enemigo, Mapa mapa)
     }
 
     enemigo->posicion.x += enemigo->velocidad.x * enemigo->direccion;
+    
+    if (enemigo->tipo == DRAGON)
+    {
+        enemigo->posicion.y += amplitud_dragon * sin((float) enemigo->fps_en_caminata / 12);
+    }
 
     if (enemigo->fps_en_caminata % 8 == 0)
     {
         actualizar_frame(enemigo, '\0');  // El modo es '\0' ya que da igual para los enemigos
     }
 
-    // Si no está en salto, activa caída libre
-    if (!enemigo->salto.en_salto && !hay_colision_inferior(enemigo, mapa))
+    if (enemigo->tipo != DRAGON)
     {
-        activar_caida_libre(enemigo);
-    }
+        // Si no está en salto, activa caída libre
+        if (!enemigo->salto.en_salto && !hay_colision_inferior(enemigo, mapa))
+        {
+            activar_caida_libre(enemigo);
+        }
 
-    // Si está en salto (o caída), continuar con física
-    if (enemigo->salto.en_salto)
-    {
-        enemigo->salto.tiempo_en_salto += 1./FPS;
-        continuar_salto(enemigo, enemigo->salto.tiempo_en_salto, mapa);
+        // Si está en salto (o caída), continuar con física
+        if (enemigo->salto.en_salto)
+        {
+            enemigo->salto.tiempo_en_salto += 1./FPS;
+            continuar_salto(enemigo, enemigo->salto.tiempo_en_salto, mapa);
+        }
     }
 
     enemigo->fps_en_caminata++;
@@ -1000,7 +1020,10 @@ Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Persona
 
     for (i=0; i<cantidad_enemigos; i++)
     {
-        efectuar_disparo_de_enemigo(&enemigos[i], woofson, mapa);
+        if (enemigos[i].tipo != DRAGON)
+        {
+            efectuar_disparo_de_enemigo(&enemigos[i], woofson, mapa);
+        }
     }
 }
 
