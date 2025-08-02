@@ -1,10 +1,8 @@
 #include "allegro.h"
-#include "characters.h"
-#include "types.h"
 #include "load.h"
 #include "debug.h"
 
-int main() // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PARECER)
+int main()
 {
     Recursos recursos = {0};                        /* Se inicializan los recursos del juego */
     ALLEGRO_EVENT evento;                           /* Ṕara agregar los eventos que vayan ocurriendo a la cola de eventos */
@@ -15,7 +13,7 @@ int main() // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PARECE
     bool cambio_estado_procesado = false;           /* Para el estado de la puerta y la palanca */
     Natural ranking_a_mostrar = -1;                 /* Este valor es equivalente a la macro USHRT_MAX (65535) -> No hay ranking inicial que se muestre */
     
-    /* Se inicializan todos los recursos de Allegro */
+    // Se inicializan todos los recursos de Allegro
     if (!inicializar_todo(&recursos))
     {
         return 1;
@@ -45,7 +43,7 @@ int main() // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PARECE
 
                 if (!recursos.pje_principal.muerto && es_tecla_lateral(evento.keyboard.keycode))
                 {
-                    ultima_tecla_lateral = (Natural)evento.keyboard.keycode;
+                    ultima_tecla_lateral = evento.keyboard.keycode;
                 }
 
                 break;
@@ -56,7 +54,7 @@ int main() // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PARECE
 
                 if (!recursos.pje_principal.muerto && es_tecla_lateral(evento.keyboard.keycode))
                 {
-                    ultima_tecla_lateral = (Natural)evento.keyboard.keycode;
+                    ultima_tecla_lateral = evento.keyboard.keycode;
                 }
 
                 break;
