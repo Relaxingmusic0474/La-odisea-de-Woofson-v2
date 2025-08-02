@@ -4,33 +4,35 @@
 #include "load.h"
 #include "debug.h"
 
-int main() // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PARECER)  -> 1er codigo aprobado
+int main() // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PARECER)
 {
     Recursos recursos = {0};                        /* Se inicializan los recursos del juego */
     ALLEGRO_EVENT evento;                           /* Ṕara agregar los eventos que vayan ocurriendo a la cola de eventos */
     Etapa etapa_juego = MENU_PRINCIPAL;             /* Para capturar el estado actual del juego */
     Tecla ultima_tecla_lateral = ALLEGRO_KEY_RIGHT; /* Para que el personaje parta mirando a la derecha */
-    Natural iteracion = 0, nivel_actual = 0;        //, ranking_a_mostrar = -1;  /* Para controlar las iteraciones del juego */
+    Natural iteracion = 0, nivel_actual = 0;        /* Para controlar las iteraciones del juego */
     extern bool teclas[ALLEGRO_KEY_MAX];            /* Para manejar las teclas que se presionan */
-    bool cambio_estado_procesado = false;
-
-    if (!inicializar_todo(&recursos)) /* Se inicializan todos los recursos de Allegro */
+    bool cambio_estado_procesado = false;           /* Para el estado de la puerta y la palanca */
+    Natural ranking_a_mostrar = -1;                 /* Este valor es equivalente a la macro USHRT_MAX (65535) -> No hay ranking inicial que se muestre */
+    
+    /* Se inicializan todos los recursos de Allegro */
+    if (!inicializar_todo(&recursos))
     {
         return 1;
     }
 
     LOOP
     {
-        al_wait_for_event(recursos.cola_eventos, &evento); /* Se espera a que ocurra algun evento */
+        al_wait_for_event(recursos.cola_eventos, &evento);  /* Se espera a que ocurra algun evento */
 
         if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
         {
-            break; /* Se sale del loop si la ventana se cierra (el juego termina) */
+            break;  /* Se sale del loop si la ventana se cierra (el juego termina) */
         }
 
         if (etapa_juego == MENU_PRINCIPAL || etapa_juego == MENU_NIVELES || etapa_juego == MENU_RANKING || etapa_juego == RANKING || etapa_juego == VICTORIA || etapa_juego == DERROTA)
         {
-            manejar_menu(&recursos, &evento, &etapa_juego, &nivel_actual, iteracion, &cambio_estado_procesado, &ultima_tecla_lateral); //, &ranking_a_mostrar);
+            manejar_menu(&recursos, &evento, &etapa_juego, &nivel_actual, iteracion, &cambio_estado_procesado, &ultima_tecla_lateral, &ranking_a_mostrar);
         }
 
         else

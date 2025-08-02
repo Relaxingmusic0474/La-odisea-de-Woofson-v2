@@ -885,10 +885,47 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
                     {
                         if (victima->subvida_actual == 0)
                         {
-                            //*victima = (Personaje) {0};  // Se simula la muerte del enemigo
                             victima->muerto = true;
                             victima->tiempo_muerte = 0;
-                            puntuacion += 10;
+
+                            if (victima->tipo == EXTRATERRESTRE)  
+                            {
+                                puntuacion += 10;  // Se dan 10 puntos por matar a un extraterrestre
+                            }
+
+                            else if (victima->tipo == DRAGON)
+                            {
+                                puntuacion += 25;  // Se dan 25 puntos por matar a un dragón
+                            }
+
+                            else
+                            {
+                                if (victima->tipo == MONSTRUO)
+                                {
+                                    puntuacion += 100;  // Se dan 100 puntos por matar al monstruo
+                                }
+                            }
+                        }
+
+                        else  // Si no se mata al enemigo
+                        {
+                            if (victima->tipo == EXTRATERRESTRE)  
+                            {
+                                puntuacion += 2;  // Se dan 2 puntos por cada daño hecho a un extraterrestre (sin matarlo)
+                            }
+
+                            else if (victima->tipo == DRAGON)
+                            {
+                                puntuacion += 7;  // Se dan 7 puntos por cada daño hecho a un dragón (sin matarlo)
+                            }
+
+                            else
+                            {
+                                if (victima->tipo == MONSTRUO)
+                                {
+                                    puntuacion += 15;  // Se dan 15 puntos por cada daño hecho al monstruo (sin matarlo)
+                                }
+                            }
                         }
                     }
 
@@ -1046,7 +1083,7 @@ Procedure lanzar_fuego(Personaje* dragon, Personaje* woofson, Imagen imagen_fueg
         return;
     }
 
-    if (dragon->muerto)
+    if (dragon->muerto || !dragon->inicializado)
     {
         return;
     }
@@ -1068,6 +1105,7 @@ Procedure lanzar_fuego(Personaje* dragon, Personaje* woofson, Imagen imagen_fueg
     
     dragon->fuego.posicion.y = dragon->posicion.y + porcentajes_boca[dragon->id_nro_frame] / 100 * dragon->alto;  // 0.2f ya que por ahi esta su boca
 
+    
     al_draw_scaled_bitmap(dragon->fuego.imagen, dragon->bandera_dibujo == 0 ? 0 : dragon->fuego.ancho * (100 - dragon->fuego.porcentaje_progreso) / 100,
                           0, dragon->fuego.ancho * dragon->fuego.porcentaje_progreso / 100, dragon->fuego.alto, dragon->fuego.posicion.x,
                           dragon->fuego.posicion.y, dragon->fuego.ancho * dragon->fuego.porcentaje_progreso / 100,
@@ -1075,8 +1113,8 @@ Procedure lanzar_fuego(Personaje* dragon, Personaje* woofson, Imagen imagen_fueg
 
     if (dragon->direccion == 1)
     {
-        if (woofson->posicion.x > dragon->fuego.posicion.x && woofson->posicion.x < dragon->fuego.posicion.x + dragon->fuego.ancho * dragon->fuego.porcentaje_progreso / 100 &&
-            woofson->posicion.y > dragon->fuego.posicion.y && woofson->posicion.y < dragon->fuego.posicion.y + dragon->fuego.alto * dragon->fuego.porcentaje_progreso / 100)
+        if (woofson->posicion.x + woofson->ancho > dragon->fuego.posicion.x && woofson->posicion.x < dragon->fuego.posicion.x + dragon->fuego.ancho * dragon->fuego.porcentaje_progreso / 100 &&
+            woofson->posicion.y + woofson->alto > dragon->fuego.posicion.y && woofson->posicion.y < dragon->fuego.posicion.y + dragon->fuego.alto * dragon->fuego.porcentaje_progreso / 100)
         {
             if (!woofson->danhado)
             {
@@ -1089,9 +1127,9 @@ Procedure lanzar_fuego(Personaje* dragon, Personaje* woofson, Imagen imagen_fueg
 
     else
     {
-        if (woofson->posicion.x > dragon->fuego.posicion.x + dragon->fuego.ancho * (100 - dragon->fuego.porcentaje_progreso) / 100 && 
+        if (woofson->posicion.x + woofson->ancho > dragon->fuego.posicion.x + dragon->fuego.ancho * (100 - dragon->fuego.porcentaje_progreso) / 100 && 
             woofson->posicion.x < dragon->fuego.posicion.x + dragon->fuego.ancho &&
-            woofson->posicion.y > dragon->fuego.posicion.y && woofson->posicion.y < dragon->fuego.posicion.y + dragon->fuego.alto * dragon->fuego.porcentaje_progreso / 100)
+            woofson->posicion.y + woofson->alto > dragon->fuego.posicion.y && woofson->posicion.y < dragon->fuego.posicion.y + dragon->fuego.alto * dragon->fuego.porcentaje_progreso / 100)
         {
             if (!woofson->danhado)
             {

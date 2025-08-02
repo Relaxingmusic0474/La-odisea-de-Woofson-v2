@@ -394,7 +394,7 @@ Procedure detener_efectos_de_sonido(Recursos* recursos)
  * @param etapa_actual Es el puntero a la etapa actual del juego (cambia al cambiar de menú).
  * @param nivel_actual Es el puntero al nivel actual del juego (en algunos casos cambia al cambiar de menú).
  */
-Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual)//, Natural* ranking_a_mostrar)
+Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual, Natural* ranking_a_mostrar)//, Natural* ranking_a_mostrar)
 {
     Menu menu_vacio = {0};
     char nombre[LARGO] = {'\0'};  // Para entrar al ranking
@@ -476,6 +476,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
             *etapa_actual = RANKING;
             cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_RANK]);
             mostrar_ranking(&recursos->menu_actual, &recursos->rankings[opcion_clickeada]);
+            *ranking_a_mostrar = opcion_clickeada;
         }
     }
 
@@ -745,13 +746,7 @@ Procedure mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, 
     {
         determinar_color_pantalla(iteracion);
     }
-/*
-    else if (nivel_actual == 3)  // Nivel en el cual tengo pensado añadir scroll (Por eso se está dibujando solo una parte de la imagen)
-    {
-        al_draw_scaled_bitmap(fondos[NIVEL3], 0, 0, ANCHO_VENTANA, ALTO_JUEGO, 0, 0, 
-                              al_get_bitmap_width(fondos[NIVEL3]), al_get_bitmap_height(fondos[NIVEL3]), 0);
-    }
-*/
+
     else
     {
         if (nivel_actual != 0)
@@ -763,7 +758,7 @@ Procedure mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, 
 }
 
 
-Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_actual, Natural* nivel_actual, Natural iteracion, bool* cambio_estado_procesado, Tecla* ultima_tecla_lateral)//, Natural* ranking_a_mostrar)
+Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_actual, Natural* nivel_actual, Natural iteracion, bool* cambio_estado_procesado, Tecla* ultima_tecla_lateral, Natural* ranking_a_mostrar)
 {
     Menu menu_vacio = {0};
 
@@ -773,7 +768,7 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
 
         if (recursos->menu_actual.opcion_en_hover < recursos->menu_actual.nro_opciones)
         {
-            redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual);//, ranking_a_mostrar);
+            redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual, ranking_a_mostrar);
         }
     }
 
@@ -785,7 +780,7 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
 
             if (*etapa_actual == VICTORIA || *etapa_actual == DERROTA)
             {
-                redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual);//, ranking_a_mostrar);
+                redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual, ranking_a_mostrar);
             }
         }
 
@@ -804,5 +799,9 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
             mostrar_menu(recursos->menu_actual, *etapa_actual);
         }
 
+        else
+        {
+            mostrar_ranking(&recursos->menu_actual, &recursos->rankings[*ranking_a_mostrar]);
+        }
     }
 }
