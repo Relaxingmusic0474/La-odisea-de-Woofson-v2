@@ -4,7 +4,7 @@
 #include "load.h"
 #include "debug.h"
 
-int main() // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PARECER)
+int main() // EL PROBLEMA ESTÁ AL REINTENTAR LUEGO DE PERDER (SIEMPRE AL PARECER)  -> 1er codigo aprobado
 {
     Recursos recursos = {0};                        /* Se inicializan los recursos del juego */
     ALLEGRO_EVENT evento;                           /* Ṕara agregar los eventos que vayan ocurriendo a la cola de eventos */
