@@ -361,7 +361,7 @@ Procedure cambiar_tipo_municion(Municion municiones[MAX_MUNICIONES], Imagen muni
  * @param etapa_actual Un puntero a la etapa actual del juego (a veces al resetear el estado del juego la etapa actual debe cambiar).
  * @param etapa_deseada La etapa a la que se desea cambiar.
  */
-Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actual, Etapa etapa_deseada)
+Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actual, Etapa etapa_deseada, float* tiempo_en_nivel)
 {
     Natural i;
 
@@ -383,6 +383,8 @@ Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actu
     {
         recursos->municiones[i].tomada = false;
     }
+
+    *tiempo_en_nivel = 0;
 }
 
 
@@ -420,7 +422,7 @@ Procedure detener_efectos_de_sonido(Recursos* recursos)
  * @param etapa_actual Es el puntero a la etapa actual del juego (cambia al cambiar de menú).
  * @param nivel_actual Es el puntero al nivel actual del juego (en algunos casos cambia al cambiar de menú).
  */
-Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual, Natural* ranking_a_mostrar)//, Natural* ranking_a_mostrar)
+Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual, Natural* ranking_a_mostrar, float* tiempo_en_nivel)//, Natural* ranking_a_mostrar)
 {
     Menu menu_vacio = {0};
     char nombre[LARGO] = {'\0'};  // Para entrar al ranking
@@ -523,7 +525,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
 
             if (opcion_clickeada == 0)  // Lógica para REINTENTAR el nivel
             {
-                resetear_estado_juego(recursos, menu_vacio, etapa_actual, *nivel_actual-1);
+                resetear_estado_juego(recursos, menu_vacio, etapa_actual, *nivel_actual-1, tiempo_en_nivel);
 
                 if (*nivel_actual == 5)
                 {
@@ -538,7 +540,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
             {
                 if (opcion_clickeada == 1)  // Logica para volver al MENÚ PRINCIPAL
                 {
-                    resetear_estado_juego(recursos, recursos->menus[PRINCIPAL], etapa_actual, MENU_PRINCIPAL);
+                    resetear_estado_juego(recursos, recursos->menus[PRINCIPAL], etapa_actual, MENU_PRINCIPAL, tiempo_en_nivel);
                     *nivel_actual = 0;
                     detener_efectos_de_sonido(recursos);
                     cambiar_musica(recursos, recursos->musicas[0]);
@@ -552,7 +554,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
 
             if (opcion_clickeada == 0)  // Lógica para volver al menú principal
             {
-                resetear_estado_juego(recursos, recursos->menus[PRINCIPAL], etapa_actual, MENU_PRINCIPAL);
+                resetear_estado_juego(recursos, recursos->menus[PRINCIPAL], etapa_actual, MENU_PRINCIPAL, tiempo_en_nivel);
                 *nivel_actual = 0;
                 detener_efectos_de_sonido(recursos);
                 cambiar_musica(recursos, recursos->musicas[0]);
@@ -572,7 +574,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                 {
                     if (*nivel_actual != NRO_NIVELES)
                     {
-                        resetear_estado_juego(recursos, menu_vacio, etapa_actual, (*nivel_actual-1)+1);
+                        resetear_estado_juego(recursos, menu_vacio, etapa_actual, (*nivel_actual-1)+1, tiempo_en_nivel);
                         *nivel_actual = *nivel_actual + 1;
                     }
                     
@@ -713,15 +715,16 @@ Rectangulo dibujar_rectangulo_en_rectangulo(Rectangulo rect_destino, float alto,
 }
 
 
-Procedure mostrar_pantalla_datos(Personaje personaje, Municion municion, Imagen vida, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, Natural nivel_actual)
+Procedure mostrar_pantalla_datos(Personaje personaje, Municion municion, Imagen vida, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, Natural nivel_actual, float tiempo_en_nivel)
 {
-    Natural i;
+    Natural i, min, seg;
     Natural alto_linea, alto_barras, ancho_barras;
     Rectangulo rectangulo_subvidas;
     extern Natural puntuacion;
     char texto_nro_nivel[6] = {'\0'};
     char texto_nro_vidas[5] = {'\0'};
     char texto_puntuacion[5] = {'\0'};
+    char texto_tiempo_nivel[LARGO] = {'\0'};
 
     alto_linea = RECTANGULO_DATOS.pos_final.y - RECTANGULO_DATOS.pos_inicial.y;
 
@@ -768,6 +771,24 @@ Procedure mostrar_pantalla_datos(Personaje personaje, Municion municion, Imagen 
     sprintf(texto_puntuacion, "%hu", puntuacion);
     dibujar_texto_en_rectangulo(texto_puntuacion, RECTANGULO_DATOS, 75.0, 35.0, fuente, NEGRO);
     dibujar_rectangulo_en_rectangulo(RECTANGULO_DATOS, alto_linea, 0, 80.0, 50.0, false, NEGRO);   
+
+    min = tiempo_en_nivel / 60;
+    seg = (Natural) (tiempo_en_nivel) % 60;
+
+    if (seg >= 10)
+    {
+        snprintf(texto_tiempo_nivel, sizeof(texto_tiempo_nivel), "%hu:%hu", min, seg);
+    }
+
+    else
+    {
+        snprintf(texto_tiempo_nivel, sizeof(texto_tiempo_nivel), "%hu:0%hu", min, seg);
+    }
+    
+    dibujar_texto_en_rectangulo(texto_tiempo_nivel, RECTANGULO_DATOS, 85.0, 35.0, fuente, NEGRO);
+    dibujar_texto_en_rectangulo("TIEMPO", RECTANGULO_DATOS, 85.0, 75.0, fuente_sec, NEGRO);
+
+    dibujar_rectangulo_en_rectangulo(RECTANGULO_DATOS, alto_linea, 0, 90.0, 50.0, false, NEGRO);
 }
 
 
@@ -789,7 +810,7 @@ Procedure mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, 
 }
 
 
-Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_actual, Natural* nivel_actual, Natural iteracion, bool* cambio_estado_procesado, Tecla* ultima_tecla_lateral, Natural* ranking_a_mostrar)
+Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_actual, Natural* nivel_actual, Natural iteracion, bool* cambio_estado_procesado, Tecla* ultima_tecla_lateral, Natural* ranking_a_mostrar, float* tiempo_en_nivel)
 {
     Menu menu_vacio = {0};
 
@@ -799,7 +820,7 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
 
         if (recursos->menu_actual.opcion_en_hover < recursos->menu_actual.nro_opciones)
         {
-            redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual, ranking_a_mostrar);
+            redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual, ranking_a_mostrar, tiempo_en_nivel);
         }
     }
 
@@ -811,7 +832,7 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
 
             if (*etapa_actual == VICTORIA || *etapa_actual == DERROTA)
             {
-                redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual, ranking_a_mostrar);
+                redirigir_menu(recursos, recursos->menu_actual.opcion_en_hover, etapa_actual, nivel_actual, ranking_a_mostrar, tiempo_en_nivel);
             }
         }
 
@@ -822,7 +843,7 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
             dibujar_personaje(&recursos->pje_principal, *ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
             morir(&recursos->pje_principal, ultima_tecla_lateral, etapa_actual);  // Esta función se ejecuta solamente si el personaje figura como muerto
             actualizar_rayos(recursos->rayos[(*nivel_actual)-1], recursos->cantidad_rayos[(*nivel_actual)-1], recursos->pje_principal, recursos->mapas[(*nivel_actual)-1]);
-            mostrar_pantalla_datos(recursos->pje_principal, recursos->municiones[0], recursos->vida, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual);
+            mostrar_pantalla_datos(recursos->pje_principal, recursos->municiones[0], recursos->vida, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual, *tiempo_en_nivel);
         }
     
         if (*etapa_actual != RANKING)
