@@ -480,9 +480,6 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
 
                             inicializar_personaje(&recursos->enemigos[id_enemigo], mapa.mapa[i][j] <= EXTRATERRESTRE_DINAMICO ? EXTRATERRESTRE : MONSTRUO, recursos->frames, 
                                                   recursos->enemigos[id_enemigo].posicion_inicial, mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO ? true : false);
-                        
-                            printf("ENEMIGO %hu -> Tipo: %c, inicializado: %d\n", id_enemigo, recursos->enemigos[id_enemigo].tipo, recursos->enemigos[id_enemigo].inicializado == true ? 1 : 0);
-                            //printf("Enemigo %hu: (%.2f, %.2f), \n", id_enemigo, recursos->enemigos[id_enemigo].posicion_inicial.x, recursos->enemigos[id_enemigo].posicion_inicial.y);
                         }                        
 
                         else  // Si ya estaba inicializado

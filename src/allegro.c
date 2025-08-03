@@ -341,10 +341,6 @@ bool crear_recursos(Recursos* R)
                         i==0 ? NORMAL : (i==1 ? GRANDE : GIGANTE));
                 return false;
             }
-            
-            printf("Se cargó la fuente %s de tamaño %hu\n", 
-                        j==0 ? "Comfortaa-Light" : "Times New Roman", 
-                        i==0 ? NORMAL : (i==1 ? GRANDE : GIGANTE));
         }
     }
 
@@ -417,11 +413,6 @@ bool crear_recursos(Recursos* R)
         if (!R->musicas[i])
         {
             return false;
-        }
-
-        else
-        {
-            printf("Musica cargada correctamente.\n");
         }
     }
 
