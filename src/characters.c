@@ -460,7 +460,6 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 
 Procedure mover_enemigo_dinamico(Personaje* enemigo, Mapa mapa)
 {
-    Natural i;
     float amplitud_dragon = 2;   
 
     if (enemigo->estatico || enemigo->muerto)  // No tiene sentido mover un enemigo estático o que ya murió
@@ -1167,9 +1166,7 @@ Procedure lanzar_fuego(Personaje* dragon, Personaje* woofson, Imagen imagen_fueg
 
 Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Personaje* woofson, Mapa mapa, Imagen fuego)
 {
-    Natural i, cantidad_enemigos;
-
-    //cantidad_enemigos = nro_enemigos_activos(enemigos);
+    Natural i;
 
     for (i=0; i<MAX_ENEMIGOS; i++)
     {
