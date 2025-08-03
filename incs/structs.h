@@ -8,6 +8,7 @@
 
 typedef struct vector Vector;
 typedef struct rectangulo Rectangulo;
+typedef struct barraVida BarraVida;
 typedef struct salto Salto;
 typedef struct mapa Mapa;
 typedef struct bala Bala;
@@ -42,6 +43,12 @@ struct rectangulo
 {
     Vector pos_inicial;
     Vector pos_final;
+};
+
+struct barraVida
+{
+    Rectangulo contenedor;
+    Rectangulo subvida;
 };
 
 struct salto  // ANALIZAR SI SERÁ NECESARIO AGREGAR LA POSICIÓN FINAL DEL SALTO A LA ESTRUCTURA
@@ -128,7 +135,7 @@ struct personaje
     Natural frames_para_prox_disparo;
     bool victoria;
     Fuego fuego;  // Aplica solo para el dragón
-
+    BarraVida barra_vida;
     // bool hay_obj_izq;
     // bool hay_obj_der;
     // bool hay_obj_sup;

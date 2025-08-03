@@ -544,8 +544,6 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
 
                         inicializar_personaje(&recursos->enemigos[id_enemigo], DRAGON, recursos->frames, 
                                               recursos->enemigos[id_enemigo].posicion_inicial, false);
-                            
-                        printf("ENEMIGO %hu -> Tipo: %c, inicializado: %d\n", id_enemigo, recursos->enemigos[id_enemigo].tipo, recursos->enemigos[id_enemigo].inicializado == true ? 1 : 0);
                     }
 
                     else
@@ -591,7 +589,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 recursos->puerta.alto = al_get_bitmap_height(recursos->puerta.imagen);
                 recursos->puerta.ancho = al_get_bitmap_width(recursos->puerta.imagen);
                 recursos->puerta.posicion = (Vector) {x1, y2-recursos->puerta.alto+15};
-                al_draw_bitmap(recursos->puerta.imagen, recursos->puerta.posicion.x, recursos->puerta.posicion.y, 0);
+                al_draw_bitmap(recursos->puerta.imagen, recursos->puerta.posicion.x, recursos->puerta.posicion.y, j>mapa.nro_columnas/2 ? 0 : ALLEGRO_FLIP_HORIZONTAL);
             }
 
             if (mapa.mapa[i][j] == PALANCA)

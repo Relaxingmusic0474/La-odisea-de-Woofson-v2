@@ -18,6 +18,7 @@
 #define ALTO_JUEGO (8./9  * ALTO_VENTANA)
 #define RECTANGULO_JUEGO (Rectangulo) {{0, 0}, {ANCHO_VENTANA, ALTO_JUEGO}}
 #define RECTANGULO_VENTANA (Rectangulo) {{0, 0}, {ANCHO_VENTANA, ALTO_VENTANA}}
+#define RECTANGULO_DATOS (Rectangulo) {{0, ALTO_JUEGO}, {ANCHO_VENTANA, ALTO_VENTANA}}
 #define RECTANGULO_MENU_RESULTADO (obtener_rectangulo(RECTANGULO_JUEGO, 500, 1200, 50.0, 50.0))
 #define VECTOR_NULO (Vector) {0, 0}
 #define NRO_NIVELES 5
@@ -71,8 +72,9 @@
 
 // Macros para las caracteristicas del personaje
 #define VELOCIDAD_MAXIMA_PERSONAJE 8
-#define MAX_TIEMPO_INMUNE 1.5  // Máximo tiempo en que el personaje no puede recibir un daño adicional
-#define TIEMPO_MUERTE 2.0  // Tiempo que se tomará el personaje en morir, para volver a comenzar desde su posicion inicial
+#define MAX_TIEMPO_INMUNE_WOOFSON 1.5  // Tiempo en que Woofson no puede recibir un daño adicional
+#define MAX_TIEMPO_INMUNE_ENEMIGO 1.0
+#define TIEMPO_MUERTE 2.0  // Tiempo que se tomará Woofson en morir, para volver a comenzar desde su posicion inicial
 #define ACELERACION_PERSONAJE 0.2  // Aceleración del personaje al caminar
 #define VELOCIDAD_DRAGONES 2
 #define VELOCIDAD_EXTRATERRESTRES 3

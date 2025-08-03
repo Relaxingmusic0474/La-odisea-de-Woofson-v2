@@ -153,6 +153,17 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
         personaje->balas[i].frames_para_disponibilidad = 0;
     }
 
+    if (personaje->tipo == WOOFSON)
+    {
+
+        personaje->barra_vida = (BarraVida) {0};  // Woofson tendrá otro tipo de barra de vida que se manejará directamente desde la pantalla
+    }
+
+    else
+    {
+        personaje->barra_vida.contenedor = obtener_rectangulo(RECTANGULO_VENTANA, 10, 50, (personaje->posicion.x + personaje->ancho/2) / ANCHO_VENTANA * 100, (personaje->posicion.y - 10) / ALTO_VENTANA * 100);
+    }
+
     personaje->inicializado = true;
 }
 
@@ -449,7 +460,8 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 
 Procedure mover_enemigo_dinamico(Personaje* enemigo, Mapa mapa)
 {
-    float amplitud_dragon = 2;
+    Natural i;
+    float amplitud_dragon = 2;   
 
     if (enemigo->estatico || enemigo->muerto)  // No tiene sentido mover un enemigo estático o que ya murió
     {
@@ -712,7 +724,7 @@ Procedure actualizar_estado_danho(Personaje* personaje)
 {
     if (personaje->danhado) 
     {
-        if (personaje->tiempo_danho <= MAX_TIEMPO_INMUNE) 
+        if (personaje->tiempo_danho <= (personaje->tipo == WOOFSON ? MAX_TIEMPO_INMUNE_WOOFSON : MAX_TIEMPO_INMUNE_ENEMIGO))
         {
             personaje->tiempo_danho += 1.0 / FPS;
         } 
@@ -741,6 +753,15 @@ Procedure actualizar_estado_danho(Personaje* personaje)
                 personaje->subvida_actual = 100;
                 personaje->tiempo_muerte = 0;
             }
+        }
+
+        else
+        {
+            personaje->barra_vida.contenedor = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, 10, 50, (personaje->posicion.x + personaje->ancho/2) / ANCHO_VENTANA * 100, 
+                                                                               (personaje->posicion.y - 10) / ALTO_VENTANA * 100, false, NEGRO);
+
+            personaje->barra_vida.subvida = dibujar_rectangulo_en_rectangulo(personaje->barra_vida.contenedor, 8, 48 * (float) personaje->subvida_actual / 100, 
+                                                                             50.0 * (float) personaje->subvida_actual / 100, 50.0, true, NARANJO);
         }
     }
 }

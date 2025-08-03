@@ -717,31 +717,25 @@ Procedure mostrar_pantalla_datos(Personaje personaje, Municion municion, Imagen 
 {
     Natural i;
     Natural alto_linea, alto_barras, ancho_barras;
-    Rectangulo rectangulo_datos;
     Rectangulo rectangulo_subvidas;
     extern Natural puntuacion;
     char texto_nro_nivel[6] = {'\0'};
     char texto_nro_vidas[5] = {'\0'};
     char texto_puntuacion[5] = {'\0'};
 
-    rectangulo_datos.pos_inicial.x = 0;
-    rectangulo_datos.pos_inicial.y = ALTO_JUEGO;
-    rectangulo_datos.pos_final.x = ANCHO_VENTANA;
-    rectangulo_datos.pos_final.y = ALTO_VENTANA;
+    alto_linea = RECTANGULO_DATOS.pos_final.y - RECTANGULO_DATOS.pos_inicial.y;
 
-    alto_linea = rectangulo_datos.pos_final.y - rectangulo_datos.pos_inicial.y;
-
-    dibujar_rectangulo(rectangulo_datos, GRIS);
+    dibujar_rectangulo(RECTANGULO_DATOS, GRIS);
     sprintf(texto_nro_nivel, "Lvl %hu", nivel_actual);
-    dibujar_texto_en_rectangulo(texto_nro_nivel, rectangulo_datos, 4.0, 50.0, fuente, NEGRO);
-    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 8.0, 50.0, false, NEGRO);  // Esto es equivalente a dibujar una línea (una de las dimensiones es 0)
-    dibujar_imagen_en_rectangulo(vida, rectangulo_datos, 9.5, 35.0);  // Se dibuja el corazón en un 5% en x y un 50% en y del rectángulo
+    dibujar_texto_en_rectangulo(texto_nro_nivel, RECTANGULO_DATOS, 4.0, 50.0, fuente, NEGRO);
+    dibujar_rectangulo_en_rectangulo(RECTANGULO_DATOS, alto_linea, 0, 8.0, 50.0, false, NEGRO);  // Esto es equivalente a dibujar una línea (una de las dimensiones es 0)
+    dibujar_imagen_en_rectangulo(vida, RECTANGULO_DATOS, 9.5, 35.0);  // Se dibuja el corazón en un 5% en x y un 50% en y del rectángulo
     sprintf(texto_nro_vidas, "× %hu", personaje.nro_vidas);
-    dibujar_texto_en_rectangulo(texto_nro_vidas, rectangulo_datos, 14.5, 35.0, fuente, NEGRO);
-    dibujar_texto_en_rectangulo("VIDAS", rectangulo_datos, 13.0, 75.0, fuente_sec, NEGRO);
-    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 18.0, 50.0, false, NEGRO);
-    rectangulo_subvidas = dibujar_rectangulo_en_rectangulo(rectangulo_datos, 40, 600, 38.5, 35.0, false, NEGRO);
-    dibujar_texto_en_rectangulo("BARRA DE VIDA", rectangulo_datos, 38.5, 75.0, fuente_sec, NEGRO);
+    dibujar_texto_en_rectangulo(texto_nro_vidas, RECTANGULO_DATOS, 14.5, 35.0, fuente, NEGRO);
+    dibujar_texto_en_rectangulo("VIDAS", RECTANGULO_DATOS, 13.0, 75.0, fuente_sec, NEGRO);
+    dibujar_rectangulo_en_rectangulo(RECTANGULO_DATOS, alto_linea, 0, 18.0, 50.0, false, NEGRO);
+    rectangulo_subvidas = dibujar_rectangulo_en_rectangulo(RECTANGULO_DATOS, 40, 600, 38.5, 35.0, false, NEGRO);
+    dibujar_texto_en_rectangulo("BARRA DE VIDA", RECTANGULO_DATOS, 38.5, 75.0, fuente_sec, NEGRO);
 
     alto_barras = 0.850 * (rectangulo_subvidas.pos_final.y - rectangulo_subvidas.pos_inicial.y);
     ancho_barras = 0.007 * (rectangulo_subvidas.pos_final.x - rectangulo_subvidas.pos_inicial.x);
@@ -751,7 +745,7 @@ Procedure mostrar_pantalla_datos(Personaje personaje, Municion municion, Imagen 
         dibujar_rectangulo_en_rectangulo(rectangulo_subvidas, alto_barras, ancho_barras, 0.8 + 98.4/99 * i, 50.0, true, VERDE_OSCURO);
     }
 
-    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 59.0, 50.0, false, NEGRO);
+    dibujar_rectangulo_en_rectangulo(RECTANGULO_DATOS, alto_linea, 0, 59.0, 50.0, false, NEGRO);
 
     if (nivel_actual >= 3)
     {
@@ -768,12 +762,12 @@ Procedure mostrar_pantalla_datos(Personaje personaje, Municion municion, Imagen 
         al_draw_line(61.5/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO)+50, 62.0/100*ANCHO_VENTANA+75, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), ROJO, 4.0);
     }
     
-    dibujar_texto_en_rectangulo("MUNICIONES", rectangulo_datos, 64.5, 75.0, fuente_sec, NEGRO);
-    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 70.0, 50.0, false, NEGRO);
-    dibujar_texto_en_rectangulo("PUNTUACIÓN", rectangulo_datos, 75.0, 75.0, fuente_sec, NEGRO);
+    dibujar_texto_en_rectangulo("MUNICIONES", RECTANGULO_DATOS, 64.5, 75.0, fuente_sec, NEGRO);
+    dibujar_rectangulo_en_rectangulo(RECTANGULO_DATOS, alto_linea, 0, 70.0, 50.0, false, NEGRO);
+    dibujar_texto_en_rectangulo("PUNTUACIÓN", RECTANGULO_DATOS, 75.0, 75.0, fuente_sec, NEGRO);
     sprintf(texto_puntuacion, "%hu", puntuacion);
-    dibujar_texto_en_rectangulo(texto_puntuacion, rectangulo_datos, 75.0, 35.0, fuente, NEGRO);
-    dibujar_rectangulo_en_rectangulo(rectangulo_datos, alto_linea, 0, 80.0, 50.0, false, NEGRO);   
+    dibujar_texto_en_rectangulo(texto_puntuacion, RECTANGULO_DATOS, 75.0, 35.0, fuente, NEGRO);
+    dibujar_rectangulo_en_rectangulo(RECTANGULO_DATOS, alto_linea, 0, 80.0, 50.0, false, NEGRO);   
 }
 
 
