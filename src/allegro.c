@@ -283,7 +283,15 @@ bool crear_recursos(Recursos* R)
 
     if (!R->municion)
     {
-        printf("Error al cargar la imagen de las municiones\n");
+        printf("Error al cargar la imagen de las municiones normales\n");
+        return false;
+    }
+
+    R->municion_pro = al_load_bitmap("assets/images/balas-2.png");
+    
+    if (!R->municion_pro)
+    {
+        printf("Error al cargar la imagen de las municiones pro\n");
         return false;
     }
 
@@ -581,6 +589,12 @@ Procedure finalizar_allegro(Recursos* R)
     {
         al_destroy_bitmap(R->fuego);
         R->fuego = NULL;
+    }
+
+    if (R->municion_pro != NULL)
+    {
+        al_destroy_bitmap(R->municion_pro);
+        R->municion_pro = NULL;
     }
 
     if (R->municion != NULL)

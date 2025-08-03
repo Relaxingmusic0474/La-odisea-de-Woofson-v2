@@ -66,6 +66,7 @@ int main()
 
                 if (nivel_actual != 0)
                 {
+                    printf("nivel: %hu\n", nivel_actual);
                     mover_personaje(&recursos.pje_principal, recursos.mapas[nivel_actual - 1], nivel_actual - 1); // Mueve al personaje según las teclas presionadas y considera lógica de salto
                     recursos.pje_principal.balas_disponibles = nro_balas_disponibles(recursos.pje_principal.balas);
                     efectuar_disparo_de_woofson(&recursos.pje_principal, recursos.enemigos, recursos.mapas[nivel_actual - 1]);
@@ -90,7 +91,7 @@ int main()
                         etapa_juego = DERROTA;
                     }
                     
-                    mostrar_pantalla_datos(recursos.pje_principal, recursos.vida, recursos.municion, recursos.fuentes[COMFORTAA_LIGHT_GIGANTE],
+                    mostrar_pantalla_datos(recursos.pje_principal, recursos.municiones[0], recursos.vida, recursos.fuentes[COMFORTAA_LIGHT_GIGANTE],
                                            recursos.fuentes[TIMES_NEW_ROMAN_NORMAL], nivel_actual);
                 }
 

@@ -329,6 +329,32 @@ Procedure cambiar_menu(Menu* menu_actual, Menu menu_nuevo)
 
 
 /**
+ * @brief Función que cambia el tipo de munición de acuerdo al nivel.
+ * @param municiones El arreglo con los objetos municiones.
+ * @param municion_normal La imagen con la munición normal.
+ * @param municion_pro La imagen con la munición pro.
+ * @param nivel_actual El nivel actual en el que se está.
+ */
+Procedure cambiar_tipo_municion(Municion municiones[MAX_MUNICIONES], Imagen municion_normal, Imagen municion_pro, Natural nivel_actual)
+{
+    Natural i;
+
+    for (i=0; i<MAX_MUNICIONES; i++)
+    {
+        if (nivel_actual >= 4)
+        {
+            municiones[i].imagen = municion_pro;
+        }
+
+        else
+        {
+            municiones[i].imagen = municion_normal;
+        }
+    }
+}
+
+
+/**
  * @brief Función que reinicia el estado del juego.
  * @param recursos Un puntero a la estructura con todos los recursos esenciales del juego.
  * @param menu El menú que se desea que se muestre.
@@ -447,13 +473,13 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                 case 1:
                 case 2:
                     cambiar_musica(recursos, recursos->musicas[1]);
-                    recursos->pje_principal.bala_recargable = true;
+                    recursos->pje_principal.bala_recargable = false;
                     break;
 
                 case 3:
                 case 4:
                     cambiar_musica(recursos, recursos->musicas[2]);
-                    recursos->pje_principal.bala_recargable = false;
+                    recursos->pje_principal.bala_recargable = opcion_clickeada == 4 ? true : false;
                     break;
             }
             
@@ -498,6 +524,12 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
             if (opcion_clickeada == 0)  // Lógica para REINTENTAR el nivel
             {
                 resetear_estado_juego(recursos, menu_vacio, etapa_actual, *nivel_actual-1);
+
+                if (*nivel_actual == 5)
+                {
+                    recursos->pje_principal.bala_recargable = true;
+                }
+
                 al_set_sample_instance_position(recursos->musica_actual->instancia, 0); // Reinicia la música
                 al_play_sample_instance(recursos->musica_actual->instancia);  
             }
@@ -543,11 +575,15 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                         resetear_estado_juego(recursos, menu_vacio, etapa_actual, (*nivel_actual-1)+1);
                         *nivel_actual = *nivel_actual + 1;
                     }
-
+                    
                     if (*nivel_actual == 4)
                     {
                         cambiar_musica(recursos, recursos->musicas[2]);
-                        recursos->pje_principal.bala_recargable = false;
+                    }
+                        
+                    if (*nivel_actual == 5)
+                    {   
+                        recursos->pje_principal.bala_recargable = true;
                     }
 
                     else
@@ -563,6 +599,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         }
     }
 
+    cambiar_tipo_municion(recursos->municiones, recursos->municion, recursos->municion_pro, *nivel_actual);
     return;
 }
 
@@ -676,7 +713,7 @@ Rectangulo dibujar_rectangulo_en_rectangulo(Rectangulo rect_destino, float alto,
 }
 
 
-Procedure mostrar_pantalla_datos(Personaje personaje, Imagen vida, Imagen municion, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, Natural nivel_actual)
+Procedure mostrar_pantalla_datos(Personaje personaje, Municion municion, Imagen vida, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, Natural nivel_actual)
 {
     Natural i;
     Natural alto_linea, alto_barras, ancho_barras;
@@ -718,13 +755,13 @@ Procedure mostrar_pantalla_datos(Personaje personaje, Imagen vida, Imagen munici
 
     if (nivel_actual >= 3)
     {
-        al_draw_scaled_bitmap(municion, 0, 0, personaje.balas_disponibles*al_get_bitmap_width(municion)/MAX_BALAS, al_get_bitmap_height(municion), 
+        al_draw_scaled_bitmap(municion.imagen, 0, 0, personaje.balas_disponibles*al_get_bitmap_width(municion.imagen)/MAX_BALAS, al_get_bitmap_height(municion.imagen), 
                               62.0/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), 75.0*(float)personaje.balas_disponibles/MAX_BALAS, 50.0, 0);
     }
 
     else
     {
-        al_draw_tinted_scaled_bitmap(municion, AMARILLO, 0, 0, al_get_bitmap_width(municion), al_get_bitmap_height(municion),
+        al_draw_tinted_scaled_bitmap(municion.imagen, AMARILLO, 0, 0, al_get_bitmap_width(municion.imagen), al_get_bitmap_height(municion.imagen),
                                      62.0/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), 75.0, 50.0, 0);
 
         al_draw_line(61.5/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), 62.0/100*ANCHO_VENTANA+75, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO)+50, ROJO, 4.0);
@@ -791,7 +828,7 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
             dibujar_personaje(&recursos->pje_principal, *ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
             morir(&recursos->pje_principal, ultima_tecla_lateral, etapa_actual);  // Esta función se ejecuta solamente si el personaje figura como muerto
             actualizar_rayos(recursos->rayos[(*nivel_actual)-1], recursos->cantidad_rayos[(*nivel_actual)-1], recursos->pje_principal, recursos->mapas[(*nivel_actual)-1]);
-            mostrar_pantalla_datos(recursos->pje_principal, recursos->vida, recursos->municion, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual);
+            mostrar_pantalla_datos(recursos->pje_principal, recursos->municiones[0], recursos->vida, recursos->fuentes[COMFORTAA_LIGHT_GIGANTE], recursos->fuentes[TIMES_NEW_ROMAN_NORMAL], *nivel_actual);
         }
     
         if (*etapa_actual != RANKING)

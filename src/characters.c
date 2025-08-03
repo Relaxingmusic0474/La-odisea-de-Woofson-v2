@@ -65,12 +65,13 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
 {
     Natural i;
 
+    personaje->tipo = tipo;
+
     if ((personaje->tipo == WOOFSON || personaje->tipo == DRAGON || personaje->tipo == MONSTRUO) && estatico == true)
     {
         return;  // No tiene sentido que se cargue el personaje principal y que no se pueda mover.  Así mismo, los dragones (ya que volarán) y el monstruo (que será duro).
     }
 
-    personaje->tipo = tipo;
     personaje->posicion = posicion_deseada;
     personaje->estatico = estatico;
 
@@ -148,7 +149,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
     {
         personaje->balas[i] = (Bala) {0};
         personaje->balas[i].disponible = true;
-        personaje->bala_recargable = true;
+        personaje->bala_recargable = personaje->tipo == WOOFSON ? false : true;
         personaje->balas[i].frames_para_disponibilidad = 0;
     }
 
@@ -1147,18 +1148,21 @@ Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Persona
 {
     Natural i, cantidad_enemigos;
 
-    cantidad_enemigos = nro_enemigos_activos(enemigos);
+    //cantidad_enemigos = nro_enemigos_activos(enemigos);
 
-    for (i=0; i<cantidad_enemigos; i++)
+    for (i=0; i<MAX_ENEMIGOS; i++)
     {
-        if (enemigos[i].tipo == DRAGON)
+        if (enemigos[i].inicializado)
         {
-            lanzar_fuego(&enemigos[i], woofson, fuego);
-        }
+            if (enemigos[i].tipo == DRAGON)
+            {
+                lanzar_fuego(&enemigos[i], woofson, fuego);
+            }
 
-        else
-        {
-            efectuar_disparo_de_enemigo(&enemigos[i], woofson, mapa);
+            else
+            {
+                efectuar_disparo_de_enemigo(&enemigos[i], woofson, mapa);
+            }
         }
     }
 }
@@ -1214,7 +1218,7 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
     if (!(woofson->muerto && woofson->subvida_actual == 0 && woofson->nro_vidas == 0))  // Si no ha perdido aún, se mueven las balas
     {
         if (hay_balas_activas(woofson->balas))
-        {       
+        {
             if (nro_enemigos == 0)
             {   
                 mover_balas_activas(woofson, &enemigos[0], mapa, NARANJO);
@@ -1222,9 +1226,12 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
 
             else
             {        
-                for (i=0; i<nro_enemigos; i++)
-                {    
-                    mover_balas_activas(woofson, &enemigos[i], mapa, NARANJO);
+                for (i=0; i<MAX_ENEMIGOS; i++)
+                {
+                    if (enemigos[i].inicializado)
+                    {
+                        mover_balas_activas(woofson, &enemigos[i], mapa, NARANJO);
+                    }
                 }
             }
         }
@@ -1260,7 +1267,7 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
     {
         for (i=0; i<MAX_BALAS; i++)  // Buscamos una bala disponible en el arreglo de balas del enemigo
         {
-            if (/*!woofson->balas[i].activa && */woofson->balas[i].disponible) //enemigo->balas[i].velocidad.x == 0 && enemigo->balas[i].velocidad.y == 0)
+            if (woofson->balas[i].disponible) //enemigo->balas[i].velocidad.x == 0 && enemigo->balas[i].velocidad.y == 0)
             {
                 woofson->balas[i].activa = true;
                 woofson->balas[i].disponible = false;

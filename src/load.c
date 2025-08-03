@@ -475,12 +475,15 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                         {
                             alto_enemigo = al_get_bitmap_height(recursos->frames[(TipoFrame) (1./6 * pow(mapa.mapa[i][j], 2) - 1.5 * mapa.mapa[i][j] + 16./3)][0]);  // Polinomio de interpolación de Lagrange
 
-                            recursos->enemigos[id_enemigo].posicion_inicial.x = mapa.ancho_bloque*j;
-                            recursos->enemigos[id_enemigo].posicion_inicial.y = mapa.alto_bloque*(i+1) - alto_enemigo - 1;
+                            recursos->enemigos[id_enemigo].posicion_inicial.x = x1;
+                            recursos->enemigos[id_enemigo].posicion_inicial.y = y2 - alto_enemigo - 1;
 
                             inicializar_personaje(&recursos->enemigos[id_enemigo], mapa.mapa[i][j] <= EXTRATERRESTRE_DINAMICO ? EXTRATERRESTRE : MONSTRUO, recursos->frames, 
                                                   recursos->enemigos[id_enemigo].posicion_inicial, mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO ? true : false);
-                        }
+                        
+                            printf("ENEMIGO %hu -> Tipo: %c, inicializado: %d\n", id_enemigo, recursos->enemigos[id_enemigo].tipo, recursos->enemigos[id_enemigo].inicializado == true ? 1 : 0);
+                            //printf("Enemigo %hu: (%.2f, %.2f), \n", id_enemigo, recursos->enemigos[id_enemigo].posicion_inicial.x, recursos->enemigos[id_enemigo].posicion_inicial.y);
+                        }                        
 
                         else  // Si ya estaba inicializado
                         {
@@ -522,11 +525,10 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                                 dibujar_personaje(&recursos->enemigos[id_enemigo], 0, iteracion);
                             }
                         }
-
                     }
+                    
+                    id_enemigo++;
                 }
-
-                id_enemigo++;
             }
 
             if (mapa.mapa[i][j] == _DRAGON)
@@ -542,6 +544,8 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
 
                         inicializar_personaje(&recursos->enemigos[id_enemigo], DRAGON, recursos->frames, 
                                               recursos->enemigos[id_enemigo].posicion_inicial, false);
+                            
+                        printf("ENEMIGO %hu -> Tipo: %c, inicializado: %d\n", id_enemigo, recursos->enemigos[id_enemigo].tipo, recursos->enemigos[id_enemigo].inicializado == true ? 1 : 0);
                     }
 
                     else

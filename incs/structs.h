@@ -286,6 +286,7 @@ struct recursos
     Imagen palancas[NRO_ESTADOS];
     Imagen pocion;
     Imagen municion;
+    Imagen municion_pro;
     Pocion pociones[MAX_POCIONES];
     Municion municiones[MAX_MUNICIONES];
     Imagen fuego;
