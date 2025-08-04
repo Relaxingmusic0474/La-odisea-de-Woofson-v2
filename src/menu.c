@@ -380,6 +380,11 @@ Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actu
         recursos->pociones[i].tomada = false;
     }
 
+    for (i=0; i<MAX_POCIONES_RANGO_BALA; i++)
+    {
+        recursos->pociones_rango_bala[i].tomada = false;
+    }
+
     for (i=0; i<MAX_MUNICIONES; i++)
     {
         recursos->municiones[i].tomada = false;

@@ -708,8 +708,9 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                                 }
                             }
                         }
-
                     }
+
+                    id_pocion_rango_bala++;
                 }
             }
             
