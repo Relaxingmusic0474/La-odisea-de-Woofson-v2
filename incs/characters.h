@@ -36,13 +36,13 @@ Procedure detectar_si_personaje_en_zona_de_rayo(Personaje*, Rayo [MAX_RAYOS]);
 bool puede_disparar_horizontalmente(Personaje, Personaje, Mapa);
 bool hay_balas_activas(Bala [MAX_BALAS]);
 Natural nro_balas_disponibles(Bala [MAX_BALAS]);
-Procedure mover_balas_activas(Personaje*, Personaje*, Mapa, ALLEGRO_COLOR);
+Procedure mover_balas_activas(Personaje*, Personaje*, Mapa, Natural, ALLEGRO_COLOR);
 bool puede_disparar_horizontalmente(Personaje, Personaje, Mapa);
-Procedure efectuar_disparo_de_enemigo(Personaje*, Personaje*, Mapa);
-Procedure efectuar_disparo_de_enemigos(Personaje [MAX_ENEMIGOS], Personaje*, Mapa, Imagen);
+Procedure efectuar_disparo_de_enemigo(Personaje*, Personaje*, Mapa, Natural);
+Procedure efectuar_disparo_de_enemigos(Personaje [MAX_ENEMIGOS], Personaje*, Mapa, Natural, Imagen);
 Natural nro_enemigos_activos(Personaje [MAX_ENEMIGOS]);
 bool woofson_puede_disparar(Personaje*);
-Procedure efectuar_disparo_de_woofson(Personaje*, Personaje [MAX_ENEMIGOS], Mapa);
+Procedure efectuar_disparo_de_woofson(Personaje*, Personaje [MAX_ENEMIGOS], Mapa, Natural);
 Procedure desactivar_enemigos(Personaje [MAX_ENEMIGOS]);
 
 #endif  // CHARACTERS_H

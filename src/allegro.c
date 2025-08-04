@@ -279,6 +279,20 @@ bool crear_recursos(Recursos* R)
         R->pociones[i].tomada = false;  // Aun no es tomada por Woofson
     }
 
+    R->pocion_rango_bala = al_load_bitmap("assets/images/pocion-2.png");
+
+    if (!R->pocion_rango_bala)
+    {
+        printf("Error al cargar la imagen de la pocion que aumenta el rango de bala\n");
+        return false;
+    }
+
+    for (i=0; i<MAX_POCIONES_RANGO_BALA; i++)
+    {
+        R->pociones_rango_bala[i].imagen = R->pocion_rango_bala;
+        R->pociones_rango_bala[i].tomada = false;   // Aun no es tomada por Woofson
+    }
+
     R->municion = al_load_bitmap("assets/images/balas.png");
 
     if (!R->municion)
@@ -592,6 +606,12 @@ Procedure finalizar_allegro(Recursos* R)
     {
         al_destroy_bitmap(R->municion);
         R->municion = NULL;
+    }
+
+    if (R->pocion_rango_bala != NULL)
+    {
+        al_destroy_bitmap(R->pocion_rango_bala);
+        R->pocion_rango_bala = NULL;
     }
 
     if (R->pocion != NULL)

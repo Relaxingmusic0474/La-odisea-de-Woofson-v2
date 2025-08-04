@@ -69,14 +69,14 @@ int main()
                     {
                         mover_personaje(&recursos.pje_principal, recursos.mapas[nivel_actual - 1], nivel_actual - 1); // Mueve al personaje según las teclas presionadas y considera lógica de salto
                         recursos.pje_principal.balas_disponibles = nro_balas_disponibles(recursos.pje_principal.balas);
-                        efectuar_disparo_de_woofson(&recursos.pje_principal, recursos.enemigos, recursos.mapas[nivel_actual - 1]);
+                        efectuar_disparo_de_woofson(&recursos.pje_principal, recursos.enemigos, recursos.mapas[nivel_actual - 1], nivel_actual);
                         dibujar_mapa(recursos.mapas[nivel_actual - 1], &recursos, &cambio_estado_procesado, iteracion); // Dibujamos el mapa del primer nivel
                         actualizar_estado_danho(&recursos.pje_principal);
                         actualizar_estado_danho_enemigos(recursos.enemigos);
                         dibujar_personaje(&recursos.pje_principal, ultima_tecla_lateral, iteracion);                    // Dibuja el personaje en su posición actual
                         actualizar_rayos(recursos.rayos[nivel_actual - 1], recursos.cantidad_rayos[nivel_actual - 1], recursos.pje_principal, recursos.mapas[nivel_actual - 1]);
                         detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual - 1]);
-                        efectuar_disparo_de_enemigos(recursos.enemigos, &recursos.pje_principal, recursos.mapas[nivel_actual - 1], recursos.fuego);
+                        efectuar_disparo_de_enemigos(recursos.enemigos, &recursos.pje_principal, recursos.mapas[nivel_actual - 1], nivel_actual, recursos.fuego);
                         determinar_victoria_woofson(&recursos.pje_principal, recursos.enemigos, recursos.puerta, &etapa_juego);
 
                         if (recursos.pje_principal.victoria)

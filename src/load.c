@@ -386,7 +386,7 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
 Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, Natural iteracion)
 {
     Natural i=0, j=0, k=0;
-    Natural id_enemigo = 0, id_pocion = 0, id_municion = 0;
+    Natural id_enemigo = 0, id_pocion = 0, id_municion = 0, id_pocion_rango_bala = 0;
     Entero flag = 0;
     Personaje* woofson = &recursos->pje_principal;
     Imagen bloque_cafe = recursos->bloques[0];
@@ -683,6 +683,35 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 id_municion++;
             }
         
+            if (mapa.mapa[i][j] == POCION_RANGO_BALA)
+            {
+                if (i==mapa.nro_filas-1 || (i<mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i+1][j] == BLOQUE_RAYO)))
+                {
+                    if (id_pocion_rango_bala < MAX_POCIONES)
+                    {
+                        if (!recursos->pociones_rango_bala[id_pocion_rango_bala].tomada)  // Si aun no ha sido tomada se dibuja
+                        {
+                            al_draw_bitmap(recursos->pociones_rango_bala[id_pocion_rango_bala].imagen, 
+                                          (x1+x2-al_get_bitmap_width(recursos->pociones_rango_bala[id_pocion_rango_bala].imagen))/2, 
+                                           y2-al_get_bitmap_height(recursos->pociones_rango_bala[id_pocion_rango_bala].imagen), 0);
+
+                            if (woofson->posicion.x + woofson->ancho >= (x1+x2-al_get_bitmap_width(recursos->pociones_rango_bala[id_pocion_rango_bala].imagen))/2 && 
+                                woofson->posicion.y + woofson->alto >= y2-al_get_bitmap_height(recursos->pociones_rango_bala[id_pocion_rango_bala].imagen) &&
+                                woofson->posicion.x < (x1+x2+al_get_bitmap_width(recursos->pociones_rango_bala[id_pocion_rango_bala].imagen))/2 &&
+                                woofson->posicion.y < y2)
+                            {
+                                if (teclas[ALLEGRO_KEY_E])
+                                {
+                                    recursos->pociones_rango_bala[id_pocion_rango_bala].tomada = true;
+                                    woofson->bala_maximo_alcance = true;
+                                    woofson->tiempo_restante_bala_maximo_alcance = MAX_TIEMPO_BALA_MAXIMO_ALCANCE;
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
             
         }
     }

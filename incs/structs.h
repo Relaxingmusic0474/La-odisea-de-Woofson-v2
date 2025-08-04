@@ -72,6 +72,7 @@ struct mapa
 
 struct bala
 {
+    Vector posicion_inicial;
     Vector posicion;
     Vector velocidad;
     Entero direccion;  // 1 si es hacia la derecha y -1 si es hacia la izquierda
@@ -136,6 +137,8 @@ struct personaje
     bool victoria;
     Fuego fuego;  // Aplica solo para el dragón
     BarraVida barra_vida;
+    bool bala_maximo_alcance;
+    float tiempo_restante_bala_maximo_alcance;
     // bool hay_obj_izq;
     // bool hay_obj_der;
     // bool hay_obj_sup;
@@ -292,9 +295,11 @@ struct recursos
     Imagen puertas[NRO_ESTADOS];
     Imagen palancas[NRO_ESTADOS];
     Imagen pocion;
+    Imagen pocion_rango_bala;
     Imagen municion;
     Imagen municion_pro;
     Pocion pociones[MAX_POCIONES];
+    Pocion pociones_rango_bala[MAX_POCIONES_RANGO_BALA];
     Municion municiones[MAX_MUNICIONES];
     Imagen fuego;
     Ranking rankings[NRO_NIVELES];  // 1 ranking por cada nivel

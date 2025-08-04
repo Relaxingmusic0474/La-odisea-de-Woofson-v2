@@ -151,6 +151,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
         personaje->balas[i] = (Bala) {0};
         personaje->balas[i].disponible = true;
         personaje->bala_recargable = personaje->tipo == WOOFSON ? false : true;
+        personaje->bala_maximo_alcance = personaje->tipo == WOOFSON ? false : true;
         personaje->balas[i].frames_para_disponibilidad = 0;
     }
 
@@ -873,7 +874,7 @@ Natural nro_balas_disponibles(Bala balas[MAX_BALAS])
 }
 
 
-Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa, ALLEGRO_COLOR color)
+Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa, Natural nivel, ALLEGRO_COLOR color)
 {
     Natural i;
     int fil, col;
@@ -884,12 +885,68 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
         {
             atacante->balas[i].posicion.x += atacante->balas[i].velocidad.x;  // Si Woofson gana, las balas se detienen (a modo como de congelar el juego)
 
-            if (atacante->balas[i].posicion.x - RADIO_AXIAL_X_BALA > ANCHO_VENTANA || atacante->balas[i].posicion.x + RADIO_AXIAL_X_BALA < 0)
+            if (atacante->bala_maximo_alcance == true)
             {
-                atacante->balas[i].direccion = 0;  // Se desactiva la bala
-                atacante->balas[i].velocidad = VECTOR_NULO;  // Se deja de mover
-                atacante->balas[i].activa = false;
-                continue;
+                if (atacante->balas[i].posicion.x - RADIO_AXIAL_X_BALA > ANCHO_VENTANA || atacante->balas[i].posicion.x + RADIO_AXIAL_X_BALA < 0)
+                {
+                    atacante->balas[i].direccion = 0;  
+                    atacante->balas[i].velocidad = VECTOR_NULO;  // Se deja de mover
+                    atacante->balas[i].activa = false;  // Se desactiva la bala
+                    continue;
+                }
+            }
+
+            else
+            {
+                if (nivel >= 4)
+                {
+                    if (atacante->bala_maximo_alcance)
+                    {
+                        if (atacante->balas[i].posicion.x - RADIO_AXIAL_X_BALA_PRO > ANCHO_VENTANA || atacante->balas[i].posicion.x + RADIO_AXIAL_X_BALA_PRO < 0)
+                        {
+                            atacante->balas[i].direccion = 0;  
+                            atacante->balas[i].velocidad = VECTOR_NULO;  // Se deja de mover
+                            atacante->balas[i].activa = false;  // Se desactiva la bala
+                            continue;
+                        }
+                    }
+
+                    else
+                    {
+                        if (fabs(atacante->balas[i].posicion.x - atacante->balas[i].posicion_inicial.x) > RANGO_BALA_PRO_WOOFSON)
+                        {
+                            atacante->balas[i].direccion = 0;  
+                            atacante->balas[i].velocidad = VECTOR_NULO;  // Se deja de mover
+                            atacante->balas[i].activa = false;  // Se desactiva la bala
+                            continue;
+                        }
+                    }
+                }
+
+                else
+                {
+                    if (atacante->bala_maximo_alcance)
+                    {
+                        if (atacante->balas[i].posicion.x - RADIO_AXIAL_X_BALA > ANCHO_VENTANA || atacante->balas[i].posicion.x + RADIO_AXIAL_X_BALA < 0)
+                        {
+                            atacante->balas[i].direccion = 0;  
+                            atacante->balas[i].velocidad = VECTOR_NULO;  // Se deja de mover
+                            atacante->balas[i].activa = false;  // Se desactiva la bala
+                            continue;
+                        }
+                    }
+
+                    else
+                    {
+                        if (fabs(atacante->balas[i].posicion.x - atacante->balas[i].posicion_inicial.x) > RANGO_BALA_WOOFSON)
+                        {
+                            atacante->balas[i].direccion = 0;  
+                            atacante->balas[i].velocidad = VECTOR_NULO;  // Se deja de mover
+                            atacante->balas[i].activa = false;  // Se desactiva la bala
+                            continue;
+                        }
+                    }
+                }
             }
 
             // Verificar colisión con Woofson   
@@ -907,7 +964,49 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
                     victima->danhado = true;
                     victima->tiempo_danho = 0;
 
-                    aplicar_danho(victima, atacante->tipo == EXTRATERRESTRE ? DANHO_BALA_EXTRATERRESTRE : DANHO_BALA_WOOFSON);
+                    if (atacante->tipo == WOOFSON)
+                    {
+                        if (nivel >= 4)
+                        {
+                            if (victima->tipo == EXTRATERRESTRE)
+                            {
+                                aplicar_danho(victima, 86);
+                            }
+
+                            else if (victima->tipo == DRAGON)
+                            {
+                                aplicar_danho(victima, 45);
+                            }
+
+                            else  // MONSTRUO
+                            {
+                                aplicar_danho(victima, 13);
+                            }
+                        }
+
+                        else
+                        {
+                            if (victima->tipo == EXTRATERRESTRE)
+                            {
+                                aplicar_danho(victima, 34);
+                            }
+
+                            else if (victima->tipo == DRAGON)
+                            {
+                                aplicar_danho(victima, 17);
+                            }
+
+                            else  // MONSTRUO
+                            {
+                                aplicar_danho(victima, 5);
+                            }
+                        }
+                    }
+
+                    else
+                    {
+                        aplicar_danho(victima, DANHO_BALA_EXTRATERRESTRE);
+                    }
 
                     if (atacante->tipo == WOOFSON)
                     {
@@ -974,7 +1073,15 @@ Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa
                 atacante->balas[i].activa = false;
             }
 
-            al_draw_filled_ellipse(atacante->balas[i].posicion.x, atacante->balas[i].posicion.y, RADIO_AXIAL_X_BALA, RADIO_AXIAL_Y_BALA, color);
+            if (atacante->tipo != WOOFSON || nivel < 4)
+            {
+                al_draw_filled_ellipse(atacante->balas[i].posicion.x, atacante->balas[i].posicion.y, RADIO_AXIAL_X_BALA, RADIO_AXIAL_Y_BALA, color);
+            }
+
+            else
+            {
+                al_draw_filled_ellipse(atacante->balas[i].posicion.x, atacante->balas[i].posicion.y, RADIO_AXIAL_X_BALA_PRO, RADIO_AXIAL_Y_BALA_PRO, color);
+            }
         }
     }
 }
@@ -1038,14 +1145,14 @@ bool puede_disparar_horizontalmente(Personaje enemigo, Personaje woofson, Mapa m
 }
 
 
-Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Mapa mapa)
+Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Mapa mapa, Natural nivel)
 {
     Natural i;
     float dx;
     
     if (hay_balas_activas(enemigo->balas))
     {
-        mover_balas_activas(enemigo, woofson, mapa, AZUL);
+        mover_balas_activas(enemigo, woofson, mapa, nivel, nivel != 4 ? VERDE : AMARILLO);
     }
     
     if (!enemigo->inicializado || enemigo->muerto)
@@ -1171,7 +1278,7 @@ Procedure lanzar_fuego(Personaje* dragon, Personaje* woofson, Imagen imagen_fueg
     dragon->fps_en_ataque++;
 }
 
-Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Personaje* woofson, Mapa mapa, Imagen fuego)
+Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Personaje* woofson, Mapa mapa, Natural nivel, Imagen fuego)
 {
     Natural i;
 
@@ -1186,7 +1293,7 @@ Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Persona
 
             else
             {
-                efectuar_disparo_de_enemigo(&enemigos[i], woofson, mapa);
+                efectuar_disparo_de_enemigo(&enemigos[i], woofson, mapa, nivel);
             }
         }
     }
@@ -1234,11 +1341,22 @@ bool woofson_puede_disparar(Personaje* woofson)
 }
 
 
-Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX_ENEMIGOS], Mapa mapa)
+Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX_ENEMIGOS], Mapa mapa, Natural nivel)
 {
     Natural i, nro_enemigos;
     
     nro_enemigos = nro_enemigos_activos(enemigos);
+
+    if (woofson->bala_maximo_alcance)
+    {
+        woofson->tiempo_restante_bala_maximo_alcance -= 1./FPS;
+
+        if (woofson->tiempo_restante_bala_maximo_alcance <= 0)
+        {
+            woofson->bala_maximo_alcance = false;
+            woofson->tiempo_restante_bala_maximo_alcance = 0;
+        }
+    }
     
     if (!(woofson->muerto && woofson->subvida_actual == 0 && woofson->nro_vidas == 0))  // Si no ha perdido aún, se mueven las balas
     {
@@ -1246,7 +1364,7 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
         {
             if (nro_enemigos == 0)
             {   
-                mover_balas_activas(woofson, &enemigos[0], mapa, NARANJO);
+                mover_balas_activas(woofson, &enemigos[0], mapa, nivel, NARANJO);
             }
 
             else
@@ -1255,7 +1373,7 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
                 {
                     if (enemigos[i].inicializado)
                     {
-                        mover_balas_activas(woofson, &enemigos[i], mapa, NARANJO);
+                        mover_balas_activas(woofson, &enemigos[i], mapa, nivel, NARANJO);
                     }
                 }
             }
@@ -1302,6 +1420,7 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
                 woofson->balas[i].posicion = (Vector) {woofson->bandera_dibujo == 0 ? woofson->posicion.x + woofson->ancho : woofson->posicion.x, 
                                                        woofson->posicion.y + 0.45f * woofson->alto};
 
+                woofson->balas[i].posicion_inicial = woofson->balas[i].posicion;
                 woofson->balas[i].direccion = woofson->direccion;
 
                 if (nro_enemigos == 0)
