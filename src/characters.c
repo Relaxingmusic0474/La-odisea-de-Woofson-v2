@@ -59,6 +59,7 @@ TipoPersonaje tipo_personaje(TipoFrame tipo)
  * @param personaje Puntero al personaje a inicializar.
  * @param tipo Tipo de personaje a inicializar.
  * @param frames Es el arreglo con los frames de todos los personajes.
+ * @param posicion_deseada Posición en la que se desea inicializar al personaje.
  * @param estatico Un booleano que determina si el personaje estará en una posición fija o no.
  */
 Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen* frames[TIPOS_PERSONAJES], Vector posicion_deseada, bool estatico)
@@ -169,7 +170,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
 
 
 /**
- * Función que inicializa la estructura de salto del personaje.
+ * @brief Función que inicializa la estructura de salto del personaje.
  * @param personaje Puntero al personaje cuya estructura de salto se va a inicializar.
  */
 Procedure inicializar_salto(Personaje* personaje)
@@ -379,8 +380,6 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
                 {
                     personaje->velocidad.x = teclas[ALLEGRO_KEY_LEFT] ? personaje->velocidad.x - ACELERACION_PERSONAJE 
                                                                       : personaje->velocidad.x + ACELERACION_PERSONAJE;   // Acelera el personaje al caminar dependiendo del sentido
-                
-                    //personaje->direccion = personaje->bandera_dibujo == 0 ? 1 : -1;
                 }
 
                 else
@@ -551,6 +550,7 @@ Procedure activar_caida_libre(Personaje* personaje)
 /**
  * Función que calcula la velocidad vertical del personaje en un instante de tiempo, teniendo en cuenta que v = dy/dt.
  * @param personaje Es el personaje del cual se quiere conocer su velocidad vertical.
+ * @param t El tiempo actual.
  * @return La velocidad vertical del personaje.
  */
 Entero velocidad_instantanea(Personaje personaje, float t)
@@ -667,6 +667,13 @@ Procedure morir(Personaje* personaje, Tecla* ultima_lateral, Etapa* etapa_actual
 }
 
 
+/**
+ * @brief Procedimiento que determina si Woofson gana, y si es así, deja la victoria de Woofson en true, y la de los enemigos en false.
+ * @param personaje Puntero a Woofson.
+ * @param enemigo Arreglo con los enemigos (que se rendirán si Woofson gana).
+ * @param puerta Es la puerta de paso de nivel.
+ * @param etapa_actual Es un puntero a la etapa actual del juego.
+ */
 Procedure determinar_victoria_woofson(Personaje* personaje, Personaje enemigos[MAX_ENEMIGOS], Puerta puerta, Etapa* etapa_actual)
 {
     Natural i;
@@ -1038,7 +1045,7 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
     
     if (hay_balas_activas(enemigo->balas))
     {
-        mover_balas_activas(enemigo, woofson, mapa, VERDE);
+        mover_balas_activas(enemigo, woofson, mapa, AZUL);
     }
     
     if (!enemigo->inicializado || enemigo->muerto)
@@ -1317,6 +1324,10 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
 }
 
 
+/**
+ * @brief Función que desactiva los enemigos para que se puedan inicializar de nuevo para otro nivel.
+ * @param enemigos El arreglo con los enemigos.
+ */
 Procedure desactivar_enemigos(Personaje enemigos[MAX_ENEMIGOS])
 {
     Natural i;

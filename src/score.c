@@ -1,3 +1,3 @@
 #include "score.h"
 
-Natural puntuacion = 0;
+Natural puntuacion = PUNTUACION_INICIAL;

@@ -367,10 +367,11 @@ Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actu
 
     cambiar_menu(&recursos->menu_actual, menu);
     inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, (Vector){ANCHO_VENTANA * 0.1, ALTURA_PISO - al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
+    teclas[ALLEGRO_KEY_RIGHT] = true;
     memset((bool *) teclas, false, sizeof(teclas));
     recursos->puerta.estado = CERRADA;
     recursos->palanca.estado = DESACTIVADA;
-    puntuacion = 0;
+    puntuacion = PUNTUACION_INICIAL;
     desactivar_enemigos(recursos->enemigos);
     *etapa_actual = etapa_deseada;
 
@@ -421,6 +422,8 @@ Procedure detener_efectos_de_sonido(Recursos* recursos)
  * @param opcion_clickeada Es el identificador de la opción que se clickea con el mouse (depende de eso la redirección será distinta).
  * @param etapa_actual Es el puntero a la etapa actual del juego (cambia al cambiar de menú).
  * @param nivel_actual Es el puntero al nivel actual del juego (en algunos casos cambia al cambiar de menú).
+ * @param ranking_a_mostrar Es el puntero al identificador del ranking que se debe mostrar (si no se debe mostrar ninguno, entonces es -1).
+ * @param tiempo_en_nivel Un puntero al tiempo que se lleva en el nivel actual.
  */
 Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual, Natural* ranking_a_mostrar, float* tiempo_en_nivel)//, Natural* ranking_a_mostrar)
 {
@@ -637,12 +640,24 @@ Procedure finalizar_menu(Menu* menu)
 }
 
 
+/** 
+ * @brief Función que (dibuja un rectángulo de cierto color.
+ * @param rectangulo La estructura del rectángulo que se quiere dibujar (contiene posición inicial y final).
+ * @param color Color del cual se desea dibujar el rectángulo.
+ */
 Procedure dibujar_rectangulo(Rectangulo rectangulo, ALLEGRO_COLOR color)
 {
     al_draw_filled_rectangle(rectangulo.pos_inicial.x, rectangulo.pos_inicial.y, rectangulo.pos_final.x, rectangulo.pos_final.y, color);
 }
 
 
+/**
+ * @brief Función que permite dibujar una imagen centrada en cierto porcentaje relativo a un rectángulo.
+ * @param imagen La imagen que se desea colocar.
+ * @param rectangulo El rectángulo sobre el cual se desea colocar la imagen.
+ * @param porcentaje_x El porcentaje en x relativo al rectángulo, en el cual se desea colocar la imagen.
+ * @param porcentaje_y El porcentaje en y relativo al rectángulo, en el cual se desea colocar la imagen.
+ */
 Procedure dibujar_imagen_en_rectangulo(Imagen imagen, Rectangulo rectangulo, float porcentaje_x, float porcentaje_y)
 {
     Vector posicion_dibujo;
@@ -765,13 +780,21 @@ Procedure mostrar_pantalla_datos(Personaje personaje, Municion municion, Imagen 
         al_draw_line(61.5/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO)+50, 62.0/100*ANCHO_VENTANA+75, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), ROJO, 4.0);
     }
     
+    if (fabs(floor(tiempo_en_nivel) - tiempo_en_nivel) < 1./FPS && (unsigned int) tiempo_en_nivel % 5 == 0)
+    {
+        if (puntuacion > 0)
+        {
+            puntuacion--;
+        }
+    }
+    
     dibujar_texto_en_rectangulo("MUNICIONES", RECTANGULO_DATOS, 64.5, 75.0, fuente_sec, NEGRO);
     dibujar_rectangulo_en_rectangulo(RECTANGULO_DATOS, alto_linea, 0, 70.0, 50.0, false, NEGRO);
     dibujar_texto_en_rectangulo("PUNTUACIÓN", RECTANGULO_DATOS, 75.0, 75.0, fuente_sec, NEGRO);
     sprintf(texto_puntuacion, "%hu", puntuacion);
     dibujar_texto_en_rectangulo(texto_puntuacion, RECTANGULO_DATOS, 75.0, 35.0, fuente, NEGRO);
-    dibujar_rectangulo_en_rectangulo(RECTANGULO_DATOS, alto_linea, 0, 80.0, 50.0, false, NEGRO);   
-
+    dibujar_rectangulo_en_rectangulo(RECTANGULO_DATOS, alto_linea, 0, 80.0, 50.0, false, NEGRO);
+    
     min = tiempo_en_nivel / 60;
     seg = (Natural) (tiempo_en_nivel) % 60;
 
@@ -810,6 +833,18 @@ Procedure mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, 
 }
 
 
+/**
+ * @brief Procedimiento que realiza toda la lógica que se debe cubrir al manejar un menú.
+ * @param recursos Estructura que contiene todos los recursos esenciales del juego.
+ * @param evento Evento auxiliar que se usa para manejar los clicks y todo eso.
+ * @param etapa_actual Puntero a la etapa actual (se modificará la etapa si se redirige el menú).
+ * @param nivel_actual Puntero al nivel actual del juego (el nivel podría cambiar en algunos casos).
+ * @param iteracion Iteración actual del juego.
+ * @param cambio_estado_procesado Es un puntero que se usa al pasar ese parámetro a la función dibujar mapa.
+ * @param ultima_tecla_lateral Puntero a la última tecla lateral (se usa para dibujar a Woofson).
+ * @param ranking_a_mostrar Puntero al ranking que se está mostrando actualmente.
+ * @param tiempo_en_nivel Tiempo actual en el nivel (puntero -> puede cambiar).
+ */
 Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_actual, Natural* nivel_actual, Natural iteracion, bool* cambio_estado_procesado, Tecla* ultima_tecla_lateral, Natural* ranking_a_mostrar, float* tiempo_en_nivel)
 {
     Menu menu_vacio = {0};

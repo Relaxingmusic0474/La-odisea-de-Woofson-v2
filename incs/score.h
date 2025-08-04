@@ -2,6 +2,7 @@
 #define SCORE_H
 
 #include "types.h"
+#include "macros.h"
 
 extern Natural puntuacion;
 

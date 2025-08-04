@@ -42,6 +42,7 @@
 #define MAX_FRAMES_ESPERA_WOOFSON 15
 #define MAX_FRAMES_ESPERA_RECARGA 240
 #define MAX_FRAMES_ESPERA_DRAGON 100
+#define PUNTUACION_INICIAL 30
 #define VELOCIDAD_BALA 9
 #define RADIO_AXIAL_X_BALA 6
 #define RADIO_AXIAL_Y_BALA 4
@@ -69,6 +70,7 @@
 #define CHARCO 10  // Otro tipo de trampa
 #define POCION 11  // Poción para aumentar la vida de Woofson
 #define MUNICION 12  // Para que Woofson recoja municiones cuando le falten
+#define POCION_RANGO_BALA 13  // Poción que servirá para aumentar el rango de bala de Woofson.
 
 // Macros para las caracteristicas del personaje
 #define VELOCIDAD_MAXIMA_PERSONAJE 8
