@@ -514,7 +514,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                                     recursos->enemigos[id_enemigo].bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;
                                 }
 
-                                mover_enemigo_dinamico(&recursos->enemigos[id_enemigo], mapa);
+                                mover_enemigo_dinamico(&recursos->enemigos[id_enemigo], *woofson, mapa);
                             }
 
                             if (!recursos->enemigos[id_enemigo].muerto)
@@ -557,7 +557,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                             recursos->enemigos[id_enemigo].bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;
                         }
 
-                        mover_enemigo_dinamico(&recursos->enemigos[id_enemigo], mapa);
+                        mover_enemigo_dinamico(&recursos->enemigos[id_enemigo], *woofson, mapa);
                     }
 
                     if (!recursos->enemigos[id_enemigo].muerto)
@@ -713,7 +713,48 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                     id_pocion_rango_bala++;
                 }
             }
-            
+         
+            if (mapa.mapa[i][j] == DUENDE)
+            {
+                if (i==mapa.nro_filas-1 || (i<mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i+1][j] == BLOQUE_RAYO)))
+                {
+                    if  (id_enemigo < MAX_ENEMIGOS)
+                    {
+                        if (!recursos->enemigos[id_enemigo].inicializado)
+                        {
+                            alto_enemigo = al_get_bitmap_height(recursos->frames[FRAME_LEPRECHAUN][0]);  // Polinomio de interpolación de Lagrange
+
+                            recursos->enemigos[id_enemigo].posicion_inicial.x = x1;
+                            recursos->enemigos[id_enemigo].posicion_inicial.y = y2 - alto_enemigo - 1;
+
+                            inicializar_personaje(&recursos->enemigos[id_enemigo], LEPRECHAUN, recursos->frames, 
+                                                  recursos->enemigos[id_enemigo].posicion_inicial, false);
+                        }                        
+
+                        else  // Si ya estaba inicializado
+                        {                            
+                            if (recursos->enemigos[id_enemigo].direccion == 1)
+                            {
+                                recursos->enemigos[id_enemigo].bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;
+                            }
+
+                            else
+                            {
+                                recursos->enemigos[id_enemigo].bandera_dibujo = 0;
+                            }
+
+                            mover_enemigo_dinamico(&recursos->enemigos[id_enemigo], *woofson, mapa);
+
+                            if (!recursos->enemigos[id_enemigo].muerto)
+                            {   
+                                dibujar_personaje(&recursos->enemigos[id_enemigo], 0, iteracion);
+                            }
+                        }
+                    }
+
+                    id_enemigo++;
+                }
+            }
         }
     }
 
@@ -873,6 +914,11 @@ Imagen* cargar_frames(TipoPersonaje tipo)
             strcpy(ruta_base, "assets/images/monster-frames/monstruo-");
             break;
 
+        case LEPRECHAUN:
+            cantidad_frames = NRO_FRAMES_LEPRECHAUN;
+            strcpy(ruta_base, "assets/images/leprechaun-frames/leprechaun-");
+            break;
+
         default:
             cantidad_frames = 0;
             return NULL;
@@ -945,7 +991,7 @@ Procedure destruir_frames(Imagen* frames, Natural cantidad_frames)
 Procedure destruir_todos_los_frames(Imagen* frames[TIPOS_PERSONAJES])
 {
     Natural i;
-    Natural nro_frames[TIPOS_PERSONAJES] = {NRO_FRAMES_WOOFSON, NRO_FRAMES_DRAGON, NRO_FRAMES_EXTRATERRESTRE, NRO_FRAMES_MONSTRUO};
+    Natural nro_frames[TIPOS_PERSONAJES] = {NRO_FRAMES_WOOFSON, NRO_FRAMES_DRAGON, NRO_FRAMES_EXTRATERRESTRE, NRO_FRAMES_MONSTRUO, NRO_FRAMES_LEPRECHAUN};
 
     for (i=0; i<TIPOS_PERSONAJES; i++)
     {

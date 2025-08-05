@@ -59,6 +59,7 @@
 #define NRO_FRAMES_DRAGON 10
 #define NRO_FRAMES_EXTRATERRESTRE 10
 #define NRO_FRAMES_MONSTRUO 13
+#define NRO_FRAMES_LEPRECHAUN 20
 
 // Macros para los elementos del mapa
 #define NADA 0  // Representa un espacio vacío en el mapa
@@ -75,6 +76,7 @@
 #define POCION 11  // Poción para aumentar la vida de Woofson
 #define MUNICION 12  // Para que Woofson recoja municiones cuando le falten
 #define POCION_RANGO_BALA 13  // Poción que servirá para aumentar el rango de bala de Woofson.
+#define DUENDE 14
 
 // Macros para las caracteristicas del personaje
 #define VELOCIDAD_MAXIMA_PERSONAJE 8
@@ -85,6 +87,7 @@
 #define VELOCIDAD_DRAGONES 2
 #define VELOCIDAD_EXTRATERRESTRES 3
 #define VELOCIDAD_MONSTRUO 7
+#define VELOCIDAD_LEPRECHAUN 4
 #define ACELERACION_ADREDE 5 // Aceleración adicional que se genera al presionar la tecla de abajo estando en caida libre
 #define IMPULSO_PERSONAJE 700  // Impulso de salto del personaje en px/s
 

@@ -7,6 +7,7 @@ enum tipoFrame
     FRAME_DRAGON,
     FRAME_EXTRATERRESTRE,
     FRAME_MONSTRUO,
+    FRAME_LEPRECHAUN,
     TIPOS_PERSONAJES,
 };
 
@@ -18,6 +19,7 @@ enum tipoPersonaje
     DRAGON = 'D',
     EXTRATERRESTRE = 'E',
     MONSTRUO = 'M',
+    LEPRECHAUN = 'L',
 };
 
 typedef enum tipoPersonaje TipoPersonaje;

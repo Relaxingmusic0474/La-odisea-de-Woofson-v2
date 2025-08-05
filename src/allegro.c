@@ -191,14 +191,6 @@ bool crear_recursos(Recursos* R)
     R->espina_actual.imagen_espina = R->espina;
     R->espina_actual.ancho = al_get_bitmap_width(R->espina);
     R->espina_actual.alto = al_get_bitmap_height(R->espina);
-
-    R->frames[FRAME_WOOFSON] = cargar_frames(WOOFSON);
-    
-    if (!R->frames[FRAME_WOOFSON])
-    {
-        printf("Error al cargar los frames de Woofson.\n");
-        return false;
-    }
     
     R->pje_principal.imagen_modo_muerte = al_load_bitmap("assets/images/muerte.png");
 

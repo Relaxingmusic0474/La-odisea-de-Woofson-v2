@@ -21,6 +21,9 @@ TipoFrame tipo_frame(TipoPersonaje tipo)
         case MONSTRUO:
             return FRAME_MONSTRUO;
 
+        case LEPRECHAUN:
+            return FRAME_LEPRECHAUN;
+
         default:
             return FRAME_WOOFSON;
     }
@@ -47,6 +50,9 @@ TipoPersonaje tipo_personaje(TipoFrame tipo)
         
         case FRAME_MONSTRUO:
             return MONSTRUO;
+        
+        case FRAME_LEPRECHAUN:
+            return LEPRECHAUN;
     
         default:
             return WOOFSON;
@@ -144,6 +150,19 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             personaje->velocidad.x = VELOCIDAD_MONSTRUO;
             personaje->velocidad.y = 0;  // Inicialmente no está en salto
             break;
+        
+        case LEPRECHAUN:
+            personaje->velocidad.x = VELOCIDAD_LEPRECHAUN;
+            personaje->velocidad.y = 0;
+            personaje->direccion = pow(-1, rand() % 2);
+            personaje->nro_vidas = 1;  // Tendrá una sola vida
+            personaje->subvida_actual = 100;
+            personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
+            personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
+            personaje->danhado = false;
+            personaje->tiempo_danho = 0;
+            inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
+            break;
     }
 
     for (i=0; i<MAX_BALAS; i++)
@@ -157,7 +176,6 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
 
     if (personaje->tipo == WOOFSON)
     {
-
         personaje->barra_vida = (BarraVida) {0};  // Woofson tendrá otro tipo de barra de vida que se manejará directamente desde la pantalla
     }
 
@@ -289,6 +307,19 @@ Procedure actualizar_frame(Personaje* personaje, ModoWoofson modo)
     else if (personaje->tipo == DRAGON)
     {
         personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_DRAGON;
+    }
+
+    else if (personaje->tipo == LEPRECHAUN)
+    {
+        if (modo == PELEA)
+        {
+            personaje->id_nro_frame = NRO_FRAMES_MOVIMIENTO + (personaje->id_nro_frame + 1) % NRO_FRAMES_PELEA;
+        }
+
+        else
+        {
+            personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_MOVIMIENTO;
+        }
     }
 
     if (personaje->frames[personaje->id_nro_frame])  // Verifica si hay un frame siguiente para evitar errores de acceso a memoria
@@ -458,8 +489,9 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 }
 
 
-Procedure mover_enemigo_dinamico(Personaje* enemigo, Mapa mapa)
+Procedure mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa mapa)
 {
+    ModoWoofson modo_leprechaun;
     float amplitud_dragon = 2;   
 
     if (enemigo->estatico || enemigo->muerto)  // No tiene sentido mover un enemigo estático o que ya murió
@@ -482,9 +514,21 @@ Procedure mover_enemigo_dinamico(Personaje* enemigo, Mapa mapa)
         }
     }
 
-    if (enemigo->fps_en_caminata % 8 == 0)
+    if (enemigo->tipo == LEPRECHAUN)
     {
-        actualizar_frame(enemigo, '\0');  // El modo es '\0' ya que da igual para los enemigos
+        if (enemigo->fps_en_caminata % 12 == 0)
+        {
+            modo_leprechaun = puede_disparar_horizontalmente(*enemigo, woofson, mapa) ? PELEA : CAMINATA;
+            actualizar_frame(enemigo, modo_leprechaun);
+        }
+    }
+
+    else
+    {
+        if (enemigo->fps_en_caminata % 8 == 0)
+        {
+            actualizar_frame(enemigo, '\0');  // El modo es '\0' ya que da igual para los enemigos
+        }
     }
 
     if (enemigo->tipo != DRAGON)
@@ -1126,12 +1170,12 @@ bool puede_disparar_horizontalmente(Personaje enemigo, Personaje woofson, Mapa m
 
     mirando_a_woofson = false;
 
-    if (enemigo.bandera_dibujo == ALLEGRO_FLIP_HORIZONTAL && woofson.posicion.x + woofson.ancho <= enemigo.posicion.x)
+    if (enemigo.bandera_dibujo == (enemigo.tipo == LEPRECHAUN ? 0 : ALLEGRO_FLIP_HORIZONTAL) && woofson.posicion.x + woofson.ancho <= enemigo.posicion.x)
     {
         mirando_a_woofson = true;
     }
 
-    else if (enemigo.bandera_dibujo == 0 && woofson.posicion.x >= enemigo.posicion.x + enemigo.ancho)
+    else if (enemigo.bandera_dibujo == (enemigo.tipo == LEPRECHAUN ? ALLEGRO_FLIP_HORIZONTAL : 0) && woofson.posicion.x >= enemigo.posicion.x + enemigo.ancho)
     {
         mirando_a_woofson = true;
     }
@@ -1289,6 +1333,11 @@ Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Persona
             if (enemigos[i].tipo == DRAGON)
             {
                 lanzar_fuego(&enemigos[i], woofson, fuego);
+            }
+
+            else if (enemigos[i].tipo == LEPRECHAUN)
+            {
+                // NADA
             }
 
             else

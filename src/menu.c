@@ -781,8 +781,8 @@ Procedure mostrar_pantalla_datos(Personaje personaje, Municion municion, Imagen 
         al_draw_tinted_scaled_bitmap(municion.imagen, AMARILLO, 0, 0, al_get_bitmap_width(municion.imagen), al_get_bitmap_height(municion.imagen),
                                      58.0/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), 75.0, 50.0, 0);
 
-        al_draw_line(61.5/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), 58.0/100*ANCHO_VENTANA+75, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO)+50, ROJO, 4.0);
-        al_draw_line(61.5/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO)+50, 58.0/100*ANCHO_VENTANA+75, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), ROJO, 4.0);
+        al_draw_line(58.0/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), 58.0/100*ANCHO_VENTANA+75, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO)+50, ROJO, 4.0);
+        al_draw_line(58.0/100*ANCHO_VENTANA, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO)+50, 58.0/100*ANCHO_VENTANA+75, ALTO_JUEGO+0.10*(ALTO_VENTANA-ALTO_JUEGO), ROJO, 4.0);
     }
     
     if (fabs(floor(tiempo_en_nivel) - tiempo_en_nivel) < 1./FPS && (unsigned int) tiempo_en_nivel % 5 == 0)
