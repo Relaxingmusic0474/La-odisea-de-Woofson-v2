@@ -687,7 +687,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
             {
                 if (i==mapa.nro_filas-1 || (i<mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i+1][j] == BLOQUE_RAYO)))
                 {
-                    if (id_pocion_rango_bala < MAX_POCIONES)
+                    if (id_pocion_rango_bala < MAX_POCIONES_RANGO_BALA)
                     {
                         if (!recursos->pociones_rango_bala[id_pocion_rango_bala].tomada)  // Si aun no ha sido tomada se dibuja
                         {
