@@ -166,7 +166,6 @@ bool crear_recursos(Recursos* R)
     char* textos_opciones_perder[] = {"Reintentar nivel", "Ir al menú principal"};
     char* textos_opciones_ranking[] = {"Volver atrás"};
     char ruta[40] = {'\0'};
-    //bool exito = false;
 
     if (!crear_recursos_allegro(R))
     {

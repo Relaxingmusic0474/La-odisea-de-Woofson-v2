@@ -416,14 +416,14 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
             if (mapa.mapa[i][j] == BLOQUE || mapa.mapa[i][j] == BLOQUE_RAYO)
             {
                 al_draw_scaled_bitmap(bloque_plateado, 0, 0, al_get_bitmap_width(bloque_plateado), al_get_bitmap_height(bloque_plateado), x1, y1, mapa.ancho_bloque, mapa.alto_bloque, 0);
+                
+                if (mapa.mapa[i][j] == BLOQUE_RAYO)
+                {
+                    al_draw_filled_circle((x1+x2)/2, (y1+y2)/2, RADIO_CIRCULO_ROJO, ROJO);
+                }
             }
 
-            if (mapa.mapa[i][j] == BLOQUE_RAYO)
-            {
-                al_draw_filled_circle((x1+x2)/2, (y1+y2)/2, RADIO_CIRCULO_ROJO, ROJO);
-            }
-
-            if (mapa.mapa[i][j] == ESPINA)
+            else if (mapa.mapa[i][j] == ESPINA)
             {
                 if (i == mapa.nro_filas-1 || (i < mapa.nro_filas-1 && mapa.mapa[i+1][j] == BLOQUE))
                 {
@@ -465,7 +465,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 }
             }
 
-            if (mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO || mapa.mapa[i][j] == EXTRATERRESTRE_DINAMICO || mapa.mapa[i][j] == _MONSTRUO)
+            else if (mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO || mapa.mapa[i][j] == EXTRATERRESTRE_DINAMICO || mapa.mapa[i][j] == _MONSTRUO)
             {
                 if (i==mapa.nro_filas-1 || (i<mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i+1][j] == BLOQUE_RAYO)))
                 {
@@ -528,7 +528,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 }
             }
 
-            if (mapa.mapa[i][j] == _DRAGON)
+            else if (mapa.mapa[i][j] == _DRAGON)
             {
                 if (id_enemigo < MAX_ENEMIGOS)
                 {
@@ -569,7 +569,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 id_enemigo++;
             }
 
-            if (mapa.mapa[i][j] == PUERTA)
+            else if (mapa.mapa[i][j] == PUERTA)
             {
                 if (recursos->palanca.estado == DESACTIVADA)
                 {
@@ -589,7 +589,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 al_draw_bitmap(recursos->puerta.imagen, recursos->puerta.posicion.x, recursos->puerta.posicion.y, j>mapa.nro_columnas/2 ? 0 : ALLEGRO_FLIP_HORIZONTAL);
             }
 
-            if (mapa.mapa[i][j] == PALANCA)
+            else if (mapa.mapa[i][j] == PALANCA)
             {
                 recursos->palanca.imagen = recursos->palancas[DESACTIVADA];
                 recursos->palanca.posicion = (Vector) {x1, y2-recursos->palanca.alto};
@@ -621,7 +621,12 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 al_draw_bitmap(recursos->palanca.imagen, recursos->palanca.posicion.x, recursos->palanca.posicion.y, 0);
             }
 
-            if (mapa.mapa[i][j] == POCION)
+            else if (mapa.mapa[i][j] == CHARCO)
+            {
+
+            }
+
+            else if (mapa.mapa[i][j] == POCION)
             {
                 if (i==mapa.nro_filas-1 || (i<mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i+1][j] == BLOQUE_RAYO)))
                 {
@@ -650,7 +655,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 id_pocion++;
             }
 
-            if (mapa.mapa[i][j] == MUNICION)
+            else if (mapa.mapa[i][j] == MUNICION)
             {
                 if (i==mapa.nro_filas-1 || (i<mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i+1][j] == BLOQUE_RAYO)))
                 {
@@ -683,7 +688,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 id_municion++;
             }
         
-            if (mapa.mapa[i][j] == POCION_RANGO_BALA)
+            else if (mapa.mapa[i][j] == POCION_RANGO_BALA)
             {
                 if (i==mapa.nro_filas-1 || (i<mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i+1][j] == BLOQUE_RAYO)))
                 {
@@ -714,7 +719,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 }
             }
          
-            if (mapa.mapa[i][j] == DUENDE)
+            else if (mapa.mapa[i][j] == DUENDE)
             {
                 if (i==mapa.nro_filas-1 || (i<mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i+1][j] == BLOQUE_RAYO)))
                 {
