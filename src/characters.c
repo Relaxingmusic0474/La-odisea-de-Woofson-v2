@@ -152,7 +152,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             break;
         
         case LEPRECHAUN:
-            personaje->velocidad.x = VELOCIDAD_LEPRECHAUN;
+            personaje->velocidad.x = MAX_VELOCIDAD_LEPRECHAUN;
             personaje->velocidad.y = 0;
             personaje->direccion = pow(-1, rand() % 2);
             personaje->nro_vidas = 1;  // Tendrá una sola vida
@@ -311,15 +311,7 @@ Procedure actualizar_frame(Personaje* personaje, ModoWoofson modo)
 
     else if (personaje->tipo == LEPRECHAUN)
     {
-        if (modo == PELEA)
-        {
-            personaje->id_nro_frame = NRO_FRAMES_MOVIMIENTO + (personaje->id_nro_frame + 1) % NRO_FRAMES_PELEA;
-        }
-
-        else
-        {
-            personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_MOVIMIENTO;
-        }
+        personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_LEPRECHAUN;
     }
 
     if (personaje->frames[personaje->id_nro_frame])  // Verifica si hay un frame siguiente para evitar errores de acceso a memoria
@@ -491,7 +483,9 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 
 Procedure mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa mapa)
 {
-    ModoWoofson modo_leprechaun;
+    Natural i, j, bloque_x1, bloque_x2, bloque_y1, bloque_y2;
+    float posicion_woofson, posicion_leprechaun;
+    bool obviar_pelea = false;
     float amplitud_dragon = 2;   
 
     if (enemigo->estatico || enemigo->muerto)  // No tiene sentido mover un enemigo estático o que ya murió
@@ -504,7 +498,10 @@ Procedure mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa map
         enemigo->direccion *= -1;
     }
 
-    enemigo->posicion.x += enemigo->velocidad.x * enemigo->direccion;
+    if (enemigo->tipo != LEPRECHAUN)
+    {
+        enemigo->posicion.x += enemigo->velocidad.x * enemigo->direccion;    
+    }
     
     if (enemigo->tipo == DRAGON)
     {
@@ -516,10 +513,85 @@ Procedure mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa map
 
     if (enemigo->tipo == LEPRECHAUN)
     {
-        if (enemigo->fps_en_caminata % 12 == 0)
+        enemigo->direccion = woofson.posicion.x >= enemigo->posicion.x ? 1 : -1;
+        enemigo->bandera_dibujo = enemigo->direccion == 1 ? ALLEGRO_FLIP_HORIZONTAL : 0;
+
+        if (woofson.posicion.x < enemigo->posicion.x)
         {
-            modo_leprechaun = puede_disparar_horizontalmente(*enemigo, woofson, mapa) ? PELEA : CAMINATA;
-            actualizar_frame(enemigo, modo_leprechaun);
+            posicion_woofson = woofson.posicion.x + woofson.ancho;
+            posicion_leprechaun = enemigo->posicion.x;
+        }
+
+        else
+        {
+            posicion_woofson = woofson.posicion.x;
+            posicion_leprechaun = enemigo->posicion.x + enemigo->ancho;
+        }
+        
+        if (fabs(enemigo->posicion.y + enemigo->alto - woofson.posicion.y - woofson.alto) < 10 && fabs(posicion_leprechaun - posicion_woofson) <= MAX_DISTANCIA_DETECTADA)
+        {
+            if (posicion_leprechaun > posicion_woofson)
+            {
+                bloque_x1 = posicion_woofson / mapa.ancho_bloque;
+                bloque_x2 = posicion_leprechaun / mapa.ancho_bloque;
+                bloque_y1 = fmin(enemigo->posicion.y, woofson.posicion.y) / mapa.alto_bloque;
+                bloque_y2 = fmax(enemigo->posicion.y + enemigo->alto, woofson.posicion.y + woofson.alto) / mapa.alto_bloque;
+            }
+
+            else
+            {
+                
+                if (posicion_leprechaun < posicion_woofson)
+                {
+                    bloque_x1 = posicion_leprechaun / mapa.ancho_bloque;
+                    bloque_x2 = posicion_woofson / mapa.ancho_bloque;
+                    bloque_y1 = fmin(enemigo->posicion.y, woofson.posicion.y) / mapa.alto_bloque;
+                    bloque_y2 = fmax(enemigo->posicion.y + enemigo->alto, woofson.posicion.y + woofson.alto) / mapa.alto_bloque;
+                }
+
+                else
+                {
+                    obviar_pelea = true;
+                }
+            }
+
+            if (!obviar_pelea)
+            {
+                for (i=bloque_y1; i<bloque_y2; i++)
+                {
+                    for (j=bloque_x1; j<bloque_x2; j++)
+                    {
+                        if (mapa.mapa[i][j] == BLOQUE || mapa.mapa[i][j] == BLOQUE_RAYO)
+                        {
+                            enemigo->imagen = enemigo->frames[0];
+                            enemigo->id_nro_frame = 0;
+                            obviar_pelea = true;
+                        }
+                    }
+                }
+            }
+    
+            if (obviar_pelea)
+            {
+                enemigo->imagen = enemigo->frames[0];
+                enemigo->id_nro_frame = 0;
+            }
+            
+            if (!obviar_pelea)
+            {
+                enemigo->posicion.x += enemigo->velocidad.x * log10f(1 + 9./MAX_DISTANCIA_DETECTADA * fabs(posicion_leprechaun - posicion_woofson)) * enemigo->direccion;
+
+                if (enemigo->fps_en_caminata % 30 == 0)
+                {
+                    actualizar_frame(enemigo, PELEA);
+                }
+            }
+        }
+
+        else
+        {
+            enemigo->imagen = enemigo->frames[0];
+            enemigo->id_nro_frame = 0;
         }
     }
 

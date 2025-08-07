@@ -23,6 +23,7 @@
 #define VECTOR_NULO (Vector) {0, 0}
 #define NRO_NIVELES 5
 #define MAX_DATOS 10
+#define MAX_ESPINAS 7
 #define MAX_POCIONES 2
 #define MAX_POCIONES_RANGO_BALA 3
 #define MAX_MUNICIONES 6
@@ -59,7 +60,7 @@
 #define NRO_FRAMES_DRAGON 10
 #define NRO_FRAMES_EXTRATERRESTRE 10
 #define NRO_FRAMES_MONSTRUO 13
-#define NRO_FRAMES_LEPRECHAUN 20
+#define NRO_FRAMES_LEPRECHAUN 10
 
 // Macros para los elementos del mapa
 #define NADA 0  // Representa un espacio vacío en el mapa
@@ -87,11 +88,12 @@
 #define VELOCIDAD_DRAGONES 2
 #define VELOCIDAD_EXTRATERRESTRES 3
 #define VELOCIDAD_MONSTRUO 7
-#define VELOCIDAD_LEPRECHAUN 4
+#define MAX_VELOCIDAD_LEPRECHAUN 1.3
 #define ACELERACION_ADREDE 5 // Aceleración adicional que se genera al presionar la tecla de abajo estando en caida libre
 #define IMPULSO_PERSONAJE 700  // Impulso de salto del personaje en px/s
 
 #define TIEMPO_MUERTE_ENEMIGO 5.0  // Durante 5 segundos el enemigo muerto no vuelve a aparecer
+#define MAX_DISTANCIA_DETECTADA (ANCHO_VENTANA/5)
 
 // Macros para los rayos
 #define MAX_RAYOS 8  // Número máximo de rayos que se pueden detectar en el mapa

@@ -386,14 +386,13 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
 Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, Natural iteracion)
 {
     Natural i=0, j=0, k=0;
-    Natural id_enemigo = 0, id_pocion = 0, id_municion = 0, id_pocion_rango_bala = 0;
+    Natural id_enemigo = 0, id_espina = 0, id_pocion = 0, id_municion = 0, id_pocion_rango_bala = 0;
     Entero flag = 0;
     Personaje* woofson = &recursos->pje_principal;
     Imagen bloque_cafe = recursos->bloques[0];
     Imagen bloque_plateado = recursos->bloques[1];
-    extern bool teclas[ALLEGRO_KEY_MAX];
     bool aux = false;
-    float ancho_espina, alto_espina, x1, y1, x2, y2;
+    float ancho_espina, alto_espina, x1, y1, x2, y2, dy, dx;
     float ancho_esc, alto_esc;
     float alto_enemigo;
     
@@ -425,43 +424,81 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
 
             else if (mapa.mapa[i][j] == ESPINA)
             {
-                if (i == mapa.nro_filas-1 || (i < mapa.nro_filas-1 && mapa.mapa[i+1][j] == BLOQUE))
+                if (id_espina < MAX_ESPINAS)
                 {
-                    flag = 0;
-                    aux = true;
-                }
+                    recursos->espinas[id_espina].alto = alto_esc;
+                    recursos->espinas[id_espina].ancho = ancho_esc;
 
-                else if (i == 0 || (i > 0 && mapa.mapa[i-1][j] == BLOQUE))
-                {
-                    flag = ALLEGRO_FLIP_VERTICAL;
-                    aux = true;
-                }
-
-                else
-                {
-                    if (j == 0 || (j > 0 && mapa.mapa[i][j-1] == BLOQUE))
+                    if (i == mapa.nro_filas-1 || (i < mapa.nro_filas-1 && mapa.mapa[i+1][j] == BLOQUE))
                     {
-                        al_draw_tinted_scaled_rotated_bitmap(recursos->espina, ROJO, ancho_espina/2, alto_espina/2, x1+alto_esc/2, (y1+y2)/2, 
-                                                             FACTOR_ESPINA, FACTOR_ESPINA, ALLEGRO_PI/2, 0);
+                        flag = 0;
+                        aux = true;
+                        recursos->espinas[id_espina].imagen_espina = recursos->espina;
+                        recursos->espinas[id_espina].direccion_espina = 'I';  // Espina inferior
+                        recursos->espinas[id_espina].posicion_vertice.x = (x1+x2)/2;
+                        recursos->espinas[id_espina].posicion_vertice.y = y2 - recursos->espinas[id_espina].alto;
+                        dy = recursos->espinas[id_espina].posicion_vertice.y - y2;
+                        dx = recursos->espinas[id_espina].ancho / 2;
+                    }
+
+                    else if (i == 0 || (i > 0 && mapa.mapa[i-1][j] == BLOQUE))
+                    {
+                        flag = ALLEGRO_FLIP_VERTICAL;
+                        aux = true;
+                        recursos->espinas[id_espina].imagen_espina = recursos->espina;
+                        recursos->espinas[id_espina].direccion_espina = 'S';  // Espina superior
+                        recursos->espinas[id_espina].posicion_vertice.x = (x1+x2)/2;
+                        recursos->espinas[id_espina].posicion_vertice.y = y1 + recursos->espinas[id_espina].alto;
+                        dy = recursos->espinas[id_espina].posicion_vertice.y - y1;
+                        dx = recursos->espinas[id_espina].ancho / 2;
                     }
 
                     else
                     {
-                        if (j == mapa.nro_columnas-1 || (j < mapa.nro_columnas-1 && mapa.mapa[i][j+1] == BLOQUE))
+                        if (j == 0 || (j > 0 && mapa.mapa[i][j-1] == BLOQUE))
                         {
-                            al_draw_tinted_scaled_rotated_bitmap(recursos->espina, ROJO, ancho_espina/2, alto_espina/2, x2-alto_esc/2, 
-                                                                 (y1+y2)/2, FACTOR_ESPINA, FACTOR_ESPINA, -ALLEGRO_PI/2, 0);
+                            recursos->espinas[id_espina].imagen_espina = recursos->espina;
+                            recursos->espinas[id_espina].direccion_espina = 'L';  // Espina izquierda (left)
+                            recursos->espinas[id_espina].posicion_vertice.x = x1 + recursos->espinas[id_espina].alto;
+                            recursos->espinas[id_espina].posicion_vertice.y = (y1+y2)/2;
+                            al_draw_tinted_scaled_rotated_bitmap(recursos->espinas[id_espina].imagen_espina, ROJO, ancho_espina/2, alto_espina/2, x1+alto_esc/2, (y1+y2)/2, 
+                                                                 FACTOR_ESPINA, FACTOR_ESPINA, ALLEGRO_PI/2, 0);
+                            dy = recursos->espinas[id_espina].posicion_vertice.y - recursos->espinas[id_espina].ancho / 2;
+                            dx = recursos->espinas[id_espina].alto;
                         }
+
+                        else
+                        {
+                            if (j == mapa.nro_columnas-1 || (j < mapa.nro_columnas-1 && mapa.mapa[i][j+1] == BLOQUE))
+                            {
+                                recursos->espinas[id_espina].imagen_espina = recursos->espina;
+                                recursos->espinas[id_espina].direccion_espina = 'R';  // Espina derecha (right)
+                                recursos->espinas[id_espina].posicion_vertice.x = x2 - recursos->espinas[id_espina].alto;
+                                recursos->espinas[id_espina].posicion_vertice.y = (y1+y2)/2;
+                                al_draw_tinted_scaled_rotated_bitmap(recursos->espinas[id_espina].imagen_espina, ROJO, ancho_espina/2, alto_espina/2, x2-alto_esc/2, 
+                                                                     (y1+y2)/2, FACTOR_ESPINA, FACTOR_ESPINA, -ALLEGRO_PI/2, 0);
+                                dy = recursos->espinas[id_espina].posicion_vertice.y - recursos->espinas[id_espina].ancho / 2;
+                                dx = recursos->espinas[id_espina].alto;
+                            }
+                        }
+
+                        aux = false;
                     }
 
-                    aux = false;
-                }
+                    if (aux)
+                    {
+                        al_draw_tinted_scaled_bitmap(recursos->espinas[id_espina].imagen_espina, ROJO, 0, 0, ancho_espina, alto_espina, 
+                                                    (x1+x2-ancho_esc)/2, y1+(mapa.alto_bloque-alto_esc)*(ALLEGRO_FLIP_VERTICAL-flag)/ALLEGRO_FLIP_VERTICAL, 
+                                                    ancho_esc, alto_esc, flag);
+                    }
 
-                if (aux)
-                {
-                    al_draw_tinted_scaled_bitmap(recursos->espina, ROJO, 0, 0, ancho_espina, alto_espina, 
-                                                 (x1+x2-ancho_esc)/2, y1+(mapa.alto_bloque-alto_esc)*(ALLEGRO_FLIP_VERTICAL-flag)/ALLEGRO_FLIP_VERTICAL, 
-                                                 ancho_esc, alto_esc, flag);
+                    recursos->espinas[id_espina].regresiones[0].m = dy/dx;
+                    recursos->espinas[id_espina].regresiones[1].m = -dy/dx;
+
+                    recursos->espinas[id_espina].regresiones[0].n = recursos->espinas[id_espina].posicion_vertice.y - recursos->espinas[id_espina].regresiones[0].m * recursos->espinas[id_espina].posicion_vertice.x;
+                    recursos->espinas[id_espina].regresiones[1].n = recursos->espinas[id_espina].posicion_vertice.y - recursos->espinas[id_espina].regresiones[1].m * recursos->espinas[id_espina].posicion_vertice.x;
+
+                    id_espina++;
                 }
             }
 

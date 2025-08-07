@@ -61,7 +61,6 @@ int main()
 
                 case ALLEGRO_EVENT_TIMER:
 
-                    al_clear_to_color(NEGRO);
                     mostrar_fondo_nivel(recursos.fondos, nivel_actual, iteracion);
                     tiempo_en_nivel += 1./FPS;
 

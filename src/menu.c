@@ -849,6 +849,8 @@ Procedure mostrar_pantalla_datos(Personaje personaje, Municion municion, Imagen 
 
 Procedure mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, Natural iteracion)
 {
+    al_clear_to_color(NEGRO);
+
     if (nivel_actual == 1)  // Nivel 1 no tiene fondo
     {
         determinar_color_pantalla(iteracion);

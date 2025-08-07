@@ -184,12 +184,6 @@ bool crear_recursos(Recursos* R)
         printf("Error al cargar la imagen de la espina.\n");
         return false;
     }
-
-    R->espina_actual = (Espina) {0};
-
-    R->espina_actual.imagen_espina = R->espina;
-    R->espina_actual.ancho = al_get_bitmap_width(R->espina);
-    R->espina_actual.alto = al_get_bitmap_height(R->espina);
     
     R->pje_principal.imagen_modo_muerte = al_load_bitmap("assets/images/muerte.png");
 

@@ -241,8 +241,6 @@ struct municion
     bool tomada;
 };
 
-
-
 struct datos
 {
     char nombre[LARGO];
@@ -284,7 +282,7 @@ struct recursos
     Rayo rayos[NRO_NIVELES][MAX_RAYOS];  // Rayos por nivel
     Natural cantidad_rayos[NRO_NIVELES];
     EfectoSonido* sonido_rayo;  // Efecto de sonido del rayo
-    Espina espina_actual;  // POSIBLEMENTE QUITE LAS ESPINAS
+    Espina espinas[MAX_ESPINAS];
     Imagen fondos[NRO_NIVELES];
     Imagen fondo_menu_principal;
     Imagen fondo_menu_niveles;

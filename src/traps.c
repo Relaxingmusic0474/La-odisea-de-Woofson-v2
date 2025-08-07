@@ -373,6 +373,11 @@ Procedure actualizar_rayos(Rayo rayos[MAX_RAYOS], Natural cantidad, Personaje pe
     }
 }
 
+Procedure detectar_si_personaje_en_zona_de_espina(Personaje* personaje, Espina espina[MAX_ESPINAS])
+{
+    
+}
+
 /*
 bool hay_hitbox_con_espina(Personaje* personaje, Mapa mapa, Espina* espina_detectada)
 {
