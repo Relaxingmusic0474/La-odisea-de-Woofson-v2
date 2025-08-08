@@ -18,6 +18,7 @@ bool linea_de_vision_libre(Rayo, Personaje, Mapa);
 bool personaje_activa_rayo(Rayo rayo, Personaje personaje, Mapa);
 Procedure actualizar_rayo(Rayo*, Natural, Personaje, Mapa);
 Procedure actualizar_rayos(Rayo [MAX_RAYOS], Natural, Personaje, Mapa);
-bool hay_hitbox_con_espina(Personaje*, Mapa, Espina*);
+Procedure detectar_si_personaje_en_zona_de_espina(Personaje* personaje, Espina espinas[MAX_ESPINAS]);
+//bool hay_hitbox_con_espina(Personaje*, Mapa, Espina*);
 
 #endif // TRAPS_H

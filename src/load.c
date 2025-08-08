@@ -428,6 +428,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 {
                     recursos->espinas[id_espina].alto = alto_esc;
                     recursos->espinas[id_espina].ancho = ancho_esc;
+                    recursos->espinas[id_espina].activa = true;
 
                     if (i == mapa.nro_filas-1 || (i < mapa.nro_filas-1 && mapa.mapa[i+1][j] == BLOQUE))
                     {

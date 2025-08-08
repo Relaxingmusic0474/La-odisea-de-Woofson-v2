@@ -204,6 +204,7 @@ struct regresionLineal
 struct espina
 {
     Imagen imagen_espina;
+    bool activa;
     float ancho;
     float alto;
     RegresionLineal regresiones[NRO_REGRESIONES];  // Las espinas son triangulares, así que se pueden representar mediante dos regresiones lineales

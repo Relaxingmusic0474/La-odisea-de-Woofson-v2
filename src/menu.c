@@ -390,6 +390,11 @@ Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actu
         recursos->municiones[i].tomada = false;
     }
 
+    for (i=0; i<MAX_ESPINAS; i++)
+    {
+        recursos->espinas[i].activa = false;
+    }
+
     *tiempo_en_nivel = 0;
 }
 
@@ -583,6 +588,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                     if (*nivel_actual != NRO_NIVELES)
                     {
                         resetear_estado_juego(recursos, menu_vacio, etapa_actual, (*nivel_actual-1)+1, tiempo_en_nivel);
+                        detener_efectos_de_sonido(recursos);
                         *nivel_actual = *nivel_actual + 1;
                     }
                     
