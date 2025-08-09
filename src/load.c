@@ -380,19 +380,22 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
 
 
 /**
- * Función que dibuja el mapa en la ventana.
+ * @brief Función que dibuja el mapa en la ventana.
  * @param mapa Es el mapa que se desea dibujar.
+ * @param recursos Es el puntero a la estructura recursos del juego (que contiene lo esencial).
+ * @param cambio_estado_procesado Es un puntero que detecta un cambio de estado en la puerta o la palanca.
+ * @param iteracion Es la iteración actual del juego.
  */
 Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, Natural iteracion)
 {
     Natural i=0, j=0, k=0;
-    Natural id_enemigo = 0, id_espina = 0, id_pocion = 0, id_municion = 0, id_pocion_rango_bala = 0;
+    Natural id_enemigo = 0, id_espina = 0, id_charco = 0, id_pocion = 0, id_municion = 0, id_pocion_rango_bala = 0;
     Entero flag = 0;
     Personaje* woofson = &recursos->pje_principal;
     Imagen bloque_cafe = recursos->bloques[0];
     Imagen bloque_plateado = recursos->bloques[1];
     bool aux = false;
-    float ancho_espina, alto_espina, x1, y1, x2, y2, dy, dx;
+    float ancho_espina, alto_espina, x1, y1, x2, y2, dy=0, dx=0;
     float ancho_esc, alto_esc;
     float alto_enemigo;
     
@@ -422,7 +425,71 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 }
             }
 
-            else if (mapa.mapa[i][j] == ESPINA)
+            else if (mapa.mapa[i][j] == PUERTA)
+            {
+                if (recursos->palanca.estado == DESACTIVADA)
+                {
+                    recursos->puerta.imagen = recursos->puertas[CERRADA];
+                    recursos->puerta.estado = CERRADA;
+                }
+
+                else
+                {
+                    recursos->puerta.imagen = recursos->puertas[ABIERTA];
+                    recursos->puerta.estado = ABIERTA;
+                }
+
+                recursos->puerta.alto = al_get_bitmap_height(recursos->puerta.imagen);
+                recursos->puerta.ancho = al_get_bitmap_width(recursos->puerta.imagen);
+                recursos->puerta.posicion = (Vector) {x1, y2-recursos->puerta.alto+15};
+                al_draw_bitmap(recursos->puerta.imagen, recursos->puerta.posicion.x, recursos->puerta.posicion.y, j>mapa.nro_columnas/2 ? 0 : ALLEGRO_FLIP_HORIZONTAL);
+            }
+
+            else if (mapa.mapa[i][j] == PALANCA)
+            {
+                recursos->palanca.imagen = recursos->palancas[DESACTIVADA];
+                recursos->palanca.posicion = (Vector) {x1, y2-recursos->palanca.alto};
+                recursos->palanca.alto = al_get_bitmap_height(recursos->palanca.imagen);
+                recursos->palanca.ancho = al_get_bitmap_width(recursos->palanca.imagen);
+
+                if (woofson->posicion.x + woofson->ancho >= recursos->palanca.posicion.x && woofson->posicion.y + woofson->alto >= recursos->palanca.posicion.y &&
+                    woofson->posicion.x < recursos->palanca.posicion.x + recursos->palanca.ancho && woofson->posicion.y < recursos->palanca.posicion.y + recursos->palanca.alto)
+                {
+                    if (teclas[ALLEGRO_KEY_E])
+                    {
+                        if (!(*cambio_estado_procesado))
+                        {
+                            *cambio_estado_procesado = true;
+                            recursos->palanca.estado = recursos->palanca.estado == ACTIVADA ? DESACTIVADA : ACTIVADA;
+                            recursos->palanca.imagen = recursos->palancas[recursos->palanca.estado];
+                            recursos->palanca.alto = al_get_bitmap_height(recursos->palanca.imagen);
+                            recursos->palanca.ancho = al_get_bitmap_width(recursos->palanca.imagen);
+                        }
+                    }
+
+                    else
+                    {
+                        *cambio_estado_procesado = false;
+                    }
+                }
+
+                recursos->palanca.imagen = recursos->palancas[recursos->palanca.estado];
+                al_draw_bitmap(recursos->palanca.imagen, recursos->palanca.posicion.x, recursos->palanca.posicion.y, 0);
+            }
+        }
+    }
+
+    for (i=0; i<mapa.nro_filas; i++)
+    {
+        for (j=0; j<mapa.nro_columnas; j++)
+        {
+            x1 = j*mapa.ancho_bloque;
+            y1 = i*mapa.alto_bloque;
+
+            x2 = (j+1)*mapa.ancho_bloque;
+            y2 = (i+1)*mapa.alto_bloque;
+
+            if (mapa.mapa[i][j] == ESPINA)
             {
                 if (id_espina < MAX_ESPINAS)
                 {
@@ -607,61 +674,23 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 id_enemigo++;
             }
 
-            else if (mapa.mapa[i][j] == PUERTA)
-            {
-                if (recursos->palanca.estado == DESACTIVADA)
-                {
-                    recursos->puerta.imagen = recursos->puertas[CERRADA];
-                    recursos->puerta.estado = CERRADA;
-                }
-
-                else
-                {
-                    recursos->puerta.imagen = recursos->puertas[ABIERTA];
-                    recursos->puerta.estado = ABIERTA;
-                }
-
-                recursos->puerta.alto = al_get_bitmap_height(recursos->puerta.imagen);
-                recursos->puerta.ancho = al_get_bitmap_width(recursos->puerta.imagen);
-                recursos->puerta.posicion = (Vector) {x1, y2-recursos->puerta.alto+15};
-                al_draw_bitmap(recursos->puerta.imagen, recursos->puerta.posicion.x, recursos->puerta.posicion.y, j>mapa.nro_columnas/2 ? 0 : ALLEGRO_FLIP_HORIZONTAL);
-            }
-
-            else if (mapa.mapa[i][j] == PALANCA)
-            {
-                recursos->palanca.imagen = recursos->palancas[DESACTIVADA];
-                recursos->palanca.posicion = (Vector) {x1, y2-recursos->palanca.alto};
-                recursos->palanca.alto = al_get_bitmap_height(recursos->palanca.imagen);
-                recursos->palanca.ancho = al_get_bitmap_width(recursos->palanca.imagen);
-
-                if (woofson->posicion.x + woofson->ancho >= recursos->palanca.posicion.x && woofson->posicion.y + woofson->alto >= recursos->palanca.posicion.y &&
-                    woofson->posicion.x < recursos->palanca.posicion.x + recursos->palanca.ancho && woofson->posicion.y < recursos->palanca.posicion.y + recursos->palanca.alto)
-                {
-                    if (teclas[ALLEGRO_KEY_E])
-                    {
-                        if (!(*cambio_estado_procesado))
-                        {
-                            *cambio_estado_procesado = true;
-                            recursos->palanca.estado = recursos->palanca.estado == ACTIVADA ? DESACTIVADA : ACTIVADA;
-                            recursos->palanca.imagen = recursos->palancas[recursos->palanca.estado];
-                            recursos->palanca.alto = al_get_bitmap_height(recursos->palanca.imagen);
-                            recursos->palanca.ancho = al_get_bitmap_width(recursos->palanca.imagen);
-                        }
-                    }
-
-                    else
-                    {
-                        *cambio_estado_procesado = false;
-                    }
-                }
-
-                recursos->palanca.imagen = recursos->palancas[recursos->palanca.estado];
-                al_draw_bitmap(recursos->palanca.imagen, recursos->palanca.posicion.x, recursos->palanca.posicion.y, 0);
-            }
-
             else if (mapa.mapa[i][j] == CHARCO)
             {
+                if (i == mapa.nro_filas-1 || (i < mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i][j] == BLOQUE_RAYO)))
+                {
+                    if (id_charco < MAX_CHARCOS)
+                    {
+                        recursos->charcos[id_charco].imagen = recursos->charco;
+                        recursos->charcos[id_charco].activo = true;
+                        recursos->charcos[id_charco].alto = al_get_bitmap_height(recursos->charco);
+                        recursos->charcos[id_charco].ancho = al_get_bitmap_width(recursos->charco);
+                        recursos->charcos[id_charco].posicion = (Vector) {x1, y2};
+                        al_draw_tinted_scaled_bitmap(recursos->charco, VERDE, 0, 0, recursos->charcos[id_charco].ancho, recursos->charcos[id_charco].alto,
+                                                     recursos->charcos[id_charco].posicion.x, recursos->charcos[id_charco].posicion.y, mapa.ancho_bloque, 2*recursos->charcos[id_charco].alto, 0);    
+                    }
 
+                    id_charco++;
+                }
             }
 
             else if (mapa.mapa[i][j] == POCION)

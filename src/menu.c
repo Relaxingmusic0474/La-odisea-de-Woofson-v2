@@ -395,6 +395,11 @@ Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actu
         recursos->espinas[i].activa = false;
     }
 
+    for (i=0; i<MAX_CHARCOS; i++)
+    {
+        recursos->charcos[i].activo = false;
+    }
+
     *tiempo_en_nivel = 0;
 }
 
@@ -438,6 +443,7 @@ Procedure detener_efectos_de_sonido(Recursos* recursos)
 Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual, Natural* ranking_a_mostrar, float* tiempo_en_nivel)//, Natural* ranking_a_mostrar)
 {
     Menu menu_vacio = {0};
+    Natural nivel_anterior = 0;
     char nombre[LARGO] = {'\0'};  // Para entrar al ranking
 
     if (*etapa_actual == MENU_PRINCIPAL)
@@ -585,6 +591,8 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
             {
                 if (opcion_clickeada == 2)
                 {
+                    nivel_anterior = *nivel_actual;  
+                    
                     if (*nivel_actual != NRO_NIVELES)
                     {
                         resetear_estado_juego(recursos, menu_vacio, etapa_actual, (*nivel_actual-1)+1, tiempo_en_nivel);
@@ -602,14 +610,12 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
                         recursos->pje_principal.bala_recargable = true;
                     }
 
-                    else
+                    if (nivel_anterior != NRO_NIVELES)
                     {
-                        if (*nivel_actual != NRO_NIVELES)
-                        {
-                            al_set_sample_instance_position(recursos->musica_actual->instancia, 0); // La reinicia
-                            al_play_sample_instance(recursos->musica_actual->instancia);  
-                        }
+                        al_set_sample_instance_position(recursos->musica_actual->instancia, 0); // La reinicia
+                        al_play_sample_instance(recursos->musica_actual->instancia);
                     }
+                   
                 }
             }
         }

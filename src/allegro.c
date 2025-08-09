@@ -184,6 +184,14 @@ bool crear_recursos(Recursos* R)
         printf("Error al cargar la imagen de la espina.\n");
         return false;
     }
+
+    R->charco = al_load_bitmap("assets/images/charco.png");
+
+    if (!R->charco)
+    {
+        printf("Error al cargar la imagen del charco.\n");
+        return false;
+    }
     
     R->pje_principal.imagen_modo_muerte = al_load_bitmap("assets/images/muerte.png");
 
@@ -643,6 +651,12 @@ Procedure finalizar_allegro(Recursos* R)
     }
     
     destruir_todos_los_frames(R->frames);
+
+    if (R->charco != NULL)
+    {
+        al_destroy_bitmap(R->charco);
+        R->charco = NULL;
+    }
 
     if (R->espina != NULL)
     {

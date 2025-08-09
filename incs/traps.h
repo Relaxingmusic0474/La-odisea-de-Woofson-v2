@@ -19,6 +19,7 @@ bool personaje_activa_rayo(Rayo rayo, Personaje personaje, Mapa);
 Procedure actualizar_rayo(Rayo*, Natural, Personaje, Mapa);
 Procedure actualizar_rayos(Rayo [MAX_RAYOS], Natural, Personaje, Mapa);
 Procedure detectar_si_personaje_en_zona_de_espina(Personaje* personaje, Espina espinas[MAX_ESPINAS]);
+Procedure detectar_si_personaje_en_zona_de_veneno(Personaje* personaje, Charco charcos[MAX_CHARCOS]);
 //bool hay_hitbox_con_espina(Personaje*, Mapa, Espina*);
 
 #endif // TRAPS_H

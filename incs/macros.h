@@ -24,6 +24,7 @@
 #define NRO_NIVELES 5
 #define MAX_DATOS 10
 #define MAX_ESPINAS 12
+#define MAX_CHARCOS 7
 #define MAX_POCIONES 2
 #define MAX_POCIONES_RANGO_BALA 3
 #define MAX_MUNICIONES 6
@@ -111,7 +112,7 @@
 // Macros para las espinas
 #define NRO_REGRESIONES 2
 #define FACTOR_ESPINA 0.5
-#define DANHO_ESPINA 17
+#define DANHO_ESPINA 63
 
 // Macro que define la cantidad de vidas que tendrá el personaje inicialmente
 #define VIDAS_INICIALES 3

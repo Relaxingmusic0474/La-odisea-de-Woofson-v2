@@ -23,6 +23,7 @@ typedef struct efectoSonido EfectoSonido;
 typedef struct rayo Rayo;
 typedef struct regresionLineal RegresionLineal;
 typedef struct espina Espina;
+typedef struct charco Charco;
 typedef struct palanca Palanca;
 typedef struct puerta Puerta;
 typedef struct pocion Pocion;
@@ -79,17 +80,6 @@ struct bala
     bool activa;
     bool disponible;
     float frames_para_disponibilidad;  // Este campo solo cobra sentido si es que las balas son recargables con el tiempo (personaje->bala_recargable == true)
-};
-
-union formaAtaque
-{
-    Bala balas[10];
-    // Otra para cuerpo a cuerpo
-};
-
-struct arma
-{
-    FormaAtaque ataque;
 };
 
 struct fuego
@@ -212,6 +202,15 @@ struct espina
     char direccion_espina;  // Si la espina es 'I' (inferior: está abajo y hay que saltarla), 'S' (superior), 'L' (izquierda: left) o 'R' (derecha: right)
 };
 
+struct charco
+{
+    Imagen imagen;
+    Vector posicion;
+    float alto;
+    float ancho;
+    bool activo;
+};
+
 struct palanca
 {
     Vector posicion;
@@ -280,10 +279,12 @@ struct recursos
     Imagen vida;
     Imagen bloques[NRO_BLOQUES];
     Imagen espina;
+    Espina espinas[MAX_ESPINAS];
     Rayo rayos[NRO_NIVELES][MAX_RAYOS];  // Rayos por nivel
     Natural cantidad_rayos[NRO_NIVELES];
     EfectoSonido* sonido_rayo;  // Efecto de sonido del rayo
-    Espina espinas[MAX_ESPINAS];
+    Imagen charco;
+    Charco charcos[MAX_CHARCOS];
     Imagen fondos[NRO_NIVELES];
     Imagen fondo_menu_principal;
     Imagen fondo_menu_niveles;

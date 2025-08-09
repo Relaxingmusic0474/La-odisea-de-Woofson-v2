@@ -458,3 +458,27 @@ Procedure detectar_si_personaje_en_zona_de_espina(Personaje* personaje, Espina e
         }
     }
 }
+
+
+Procedure detectar_si_personaje_en_zona_de_veneno(Personaje* personaje, Charco charcos[MAX_CHARCOS])
+{
+    Natural i;
+
+    for (i=0; i<MAX_CHARCOS; i++)
+    {
+        if (charcos[i].activo)
+        {
+            if (personaje->posicion.x + personaje->ancho > charcos[i].posicion.x && personaje->posicion.x < charcos[i].posicion.x + charcos[i].ancho)
+            {
+                if (personaje->posicion.y + personaje->alto == charcos[i].posicion.y)
+                {
+                    if (!personaje->danhado)
+                    {
+                        personaje->danhado = true;
+                        aplicar_danho(personaje, 100);
+                    }
+                }
+            }
+        }
+    }
+}
