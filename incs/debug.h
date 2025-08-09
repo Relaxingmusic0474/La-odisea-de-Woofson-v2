@@ -2,6 +2,8 @@
 #define DEBUG_H
 
 #include "allegro.h"
+#include "stdlib.h"
+#include "time.h"
 #include "enums.h"
 
 Procedure mostrar_mapa(Mapa);
@@ -12,5 +14,6 @@ Procedure debug_rayo_personaje(Rayo*, Personaje*);
 Procedure imprimir_datos_rayos(Rayo [MAX_RAYOS], Natural);
 Procedure imprimir_posicion_balas(Bala [MAX_BALAS]);
 Procedure mostrar_estados_actuales(Etapa, Natural);
+Procedure imprimir_posicion_charcos(Charco [MAX_CHARCOS]);
 
 #endif  // DEBUG_H

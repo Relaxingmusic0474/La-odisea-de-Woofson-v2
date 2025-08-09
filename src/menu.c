@@ -400,6 +400,9 @@ Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actu
         recursos->charcos[i].activo = false;
     }
 
+    recursos->estrella.activa = false;
+    recursos->estrella.tomada = false;
+
     *tiempo_en_nivel = 0;
 }
 

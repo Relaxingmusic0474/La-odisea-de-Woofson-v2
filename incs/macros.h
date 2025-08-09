@@ -79,9 +79,10 @@
 #define MUNICION 12  // Para que Woofson recoja municiones cuando le falten
 #define POCION_RANGO_BALA 13  // Poción que servirá para aumentar el rango de bala de Woofson.
 #define DUENDE 14
+#define ESTRELLA 15
 
 // Macros para las caracteristicas del personaje
-#define VELOCIDAD_MAXIMA_PERSONAJE 8
+#define VELOCIDAD_MAXIMA_PERSONAJE 6.5
 #define MAX_TIEMPO_INMUNE_WOOFSON 1.5  // Tiempo en que Woofson no puede recibir un daño adicional
 #define MAX_TIEMPO_INMUNE_ENEMIGO 1.0
 #define TIEMPO_MUERTE 2.0  // Tiempo que se tomará Woofson en morir, para volver a comenzar desde su posicion inicial
@@ -91,7 +92,7 @@
 #define VELOCIDAD_MONSTRUO 7
 #define MAX_VELOCIDAD_LEPRECHAUN 1.3
 #define ACELERACION_ADREDE 5 // Aceleración adicional que se genera al presionar la tecla de abajo estando en caida libre
-#define IMPULSO_PERSONAJE 700  // Impulso de salto del personaje en px/s
+#define IMPULSO_PERSONAJE 675  // Impulso de salto del personaje en px/s
 
 #define TIEMPO_MUERTE_ENEMIGO 5.0  // Durante 5 segundos el enemigo muerto no vuelve a aparecer
 #define MAX_DISTANCIA_DETECTADA (ANCHO_VENTANA/5)
@@ -114,11 +115,13 @@
 #define FACTOR_ESPINA 0.5
 #define DANHO_ESPINA 63
 
+#define PUNTAJE_ESTRELLA 15
+
 // Macro que define la cantidad de vidas que tendrá el personaje inicialmente
 #define VIDAS_INICIALES 3
 
 // Macros para cargar fuentes de distinto tamaño
-#define NORMAL 20
+#define NORMAL 16
 #define GRANDE 24
 #define GIGANTE 36
 

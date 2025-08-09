@@ -398,6 +398,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
     float ancho_espina, alto_espina, x1, y1, x2, y2, dy=0, dx=0;
     float ancho_esc, alto_esc;
     float alto_enemigo;
+    char texto_estrella[4] = {'\0'};
     
     ancho_espina = al_get_bitmap_width(recursos->espina);
     alto_espina = al_get_bitmap_height(recursos->espina);
@@ -405,6 +406,11 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
     ancho_esc = ancho_espina * FACTOR_ESPINA;
     alto_esc = alto_espina * FACTOR_ESPINA;
     
+    for (i=0; i<mapa.nro_columnas; i++)
+    {
+        al_draw_bitmap(bloque_cafe, i*mapa.ancho_bloque, ALTURA_PISO, 0);
+    }
+
     for (i=0; i<mapa.nro_filas; i++)
     {
         for (j=0; j<mapa.nro_columnas; j++)
@@ -529,7 +535,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                             recursos->espinas[id_espina].direccion_espina = 'L';  // Espina izquierda (left)
                             recursos->espinas[id_espina].posicion_vertice.x = x1 + recursos->espinas[id_espina].alto;
                             recursos->espinas[id_espina].posicion_vertice.y = (y1+y2)/2;
-                            al_draw_tinted_scaled_rotated_bitmap(recursos->espinas[id_espina].imagen_espina, ROJO, ancho_espina/2, alto_espina/2, x1+alto_esc/2, (y1+y2)/2, 
+                            al_draw_tinted_scaled_rotated_bitmap(recursos->espinas[id_espina].imagen_espina, mapa.mapa == recursos->mapas[NIVEL3].mapa ? VERDE : ROJO, ancho_espina/2, alto_espina/2, x1+alto_esc/2, (y1+y2)/2, 
                                                                  FACTOR_ESPINA, FACTOR_ESPINA, ALLEGRO_PI/2, 0);
                             dy = recursos->espinas[id_espina].posicion_vertice.y - recursos->espinas[id_espina].ancho / 2;
                             dx = recursos->espinas[id_espina].alto;
@@ -543,7 +549,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                                 recursos->espinas[id_espina].direccion_espina = 'R';  // Espina derecha (right)
                                 recursos->espinas[id_espina].posicion_vertice.x = x2 - recursos->espinas[id_espina].alto;
                                 recursos->espinas[id_espina].posicion_vertice.y = (y1+y2)/2;
-                                al_draw_tinted_scaled_rotated_bitmap(recursos->espinas[id_espina].imagen_espina, ROJO, ancho_espina/2, alto_espina/2, x2-alto_esc/2, 
+                                al_draw_tinted_scaled_rotated_bitmap(recursos->espinas[id_espina].imagen_espina, mapa.mapa == recursos->mapas[NIVEL3].mapa ? VERDE : ROJO, ancho_espina/2, alto_espina/2, x2-alto_esc/2, 
                                                                      (y1+y2)/2, FACTOR_ESPINA, FACTOR_ESPINA, -ALLEGRO_PI/2, 0);
                                 dy = recursos->espinas[id_espina].posicion_vertice.y - recursos->espinas[id_espina].ancho / 2;
                                 dx = recursos->espinas[id_espina].alto;
@@ -555,7 +561,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
 
                     if (aux)
                     {
-                        al_draw_tinted_scaled_bitmap(recursos->espinas[id_espina].imagen_espina, ROJO, 0, 0, ancho_espina, alto_espina, 
+                        al_draw_tinted_scaled_bitmap(recursos->espinas[id_espina].imagen_espina, mapa.mapa == recursos->mapas[NIVEL3].mapa ? VERDE : ROJO, 0, 0, ancho_espina, alto_espina, 
                                                     (x1+x2-ancho_esc)/2, y1+(mapa.alto_bloque-alto_esc)*(ALLEGRO_FLIP_VERTICAL-flag)/ALLEGRO_FLIP_VERTICAL, 
                                                     ancho_esc, alto_esc, flag);
                     }
@@ -676,7 +682,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
 
             else if (mapa.mapa[i][j] == CHARCO)
             {
-                if (i == mapa.nro_filas-1 || (i < mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i][j] == BLOQUE_RAYO)))
+                if (i == mapa.nro_filas-1 || (i < mapa.nro_filas-1 && (mapa.mapa[i+1][j] == BLOQUE || mapa.mapa[i+1][j] == BLOQUE_RAYO)))
                 {
                     if (id_charco < MAX_CHARCOS)
                     {
@@ -684,7 +690,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                         recursos->charcos[id_charco].activo = true;
                         recursos->charcos[id_charco].alto = al_get_bitmap_height(recursos->charco);
                         recursos->charcos[id_charco].ancho = al_get_bitmap_width(recursos->charco);
-                        recursos->charcos[id_charco].posicion = (Vector) {x1, y2};
+                        recursos->charcos[id_charco].posicion = (Vector) {x1, y2};    
                         al_draw_tinted_scaled_bitmap(recursos->charco, VERDE, 0, 0, recursos->charcos[id_charco].ancho, recursos->charcos[id_charco].alto,
                                                      recursos->charcos[id_charco].posicion.x, recursos->charcos[id_charco].posicion.y, mapa.ancho_bloque, 2*recursos->charcos[id_charco].alto, 0);    
                     }
@@ -827,12 +833,36 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                     id_enemigo++;
                 }
             }
-        }
-    }
 
-    for (i=0; i<mapa.nro_columnas; i++)
-    {
-        al_draw_bitmap(bloque_cafe, i*mapa.ancho_bloque, ALTURA_PISO, 0);
+            else if (mapa.mapa[i][j] == ESTRELLA)
+            {
+                recursos->estrella.imagen = recursos->imagen_estrella;
+                recursos->estrella.activa = true;
+
+                if (!recursos->estrella.tomada)
+                {
+                    if (recursos->estrella.activa)
+                    {
+                        al_draw_bitmap(recursos->estrella.imagen, (x1+x2-al_get_bitmap_width(recursos->estrella.imagen))/2, 
+                                      (y1+y2-al_get_bitmap_height(recursos->estrella.imagen))/2, 0);
+
+                        snprintf(texto_estrella, sizeof(texto_estrella), "+%hu", PUNTAJE_ESTRELLA);
+
+                        al_draw_text(recursos->fuentes[COMFORTAA_LIGHT_NORMAL], NEGRO, (x1+x2)/2, (y1+y2-al_get_font_line_height(recursos->fuentes[COMFORTAA_LIGHT_NORMAL]))/2, ALLEGRO_ALIGN_CENTRE, texto_estrella);
+                    }
+
+                    if (woofson->posicion.x + 0.7*woofson->ancho > (x1+x2-al_get_bitmap_width(recursos->estrella.imagen))/2 && 
+                        woofson->posicion.x + 0.3*woofson->ancho < (x1+x2+al_get_bitmap_width(recursos->estrella.imagen))/2 && 
+                        woofson->posicion.y + woofson->alto > (y1+y2-al_get_bitmap_height(recursos->estrella.imagen))/2 &&
+                        woofson->posicion.y < (y1+y2+al_get_bitmap_height(recursos->estrella.imagen))/2)
+                    {
+                        recursos->estrella.tomada = true;
+                        puntuacion += PUNTAJE_ESTRELLA;
+                    }
+                }
+
+            }
+        }
     }
 
     return;

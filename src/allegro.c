@@ -192,6 +192,14 @@ bool crear_recursos(Recursos* R)
         printf("Error al cargar la imagen del charco.\n");
         return false;
     }
+
+    R->imagen_estrella = al_load_bitmap("assets/images/estrella.png");
+
+    if (!R->imagen_estrella)
+    {
+        printf("Error al cargar la imagen del estrella.\n");
+        return false;
+    }
     
     R->pje_principal.imagen_modo_muerte = al_load_bitmap("assets/images/muerte.png");
 
@@ -651,6 +659,12 @@ Procedure finalizar_allegro(Recursos* R)
     }
     
     destruir_todos_los_frames(R->frames);
+
+    if (R->imagen_estrella != NULL)
+    {
+        al_destroy_bitmap(R->imagen_estrella);
+        R->imagen_estrella = NULL;
+    }
 
     if (R->charco != NULL)
     {

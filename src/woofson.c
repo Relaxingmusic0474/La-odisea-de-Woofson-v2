@@ -105,6 +105,7 @@ int main()
                         }
                     }
                     
+                    imprimir_posicion_charcos(recursos.charcos);
                     al_flip_display();
                     break;
             }

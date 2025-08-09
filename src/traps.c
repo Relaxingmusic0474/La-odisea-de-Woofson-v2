@@ -75,7 +75,7 @@ Natural detectar_rayos(Mapa mapa, Rayo rayos[], Natural max_rayos)
 
                         for (t=j+1; t<k; t++)
                         {
-                            if (mapa.mapa[i][t] != NADA)
+                            if (mapa.mapa[i][t] == BLOQUE)
                             {
                                 es_valido = false;
                                 break;
@@ -105,7 +105,7 @@ Natural detectar_rayos(Mapa mapa, Rayo rayos[], Natural max_rayos)
 
                         for (t=i+1; t<k; t++)
                         {
-                            if (mapa.mapa[t][j] != 0)
+                            if (mapa.mapa[t][j] == BLOQUE)
                             {
                                 es_valido = false;
                                 break;
@@ -470,7 +470,7 @@ Procedure detectar_si_personaje_en_zona_de_veneno(Personaje* personaje, Charco c
         {
             if (personaje->posicion.x + personaje->ancho > charcos[i].posicion.x && personaje->posicion.x < charcos[i].posicion.x + charcos[i].ancho)
             {
-                if (personaje->posicion.y + personaje->alto == charcos[i].posicion.y)
+                if (fabs(personaje->posicion.y + personaje->alto - charcos[i].posicion.y) < 2)
                 {
                     if (!personaje->danhado)
                     {

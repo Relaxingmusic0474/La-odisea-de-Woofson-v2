@@ -12,10 +12,8 @@ typedef struct barraVida BarraVida;
 typedef struct salto Salto;
 typedef struct mapa Mapa;
 typedef struct bala Bala;
-typedef union formaAtaque FormaAtaque;
-typedef struct arma Arma;
+typedef struct fuego Fuego;
 typedef struct personaje Personaje;
-typedef struct colision Colision;
 typedef struct boton Boton; 
 typedef struct menu Menu; 
 typedef struct musica Musica;
@@ -28,7 +26,7 @@ typedef struct palanca Palanca;
 typedef struct puerta Puerta;
 typedef struct pocion Pocion;
 typedef struct municion Municion;
-typedef struct fuego Fuego;
+typedef struct estrella Estrella;
 typedef struct datos Datos;
 typedef struct ranking Ranking;
 typedef struct eventos Eventos;
@@ -241,6 +239,13 @@ struct municion
     bool tomada;
 };
 
+struct estrella
+{
+    Imagen imagen;
+    bool activa;
+    bool tomada;
+};
+
 struct datos
 {
     char nombre[LARGO];
@@ -303,6 +308,8 @@ struct recursos
     Municion municiones[MAX_MUNICIONES];
     Imagen fuego;
     Ranking rankings[NRO_NIVELES];  // 1 ranking por cada nivel
+    Imagen imagen_estrella;
+    Estrella estrella;
     //Imagen imagen_extraterrestre;
     //Personaje extraterrestres[MAX_EXTRATERRESTRES];
     // Personaje* enemigos[NRO_NIVELES];

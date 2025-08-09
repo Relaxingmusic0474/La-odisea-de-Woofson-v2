@@ -102,3 +102,24 @@ Procedure mostrar_estados_actuales(Etapa etapa_actual, Natural nivel_actual)
     printf("Etapa actual: %s\n", etapas[etapa_actual+4]);
     printf("Nivel actual: %hu\n\n", nivel_actual);
 }
+
+Procedure imprimir_posicion_charcos(Charco charcos[MAX_CHARCOS])
+{
+    Natural i;
+
+    if ((rand() % 50) + 470 == 474)
+    {
+        for (i=0; i<MAX_CHARCOS; i++)
+        {
+            if (charcos[i].activo)
+            {
+                printf("- Charco %hu en la posicion (%.2f, %2f)\n", i+1, charcos[i].posicion.x, charcos[i].posicion.y);
+            }
+
+            else
+            {
+                printf("- Charco %hu desactivado\n", i+1);
+            }
+        }
+    }
+}
