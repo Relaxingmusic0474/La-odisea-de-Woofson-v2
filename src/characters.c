@@ -99,6 +99,9 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
     personaje->muerto = false;
     personaje->tiempo_muerte = 0;
     personaje->frames_para_prox_disparo = 0;
+    personaje->agachado = false;
+    personaje->fps_bajando = 0;
+    personaje->fps_subiendo = 0;
     personaje->subvida_actual = 100;  // Todos tendrán subvida de 100 inicialmente
     personaje->fuego = (Fuego) {0};
 
@@ -275,11 +278,15 @@ Procedure actualizar_frame(Personaje* personaje, ModoWoofson modo, Natural nivel
 {
     int base = 0;
     int cantidad = 0;
-
+    float y_pies, x_centro;
+    
     if (personaje->estatico) 
     {
         return;
     }
+    
+    y_pies = personaje->posicion.y + personaje->alto;
+    x_centro = personaje->posicion.x + 0.5f * personaje->ancho;
 
     if (personaje->tipo == WOOFSON)
     {
@@ -294,11 +301,10 @@ Procedure actualizar_frame(Personaje* personaje, ModoWoofson modo, Natural nivel
             base = NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA + NRO_FRAMES_ESPERANDO_ATAQUE;
             cantidad = NRO_FRAMES_DISPARO;
         }
-    
-        /*
+
         else if (modo == AGACHAMIENTO)
         {
-            base = NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA + NRO_FRAMES_DISPARO + NRO_FRAMES_SALTO;
+            base = NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA + NRO_FRAMES_ESPERANDO_ATAQUE + NRO_FRAMES_DISPARO;
 
             if (nivel < 3)
             {
@@ -311,7 +317,6 @@ Procedure actualizar_frame(Personaje* personaje, ModoWoofson modo, Natural nivel
                 base += NRO_FRAMES_AGACHAMIENTO_NORMAL;
             }
         }
-        */
         
         else  // Modo caminata
         {
@@ -354,6 +359,12 @@ Procedure actualizar_frame(Personaje* personaje, ModoWoofson modo, Natural nivel
         personaje->alto = al_get_bitmap_height(personaje->imagen) * (personaje->tipo == DRAGON ? 0.7 : 1);
         personaje->ancho = al_get_bitmap_width(personaje->imagen) * (personaje->tipo == DRAGON ? 0.7 : 1);
     }
+
+    if (personaje->tipo == WOOFSON)
+    {
+        personaje->posicion.y = y_pies - personaje->alto;
+        personaje->posicion.x = x_centro - 0.5f * personaje->ancho;
+    }
 }
 
 
@@ -390,6 +401,8 @@ bool es_posible_mover_personaje_lateralmente(Personaje *personaje, Mapa mapa)
 Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 {
     ModoWoofson modo_ataque;
+    float y_piso, x_medio;
+    bool flag = false;
 
     if (personaje->muerto || personaje->victoria || (personaje->nro_vidas == 0 && personaje->subvida_actual == 0))  // En caso de que el personaje esté muerto, o en caso de victoria, o en caso de que perdió, no se podrá mover
     {
@@ -402,8 +415,56 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
     
         if (teclas[ALLEGRO_KEY_DOWN])
         {
-            
+            personaje->agachado = true;
 
+            if (personaje->fps_bajando % 10 == 0)
+            {
+                if ((nivel < 3 && personaje->id_nro_frame != NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA + NRO_FRAMES_ESPERANDO_ATAQUE + NRO_FRAMES_DISPARO + 1) ||
+                    (nivel >= 3 && personaje->id_nro_frame != NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA + NRO_FRAMES_ESPERANDO_ATAQUE + NRO_FRAMES_DISPARO + NRO_FRAMES_AGACHAMIENTO_NORMAL + 1))
+                {
+                    actualizar_frame(personaje, AGACHAMIENTO, nivel);
+                }
+            }
+
+            personaje->fps_bajando++;            
+        }
+
+        else
+        {
+            if (personaje->agachado)
+            {
+                personaje->fps_bajando = 0;
+
+                if (personaje->fps_subiendo % 10 == 0)
+                {
+                    actualizar_frame(personaje, AGACHAMIENTO, nivel);
+                    personaje->agachado = false;
+                }
+
+                personaje->fps_subiendo++;
+            }
+
+            else
+            {
+                if (personaje->fps_subiendo != 0)
+                {
+                    if (personaje->fps_subiendo % 10 == 0)
+                    {
+                        personaje->id_nro_frame = nivel >= 3 ? NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA : 0;
+                        personaje->imagen = personaje->frames[personaje->id_nro_frame];
+                        personaje->ancho = al_get_bitmap_width(personaje->imagen);
+                        personaje->alto = al_get_bitmap_height(personaje->imagen);
+                        flag = true;
+                    }
+
+                    personaje->fps_subiendo++;
+
+                    if (flag)
+                    {
+                        personaje->fps_subiendo = 0;
+                    }
+                }
+            }
         }
 
         if (teclas[ALLEGRO_KEY_SPACE])
@@ -411,7 +472,7 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
             personaje->en_ataque = true;
             personaje->fps_en_ataque++;
 
-            if (personaje->fps_en_ataque % 8 == 0)  // Actualiza el frame de pelea cada 8 frames
+            if (personaje->fps_en_ataque % 8 == 0 && !personaje->agachado && personaje->fps_subiendo == 0)  // Actualiza el frame de pelea cada 8 frames
             {
                 modo_ataque = nivel < 3 ? PELEA : DISPARO;
                 actualizar_frame(personaje, modo_ataque, nivel);  // Actualiza el frame del personaje si está en pelea
@@ -431,7 +492,8 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 
             if (!teclas[ALLEGRO_KEY_SPACE])  // Si no está en pelea, actualiza el frame de caminata
             {
-                if (personaje->velocidad.x != 0 && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)  // Actualiza el frame cada cierto numero de iteraciones que depende de la velocidad
+                if (personaje->velocidad.x != 0 && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0 &&
+                    !personaje->agachado && personaje->fps_subiendo == 0)  // Actualiza el frame cada cierto numero de iteraciones que depende de la velocidad
                 {
                     actualizar_frame(personaje, CAMINATA, nivel);  // Actualiza el frame del personaje si está caminando
                 }
@@ -460,7 +522,7 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
                 personaje->velocidad.x = 0;
                 personaje->fps_en_caminata = 0;  // Reinicia el tiempo de caminata al detenerse
             
-                if (!teclas[ALLEGRO_KEY_SPACE])
+                if (!teclas[ALLEGRO_KEY_SPACE] && !personaje->agachado && personaje->fps_subiendo == 0)
                 {
                     personaje->id_nro_frame = nivel >= 3 ? NRO_FRAMES_MOVIMIENTO+NRO_FRAMES_PELEA : 0;  // Reinicia el frame del personaje al detenerse
                     personaje->imagen = personaje->frames[personaje->id_nro_frame];  // Vuelve al primer frame de la animación
@@ -471,7 +533,8 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
             {
                 personaje->fps_en_caminata++;
             
-                if (!teclas[ALLEGRO_KEY_SPACE] && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)
+                if (!teclas[ALLEGRO_KEY_SPACE] && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0 &&
+                    !personaje->agachado && personaje->fps_subiendo == 0)
                 {
                     actualizar_frame(personaje, CAMINATA, nivel);  // Actualiza el frame del personaje si está caminando
                 }

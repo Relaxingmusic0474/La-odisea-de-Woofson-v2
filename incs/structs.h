@@ -127,6 +127,9 @@ struct personaje
     BarraVida barra_vida;
     bool bala_maximo_alcance;
     float tiempo_restante_bala_maximo_alcance;
+    bool agachado;
+    Natural fps_bajando;
+    Natural fps_subiendo;
     // bool hay_obj_izq;
     // bool hay_obj_der;
     // bool hay_obj_sup;
