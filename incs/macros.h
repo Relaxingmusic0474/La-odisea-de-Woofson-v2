@@ -30,7 +30,7 @@
 #define MAX_MUNICIONES 6
 #define NRO_COLORES 5
 #define NRO_BLOQUES 2 // Tipos distintos de bloques que se cargarán
-#define NRO_MENUS 5
+#define NRO_MENUS 6
 #define NRO_ESTADOS 2
 #define NRO_MUSICAS 3
 #define NRO_INSTANCIAS 8

@@ -145,7 +145,7 @@ bool inicializar_menu(Menu* menu, TipoMenu tipo, Imagen fondo, ALLEGRO_FONT* fue
         }
     }
 
-    else  // Menú que funciona como un ranking (Solo tiene la opción de Volver atrás)
+    else  // Menú que funciona como un ranking (Solo tiene la opción de Volver atrás).  También sirve para el menú de instrucciones.
     {    
         menu->opciones[0].rectangulo.pos_inicial = (Vector) {x0 + ancho*0.05, y0 + alto*0.83};
         menu->opciones[0].rectangulo.pos_final = (Vector) {x0 + ancho*0.20, y0 + alto*0.92};
@@ -317,6 +317,59 @@ Procedure mostrar_ranking(Menu* menu, Ranking* ranking)
 }
 
 
+Procedure mostrar_instrucciones(Recursos recursos, Menu* menu)
+{
+    Rectangulo rect_tabla;
+    Imagen png_muestra_dragon = recursos.frames[FRAME_DRAGON][5];
+    Imagen png_muestra_alien = recursos.frames[FRAME_EXTRATERRESTRE][0];
+    float xm, ym, alto_fuente;
+
+    menu->opcion_en_hover = obtener_opcion_en_hover(*menu);  // Se obtiene la opcion por la que pasa el cursor (sin seleccionarla aun)
+
+    dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, ALTO_VENTANA, ANCHO_VENTANA, 50.0, 50.0, true, MORADO);
+    dibujar_texto_en_rectangulo("INSTRUCCIONES", RECTANGULO_VENTANA, 50.0, 7.5, menu->fuente, BLANCO);
+
+    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.13*ALTO_VENTANA, 0, "1. Para mover a Woofson, utilice las teclas direccionales (Aclaración: Con ↑ se salta y con ↓ se agacha).");
+    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.18*ALTO_VENTANA, 0, "2. Para disparar o atacar, use la barra espaciadora.  Manténgala presionada para varios disparos.");
+    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.23*ALTO_VENTANA, 0, "3. Tenga en cuenta que al agacharse, podrá esquivar balas, pero no podrá disparar.");
+    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.28*ALTO_VENTANA, 0, "4. Se puede conseguir puntaje matando enemigos (o haciéndoles daño) de acuerdo a lo siguiente:");
+
+    rect_tabla = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, 0.21*ALTO_VENTANA, 0.88*ANCHO_VENTANA, 50.0, 44.0, false, BLANCO);
+    dibujar_rectangulo_en_rectangulo(rect_tabla, 0.20*ALTO_VENTANA, 0, 50.0, 50.0, false, BLANCO);
+    dibujar_rectangulo_en_rectangulo(rect_tabla, 0, 0.88*ANCHO_VENTANA, 50.0, 60.0, false, BLANCO);
+
+    dibujar_imagen_en_rectangulo(png_muestra_alien, rect_tabla, 25.0, 30.0);
+
+    dibujar_texto_en_rectangulo("Por daño: 2 ptos", rect_tabla, 25.0, 70.0, menu->fuente_sec, BLANCO);
+    dibujar_texto_en_rectangulo("Por matar: 10 ptos", rect_tabla, 25.0, 90.0, menu->fuente_sec, BLANCO);
+
+    al_draw_scaled_bitmap(png_muestra_dragon, 0, 0, al_get_bitmap_width(png_muestra_dragon), al_get_bitmap_height(png_muestra_dragon), 
+                          0.75*ANCHO_VENTANA-al_get_bitmap_width(png_muestra_dragon)/2, 0.44*ALTO_VENTANA-al_get_bitmap_height(png_muestra_dragon)/2, 
+                          0.50*al_get_bitmap_width(png_muestra_dragon), 0.50*al_get_bitmap_height(png_muestra_dragon), 0);
+
+    dibujar_texto_en_rectangulo("Por daño: 7 ptos", rect_tabla, 75.0, 70.0, menu->fuente_sec, BLANCO);
+    dibujar_texto_en_rectangulo("Por matar: 25 ptos", rect_tabla, 75.0, 90.0, menu->fuente_sec, BLANCO);
+
+    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.57*ALTO_VENTANA, 0, "5. También podrá recoger puntaje adicional en algunos niveles por llegar a una estrella.");
+    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.62*ALTO_VENTANA, 0, "6. Su puntaje también dependerá del tiempo que se demore.  A más tiempo, menos puntaje.");
+    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.67*ALTO_VENTANA, 0, "7. Podrá recoger también municiones si se le acaban ya que en los niveles 3 y 4 las municiones son finitas.");
+    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.72*ALTO_VENTANA, 0, "8. Habrán pociones también.  La roja será para vida, y la azul para aumentar rango de bala");
+    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.77*ALTO_VENTANA, 0, "9. Tenga cuidado con los rayos, las espinas y los charcos, siendo estos últimos los más letales.");
+
+    al_draw_rectangle(menu->opciones[0].rectangulo.pos_inicial.x, menu->opciones[0].rectangulo.pos_inicial.y, menu->opciones[0].rectangulo.pos_final.x,
+                      menu->opciones[0].rectangulo.pos_final.y, menu->opcion_en_hover == 0 ? AZUL : BLANCO, 2.0);
+
+    xm = (menu->opciones[0].rectangulo.pos_inicial.x + menu->opciones[0].rectangulo.pos_final.x) / 2;
+    ym = (menu->opciones[0].rectangulo.pos_inicial.y + menu->opciones[0].rectangulo.pos_final.y) / 2;
+
+    alto_fuente = al_get_font_line_height(menu->fuente_sec);
+
+    al_draw_text(menu->fuente_sec, menu->opcion_en_hover == 0 ? AZUL : BLANCO, xm, (ym-alto_fuente/2), ALLEGRO_ALIGN_CENTRE, menu->opciones[0].texto);   
+
+    al_flip_display();
+}
+
+
 /**
  * @brief Función que cambia el menú que se debe mostrar actualmente (se usa harto en la función redirigir_menu())
  * @param menu_actual Un puntero al menú actual (el que se estaba mostrando).
@@ -462,7 +515,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
         else if (opcion_clickeada == 1)
         {
             *etapa_actual = INSTRUCCIONES;
-            al_flip_display();
+            cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_INSTRUCCIONES]);
         }
 
         else
@@ -508,6 +561,24 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
             }
             
             al_flip_display();
+        }
+    }
+
+    else if (*etapa_actual == INSTRUCCIONES)
+    {
+        if (opcion_clickeada == 0)
+        {
+            *nivel_actual = 0;
+            *etapa_actual = MENU_PRINCIPAL;
+            detener_efectos_de_sonido(recursos);
+            cambiar_menu(&recursos->menu_actual, recursos->menus[PRINCIPAL]);
+        }
+
+        else
+        {
+            *etapa_actual = INSTRUCCIONES;
+            cambiar_menu(&recursos->menu_actual, recursos->menus[MENU_INSTRUCCIONES]);
+            mostrar_instrucciones(*recursos, &recursos->menu_actual);
         }
     }
 
@@ -932,7 +1003,15 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
     
         if (*etapa_actual != RANKING)
         {
-            mostrar_menu(recursos->menu_actual, *etapa_actual);
+            if (*etapa_actual != INSTRUCCIONES)
+            {
+                mostrar_menu(recursos->menu_actual, *etapa_actual);
+            }
+
+            else
+            {
+                mostrar_instrucciones(*recursos, &recursos->menu_actual);
+            }
         }
 
         else

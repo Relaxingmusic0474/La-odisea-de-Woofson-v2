@@ -461,7 +461,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                 if (woofson->posicion.x + woofson->ancho >= recursos->palanca.posicion.x && woofson->posicion.y + woofson->alto >= recursos->palanca.posicion.y &&
                     woofson->posicion.x < recursos->palanca.posicion.x + recursos->palanca.ancho && woofson->posicion.y < recursos->palanca.posicion.y + recursos->palanca.alto)
                 {
-                    if (teclas[ALLEGRO_KEY_E])
+                    if (teclas[ALLEGRO_KEY_DOWN])
                     {
                         if (!(*cambio_estado_procesado))
                         {
@@ -715,7 +715,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                                 woofson->posicion.x < (x1+x2+al_get_bitmap_width(recursos->pociones[id_pocion].imagen))/2 &&
                                 woofson->posicion.y < y2)
                             {
-                                if (teclas[ALLEGRO_KEY_E])
+                                if (teclas[ALLEGRO_KEY_DOWN])
                                 {
                                     recursos->pociones[id_pocion].tomada = true;
                                     woofson->nro_vidas++;
@@ -744,7 +744,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                                 woofson->posicion.x < (x1+x2+al_get_bitmap_width(recursos->municiones[id_municion].imagen))/2 &&
                                 woofson->posicion.y < y2 && woofson->balas_disponibles == 0 && woofson->bala_recargable == false)
                             {
-                                if (teclas[ALLEGRO_KEY_E])
+                                if (teclas[ALLEGRO_KEY_DOWN])
                                 {
                                     for (k=0; k<MAX_BALAS; k++)
                                     {
@@ -778,7 +778,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                                 woofson->posicion.x < (x1+x2+al_get_bitmap_width(recursos->pociones_rango_bala[id_pocion_rango_bala].imagen))/2 &&
                                 woofson->posicion.y < y2)
                             {
-                                if (teclas[ALLEGRO_KEY_E])
+                                if (teclas[ALLEGRO_KEY_DOWN])
                                 {
                                     recursos->pociones_rango_bala[id_pocion_rango_bala].tomada = true;
                                     woofson->bala_maximo_alcance = true;

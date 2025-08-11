@@ -401,7 +401,6 @@ bool es_posible_mover_personaje_lateralmente(Personaje *personaje, Mapa mapa)
 Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 {
     ModoWoofson modo_ataque;
-    float y_piso, x_medio;
     bool flag = false;
 
     if (personaje->muerto || personaje->victoria || (personaje->nro_vidas == 0 && personaje->subvida_actual == 0))  // En caso de que el personaje esté muerto, o en caso de victoria, o en caso de que perdió, no se podrá mover

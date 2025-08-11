@@ -389,6 +389,12 @@ bool crear_recursos(Recursos* R)
         return false;
     }
 
+    if (!inicializar_menu(&R->menus[MENU_INSTRUCCIONES], MENU_INSTRUCCIONES, NULL, R->fuentes[TIMES_NEW_ROMAN_GIGANTE], R->fuentes[COMFORTAA_LIGHT_GRANDE],
+                          textos_opciones_ranking, NRO_ELEMS(textos_opciones_ranking), RECTANGULO_VENTANA))
+    {
+        return false;
+    }
+
     R->menu_actual = R->menus[0];  // Menú principal
 
     // Se crea la voz

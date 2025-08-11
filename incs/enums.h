@@ -58,6 +58,7 @@ enum etapa
     DERROTA,
     VICTORIA,
     MENU_RANKING,
+    MENU_DE_INSTRUCCIONES,
 };
 
 typedef enum etapa Etapa;
@@ -125,6 +126,7 @@ enum tipoMenu
     PERDER,
     GANAR,
     MENU_RANK,
+    MENU_INSTRUCCIONES,
 };
 
 typedef enum tipoMenu TipoMenu;
