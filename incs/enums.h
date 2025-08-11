@@ -97,6 +97,7 @@ enum modoWoofson
     CAMINATA = 'M',  // M de movimiento (normal)
     PELEA = 'P',  // P de pelea
     DISPARO = 'D',  // D de disparo
+    AGACHAMIENTO = 'A',  // A de agachamiento
 };
 
 typedef enum modoWoofson ModoWoofson;

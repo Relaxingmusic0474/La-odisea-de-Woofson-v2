@@ -923,7 +923,7 @@ Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_a
         if (*nivel_actual != 0)
         {            
             mostrar_fondo_nivel(recursos->fondos, *nivel_actual, iteracion);
-            dibujar_mapa(recursos->mapas[(*nivel_actual)-1], recursos, cambio_estado_procesado, iteracion);  // Dibujamos el mapa del primer nivel
+            dibujar_mapa(recursos->mapas[(*nivel_actual)-1], recursos, cambio_estado_procesado, iteracion, *nivel_actual);  // Dibujamos el mapa del primer nivel
             dibujar_personaje(&recursos->pje_principal, *ultima_tecla_lateral, iteracion);  // Dibuja el personaje en su posición actual
             morir(&recursos->pje_principal, ultima_tecla_lateral, etapa_actual);  // Esta función se ejecuta solamente si el personaje figura como muerto
             actualizar_rayos(recursos->rayos[(*nivel_actual)-1], recursos->cantidad_rayos[(*nivel_actual)-1], recursos->pje_principal, recursos->mapas[(*nivel_actual)-1]);

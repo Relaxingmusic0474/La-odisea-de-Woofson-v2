@@ -17,10 +17,10 @@ Procedure inicializar_personaje(Personaje*, TipoPersonaje, Imagen* [TIPOS_PERSON
 Procedure inicializar_salto(Personaje*);
 Procedure determinar_como_dibujar_personaje(Personaje*, Natural);
 Procedure dibujar_personaje(Personaje*, Natural, Natural);
-Procedure actualizar_frame(Personaje*, ModoWoofson);
+Procedure actualizar_frame(Personaje*, ModoWoofson, Natural);
 bool es_posible_mover_personaje_lateralmente(Personaje*, Mapa);
 Procedure mover_personaje(Personaje*, Mapa, Natural);
-Procedure mover_enemigo_dinamico(Personaje*, Personaje, Mapa);
+Procedure mover_enemigo_dinamico(Personaje*, Personaje, Mapa, Natural);
 Procedure continuar_salto(Personaje*, float, Mapa);
 Procedure activar_caida_libre(Personaje*);
 Entero velocidad_instantanea(Personaje, float);

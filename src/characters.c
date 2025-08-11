@@ -271,55 +271,88 @@ Procedure dibujar_personaje(Personaje* personaje, Natural ultima_tecla_lateral, 
  * @param personaje Puntero al personaje cuyo frame se va a actualizar.
  * @param modo Modo de actualización del frame (este parámetro tiene importancia solo si los frames que se actualizan son de Woofson)
  */
-Procedure actualizar_frame(Personaje* personaje, ModoWoofson modo)
+Procedure actualizar_frame(Personaje* personaje, ModoWoofson modo, Natural nivel)
 {
-    if (personaje->estatico)
+    int base = 0;
+    int cantidad = 0;
+
+    if (personaje->estatico) 
     {
-        return;  // Si es estático no tiene sentido que sus frames se actualicen
+        return;
     }
 
     if (personaje->tipo == WOOFSON)
     {
-        if (modo == PELEA)  // Si está en modo pelea, se actualiza el frame de pelea
+        if (modo == PELEA)
         {
-            personaje->id_nro_frame = NRO_FRAMES_MOVIMIENTO + (personaje->id_nro_frame + 1) % NRO_FRAMES_PELEA ;  // Evita que el frame se salga del rango
+            base = NRO_FRAMES_MOVIMIENTO;
+            cantidad = NRO_FRAMES_PELEA;
         }
 
         else if (modo == DISPARO)
         {
-            personaje->id_nro_frame = NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA + (personaje->id_nro_frame + 1) % NRO_FRAMES_DISPARO;
+            base = NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA + NRO_FRAMES_ESPERANDO_ATAQUE;
+            cantidad = NRO_FRAMES_DISPARO;
         }
-
-        else  // Si está en modo movimiento, se actualiza el frame de movimiento siempre que esté en movimiento o en pataleo
+    
+        /*
+        else if (modo == AGACHAMIENTO)
         {
-            if (personaje->velocidad.x != 0)
+            base = NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA + NRO_FRAMES_DISPARO + NRO_FRAMES_SALTO;
+
+            if (nivel < 3)
             {
-                personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_MOVIMIENTO;  // Evita que el frame se salga del rango
+                cantidad = NRO_FRAMES_AGACHAMIENTO_NORMAL;
+            }
+
+            else
+            {
+                cantidad = NRO_FRAMES_AGACHAMIENTO_CON_PISTOLA;
+                base += NRO_FRAMES_AGACHAMIENTO_NORMAL;
             }
         }
+        */
+        
+        else  // Modo caminata
+        {
+            base = nivel >= 3 ? NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA : 0;
+            cantidad = nivel >= 3 ? NRO_FRAMES_ESPERANDO_ATAQUE : NRO_FRAMES_MOVIMIENTO;
+        }
+
+        // Reiniciar si está fuera de rango
+        if (personaje->id_nro_frame < base || personaje->id_nro_frame >= base + cantidad)
+        {
+            personaje->id_nro_frame = base;
+        }
+
+        // Avanzar dentro del bloque
+        personaje->id_nro_frame = base + ((personaje->id_nro_frame - base + 1) % cantidad);
     }
 
     else if (personaje->tipo == EXTRATERRESTRE)
     {
-        personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_EXTRATERRESTRE;
+        cantidad = NRO_FRAMES_EXTRATERRESTRE;
+        personaje->id_nro_frame = (personaje->id_nro_frame + 1) % cantidad;
     }
 
     else if (personaje->tipo == DRAGON)
     {
-        personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_DRAGON;
+        cantidad = NRO_FRAMES_DRAGON;
+        personaje->id_nro_frame = (personaje->id_nro_frame + 1) % cantidad;
     }
 
     else if (personaje->tipo == LEPRECHAUN)
     {
-        personaje->id_nro_frame = (personaje->id_nro_frame + 1) % NRO_FRAMES_LEPRECHAUN;
+        cantidad = NRO_FRAMES_LEPRECHAUN;
+        personaje->id_nro_frame = (personaje->id_nro_frame + 1) % cantidad;
     }
 
-    if (personaje->frames[personaje->id_nro_frame])  // Verifica si hay un frame siguiente para evitar errores de acceso a memoria
+    // Actualizar imagen y tamaño
+    if (personaje->frames[personaje->id_nro_frame])
     {
-        personaje->imagen = personaje->frames[personaje->id_nro_frame];  // Cambia al siguiente frame de animación
-
-        personaje->alto = al_get_bitmap_height(personaje->imagen) * (personaje->tipo == DRAGON ? 0.7 : 1);  // Actualiza el alto del personaje
-        personaje->ancho = al_get_bitmap_width(personaje->imagen) * (personaje->tipo == DRAGON ? 0.7 : 1);  // Actualiza el ancho del personaje
+        personaje->imagen = personaje->frames[personaje->id_nro_frame];
+        personaje->alto = al_get_bitmap_height(personaje->imagen) * (personaje->tipo == DRAGON ? 0.7 : 1);
+        personaje->ancho = al_get_bitmap_width(personaje->imagen) * (personaje->tipo == DRAGON ? 0.7 : 1);
     }
 }
 
@@ -367,6 +400,12 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
     {
         personaje->caminata = teclas[ALLEGRO_KEY_LEFT] ^ teclas[ALLEGRO_KEY_RIGHT];  // Actualiza el estado de caminata según las teclas presionadas
     
+        if (teclas[ALLEGRO_KEY_DOWN])
+        {
+            
+
+        }
+
         if (teclas[ALLEGRO_KEY_SPACE])
         {
             personaje->en_ataque = true;
@@ -374,8 +413,8 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 
             if (personaje->fps_en_ataque % 8 == 0)  // Actualiza el frame de pelea cada 8 frames
             {
-                modo_ataque = nivel <= NIVEL2 ? PELEA : DISPARO;
-                actualizar_frame(personaje, modo_ataque);  // Actualiza el frame del personaje si está en pelea
+                modo_ataque = nivel < 3 ? PELEA : DISPARO;
+                actualizar_frame(personaje, modo_ataque, nivel);  // Actualiza el frame del personaje si está en pelea
             }
         }
 
@@ -394,7 +433,7 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
             {
                 if (personaje->velocidad.x != 0 && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)  // Actualiza el frame cada cierto numero de iteraciones que depende de la velocidad
                 {
-                    actualizar_frame(personaje, CAMINATA);  // Actualiza el frame del personaje si está caminando
+                    actualizar_frame(personaje, CAMINATA, nivel);  // Actualiza el frame del personaje si está caminando
                 }
             }
 
@@ -423,8 +462,8 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
             
                 if (!teclas[ALLEGRO_KEY_SPACE])
                 {
-                    personaje->id_nro_frame = 0;  // Reinicia el frame del personaje al detenerse
-                    personaje->imagen = personaje->frames[0];  // Vuelve al primer frame de la animación
+                    personaje->id_nro_frame = nivel >= 3 ? NRO_FRAMES_MOVIMIENTO+NRO_FRAMES_PELEA : 0;  // Reinicia el frame del personaje al detenerse
+                    personaje->imagen = personaje->frames[personaje->id_nro_frame];  // Vuelve al primer frame de la animación
                 }
             }
 
@@ -434,11 +473,11 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
             
                 if (!teclas[ALLEGRO_KEY_SPACE] && personaje->fps_en_caminata % (int) fabs((30 / ceilf(personaje->velocidad.x))) == 0)
                 {
-                    actualizar_frame(personaje, CAMINATA);  // Actualiza el frame del personaje si está caminando
+                    actualizar_frame(personaje, CAMINATA, nivel);  // Actualiza el frame del personaje si está caminando
                 }
             
                 personaje->velocidad.x = personaje->velocidad.x < 0 ? personaje->velocidad.x + ACELERACION_PERSONAJE 
-                                                                : personaje->velocidad.x - ACELERACION_PERSONAJE;  // Disminuye la velocidad de movimiento del personaje al dejar de caminar
+                                                                    : personaje->velocidad.x - ACELERACION_PERSONAJE;  // Disminuye la velocidad de movimiento del personaje al dejar de caminar
             }
         }
 
@@ -481,7 +520,7 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 }
 
 
-Procedure mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa mapa)
+Procedure mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa mapa, Natural nivel)
 {
     Natural i, j, bloque_x1, bloque_x2, bloque_y1, bloque_y2;
     float posicion_woofson, posicion_leprechaun;
@@ -583,7 +622,7 @@ Procedure mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa map
 
                 if (enemigo->fps_en_caminata % 30 == 0)
                 {
-                    actualizar_frame(enemigo, PELEA);
+                    actualizar_frame(enemigo, PELEA, nivel);
                 }
             }
         }
@@ -599,7 +638,7 @@ Procedure mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa map
     {
         if (enemigo->fps_en_caminata % 8 == 0)
         {
-            actualizar_frame(enemigo, '\0');  // El modo es '\0' ya que da igual para los enemigos
+            actualizar_frame(enemigo, '\0', nivel);  // El modo es '\0' ya que da igual para los enemigos
         }
     }
 

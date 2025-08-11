@@ -386,7 +386,7 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
  * @param cambio_estado_procesado Es un puntero que detecta un cambio de estado en la puerta o la palanca.
  * @param iteracion Es la iteración actual del juego.
  */
-Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, Natural iteracion)
+Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, Natural iteracion, Natural nivel)
 {
     Natural i=0, j=0, k=0;
     Natural id_enemigo = 0, id_espina = 0, id_charco = 0, id_pocion = 0, id_municion = 0, id_pocion_rango_bala = 0;
@@ -625,7 +625,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                                     recursos->enemigos[id_enemigo].bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;
                                 }
 
-                                mover_enemigo_dinamico(&recursos->enemigos[id_enemigo], *woofson, mapa);
+                                mover_enemigo_dinamico(&recursos->enemigos[id_enemigo], *woofson, mapa, nivel);
                             }
 
                             if (!recursos->enemigos[id_enemigo].muerto)
@@ -668,7 +668,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                             recursos->enemigos[id_enemigo].bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;
                         }
 
-                        mover_enemigo_dinamico(&recursos->enemigos[id_enemigo], *woofson, mapa);
+                        mover_enemigo_dinamico(&recursos->enemigos[id_enemigo], *woofson, mapa, nivel);
                     }
 
                     if (!recursos->enemigos[id_enemigo].muerto)
@@ -821,7 +821,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                                 recursos->enemigos[id_enemigo].bandera_dibujo = 0;
                             }
 
-                            mover_enemigo_dinamico(&recursos->enemigos[id_enemigo], *woofson, mapa);
+                            mover_enemigo_dinamico(&recursos->enemigos[id_enemigo], *woofson, mapa, nivel);
 
                             if (!recursos->enemigos[id_enemigo].muerto)
                             {   
