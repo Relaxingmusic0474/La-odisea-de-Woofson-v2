@@ -763,7 +763,6 @@ Procedure mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa map
                 enemigo->ancho = al_get_bitmap_width(enemigo->imagen);
                 enemigo->alto = al_get_bitmap_height(enemigo->imagen);
             }
-
         }
     }
 

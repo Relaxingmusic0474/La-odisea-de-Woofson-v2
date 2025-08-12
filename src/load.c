@@ -390,11 +390,13 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
 {
     Natural i=0, j=0, k=0;
     Natural id_enemigo = 0, id_espina = 0, id_charco = 0, id_pocion = 0, id_municion = 0, id_pocion_rango_bala = 0;
+    Natural cantidad_enemigos_activos = 0;
     Entero flag = 0;
     Personaje* woofson = &recursos->pje_principal;
     Imagen bloque_cafe = recursos->bloques[0];
     Imagen bloque_plateado = recursos->bloques[1];
     bool aux = false;
+    bool monstruo_encontrado = false;
     float ancho_espina, alto_espina, x1, y1, x2, y2, dy=0, dx=0;
     float ancho_esc, alto_esc;
     float alto_enemigo;
@@ -406,6 +408,8 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
     ancho_esc = ancho_espina * FACTOR_ESPINA;
     alto_esc = alto_espina * FACTOR_ESPINA;
     
+    cantidad_enemigos_activos = nro_enemigos_activos(recursos->enemigos);
+
     for (i=0; i<mapa.nro_columnas; i++)
     {
         al_draw_bitmap(bloque_cafe, i*mapa.ancho_bloque, ALTURA_PISO, 0);
@@ -465,11 +469,30 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                     {
                         if (!(*cambio_estado_procesado))
                         {
-                            *cambio_estado_procesado = true;
-                            recursos->palanca.estado = recursos->palanca.estado == ACTIVADA ? DESACTIVADA : ACTIVADA;
-                            recursos->palanca.imagen = recursos->palancas[recursos->palanca.estado];
-                            recursos->palanca.alto = al_get_bitmap_height(recursos->palanca.imagen);
-                            recursos->palanca.ancho = al_get_bitmap_width(recursos->palanca.imagen);
+                            if (nivel == 5)
+                            {
+                                for (k=0; k<cantidad_enemigos_activos && !monstruo_encontrado; k++)
+                                {
+                                    if (recursos->enemigos[k].tipo == MONSTRUO && recursos->enemigos[k].muerto)
+                                    {   
+                                        *cambio_estado_procesado = true;
+                                        recursos->palanca.estado = recursos->palanca.estado == ACTIVADA ? DESACTIVADA : ACTIVADA;
+                                        recursos->palanca.imagen = recursos->palancas[recursos->palanca.estado];
+                                        recursos->palanca.alto = al_get_bitmap_height(recursos->palanca.imagen);
+                                        recursos->palanca.ancho = al_get_bitmap_width(recursos->palanca.imagen);
+                                        monstruo_encontrado = true;
+                                    }
+                                }
+                            }
+
+                            else
+                            {
+                                *cambio_estado_procesado = true;
+                                recursos->palanca.estado = recursos->palanca.estado == ACTIVADA ? DESACTIVADA : ACTIVADA;
+                                recursos->palanca.imagen = recursos->palancas[recursos->palanca.estado];
+                                recursos->palanca.alto = al_get_bitmap_height(recursos->palanca.imagen);
+                                recursos->palanca.ancho = al_get_bitmap_width(recursos->palanca.imagen);
+                            }
                         }
                     }
 
