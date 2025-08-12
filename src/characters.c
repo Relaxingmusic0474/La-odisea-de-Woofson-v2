@@ -1024,20 +1024,23 @@ Procedure actualizar_estado_danho(Personaje* personaje)
 
     if (personaje->tipo != WOOFSON)
     {
-        if (personaje->muerto)
+        if (personaje->muerto)  
         {
-            if (personaje->tiempo_muerte <= TIEMPO_MUERTE_ENEMIGO)
+            if (personaje->tipo != MONSTRUO)  // El monstruo es único, ya que una vez que muere, se queda muerto
             {
-                personaje->posicion = VECTOR_NULO;
-                personaje->tiempo_muerte += 1.0 / FPS;
-            }
+                if (personaje->tiempo_muerte <= TIEMPO_MUERTE_ENEMIGO)
+                {
+                    personaje->posicion = VECTOR_NULO;
+                    personaje->tiempo_muerte += 1.0 / FPS;
+                }
 
-            else
-            {
-                personaje->posicion = personaje->posicion_inicial;
-                personaje->muerto = false;
-                personaje->subvida_actual = 100;
-                personaje->tiempo_muerte = 0;
+                else
+                {
+                    personaje->posicion = personaje->posicion_inicial;
+                    personaje->muerto = false;
+                    personaje->subvida_actual = 100;
+                    personaje->tiempo_muerte = 0;
+                }
             }
         }
 
