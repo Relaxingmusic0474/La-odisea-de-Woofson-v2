@@ -104,6 +104,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
     personaje->fps_subiendo = 0;
     personaje->subvida_actual = 100;  // Todos tendrán subvida de 100 inicialmente
     personaje->fuego = (Fuego) {0};
+    personaje->bola_fuego = (BolaFuego) {0};
 
     switch (tipo)
     {
@@ -158,6 +159,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             personaje->direccion = 1;
             personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
             personaje->en_ataque = false;
+            
             break;
         
         case LEPRECHAUN:
@@ -1024,7 +1026,7 @@ Procedure actualizar_estado_danho(Personaje* personaje)
 
     if (personaje->tipo != WOOFSON)
     {
-        if (personaje->muerto)  
+        if (personaje->muerto)
         {
             if (personaje->tipo != MONSTRUO)  // El monstruo es único, ya que una vez que muere, se queda muerto
             {
@@ -1558,6 +1560,20 @@ Procedure lanzar_fuego(Personaje* dragon, Personaje* woofson, Imagen imagen_fueg
     
     dragon->fps_en_ataque++;
 }
+
+
+Procedure lanzar_proyectil_fuego(Personaje* monstruo, Personaje* woofson)
+{
+    float dx, dy;
+    float porcentajes_mano[] = {1};
+
+    dx = woofson->posicion.x - monstruo->posicion.x;
+    dy = woofson->posicion.y - monstruo->posicion.y;
+
+
+
+}
+
 
 Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Personaje* woofson, Mapa mapa, Natural nivel, Imagen fuego)
 {

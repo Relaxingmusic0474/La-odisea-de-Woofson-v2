@@ -200,6 +200,14 @@ bool crear_recursos(Recursos* R)
         printf("Error al cargar la imagen del estrella.\n");
         return false;
     }
+
+    R->bola_fuego = al_load_bitmap("assets/images/bola-fuego.png");
+
+    if (!R->bola_fuego)
+    {
+        printf("Error al cargar la imagen de la bola de fuego.\n");
+        return false;
+    }
     
     R->pje_principal.imagen_modo_muerte = al_load_bitmap("assets/images/muerte.png");
 
@@ -665,6 +673,12 @@ Procedure finalizar_allegro(Recursos* R)
     }
     
     destruir_todos_los_frames(R->frames);
+
+    if (R->bola_fuego != NULL)
+    {
+        al_destroy_bitmap(R->bola_fuego);
+        R->bola_fuego = NULL;
+    }
 
     if (R->imagen_estrella != NULL)
     {

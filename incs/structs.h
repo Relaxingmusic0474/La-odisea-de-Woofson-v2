@@ -13,6 +13,7 @@ typedef struct salto Salto;
 typedef struct mapa Mapa;
 typedef struct bala Bala;
 typedef struct fuego Fuego;
+typedef struct bolaFuego BolaFuego;
 typedef struct personaje Personaje;
 typedef struct boton Boton; 
 typedef struct menu Menu; 
@@ -89,6 +90,16 @@ struct fuego
     float ancho;
 };
 
+struct bolaFuego
+{
+    Vector posicion;
+    Vector velocidad;
+    Imagen imagen;
+    bool activa;
+    bool disponible;
+    float frames_para_disponibilidad;  // Este campo solo cobra sentido si es que las bolas de fuego son recargables con el tiempo (personaje->bala_recargable == true)
+};
+
 struct personaje
 {
     TipoPersonaje tipo;
@@ -130,6 +141,10 @@ struct personaje
     bool agachado;
     Natural fps_bajando;
     Natural fps_subiendo;
+    BolaFuego bola_fuego;  // Aplica solo para el monstruo
+
+    
+
     // bool hay_obj_izq;
     // bool hay_obj_der;
     // bool hay_obj_sup;
@@ -313,6 +328,7 @@ struct recursos
     Ranking rankings[NRO_NIVELES];  // 1 ranking por cada nivel
     Imagen imagen_estrella;
     Estrella estrella;
+    Imagen bola_fuego;
     //Imagen imagen_extraterrestre;
     //Personaje extraterrestres[MAX_EXTRATERRESTRES];
     // Personaje* enemigos[NRO_NIVELES];
