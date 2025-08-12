@@ -94,7 +94,7 @@
 #define ACELERACION_PERSONAJE 0.2  // Aceleración del personaje al caminar
 #define VELOCIDAD_DRAGONES 2
 #define VELOCIDAD_EXTRATERRESTRES 3
-#define VELOCIDAD_MONSTRUO 7
+#define VELOCIDAD_MONSTRUO 0
 #define MAX_VELOCIDAD_LEPRECHAUN 1.3
 #define ACELERACION_ADREDE 5 // Aceleración adicional que se genera al presionar la tecla de abajo estando en caida libre
 #define IMPULSO_PERSONAJE 675  // Impulso de salto del personaje en px/s

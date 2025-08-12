@@ -13,8 +13,7 @@ int main()
     float tiempo_en_nivel = 0;                      /* Para manejar el tiempo que se lleva en el nivel */
     Natural ranking_a_mostrar = -1;                 /* Este valor es equivalente a la macro USHRT_MAX (65535) -> No hay ranking inicial que se muestre */
     
-    // Se inicializan todos los recursos de Allegro
-    if (!inicializar_todo(&recursos))
+    if (!inicializar_todo(&recursos))  // Se inicializan todos los recursos de Allegro
     {
         return 1;
     }
@@ -76,7 +75,7 @@ int main()
                         actualizar_rayos(recursos.rayos[nivel_actual - 1], recursos.cantidad_rayos[nivel_actual - 1], recursos.pje_principal, recursos.mapas[nivel_actual - 1]);
                         detectar_si_personaje_en_zona_de_rayo(&recursos.pje_principal, recursos.rayos[nivel_actual - 1]);
                         detectar_si_personaje_en_zona_de_espina(&recursos.pje_principal, recursos.espinas);
-                        detectar_si_personaje_en_zona_de_veneno(&recursos.pje_principal, recursos.charcos);
+                        detectar_si_personaje_en_zona_de_veneno(&recursos.pje_principal, recursos.charcos, nivel_actual);
                         efectuar_disparo_de_enemigos(recursos.enemigos, &recursos.pje_principal, recursos.mapas[nivel_actual - 1], nivel_actual, recursos.fuego);
                         determinar_victoria_woofson(&recursos.pje_principal, recursos.enemigos, recursos.puerta, &etapa_juego);
 
@@ -104,8 +103,7 @@ int main()
                             resetear_estado_juego(&recursos, recursos.menu_actual, &etapa_juego, MENU_PRINCIPAL, &tiempo_en_nivel);
                         }
                     }
-                    
-                    printf("Id Woofson: %hu\n", recursos.pje_principal.id_nro_frame);
+
                     al_flip_display();
                     break;
             }

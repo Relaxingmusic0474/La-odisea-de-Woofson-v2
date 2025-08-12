@@ -329,7 +329,7 @@ Procedure mostrar_instrucciones(Recursos recursos, Menu* menu)
     dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, ALTO_VENTANA, ANCHO_VENTANA, 50.0, 50.0, true, MORADO);
     dibujar_texto_en_rectangulo("INSTRUCCIONES", RECTANGULO_VENTANA, 50.0, 7.5, menu->fuente, BLANCO);
 
-    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.13*ALTO_VENTANA, 0, "1. Para mover a Woofson, utilice las teclas direccionales (Aclaración: Con ↑ se salta y con ↓ se agacha).");
+    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.13*ALTO_VENTANA, 0, "1. Para mover a Woofson, utilice las teclas direccionales (Aclaración: Con ↑ salta y con ↓ se agacha).");
     al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.18*ALTO_VENTANA, 0, "2. Para disparar o atacar, use la barra espaciadora.  Manténgala presionada para varios disparos.");
     al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.23*ALTO_VENTANA, 0, "3. Tenga en cuenta que al agacharse, podrá esquivar balas, pero no podrá disparar.");
     al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.28*ALTO_VENTANA, 0, "4. Se puede conseguir puntaje matando enemigos (o haciéndoles daño) de acuerdo a lo siguiente:");
@@ -351,9 +351,9 @@ Procedure mostrar_instrucciones(Recursos recursos, Menu* menu)
     dibujar_texto_en_rectangulo("Por matar: 25 ptos", rect_tabla, 75.0, 90.0, menu->fuente_sec, BLANCO);
 
     al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.57*ALTO_VENTANA, 0, "5. También podrá recoger puntaje adicional en algunos niveles por llegar a una estrella.");
-    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.62*ALTO_VENTANA, 0, "6. Su puntaje también dependerá del tiempo que se demore.  A más tiempo, menos puntaje.");
-    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.67*ALTO_VENTANA, 0, "7. Podrá recoger también municiones si se le acaban ya que en los niveles 3 y 4 las municiones son finitas.");
-    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.72*ALTO_VENTANA, 0, "8. Habrán pociones también.  La roja será para vida, y la azul para aumentar rango de bala");
+    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.62*ALTO_VENTANA, 0, "6. Su puntaje además dependerá del tiempo que se demore.  A más tiempo, menos puntaje.");
+    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.67*ALTO_VENTANA, 0, "7. Podrá recoger municiones (con la tecla ↓) si se le acaban ya que en los niveles 3 y 4 las municiones son finitas.");
+    al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.72*ALTO_VENTANA, 0, "8. Habrá pociones para recoger también (con la tecla ↓).  La roja será para vida, y la azul para aumentar rango de bala.");
     al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.77*ALTO_VENTANA, 0, "9. Tenga cuidado con los rayos, las espinas y los charcos, siendo estos últimos los más letales.");
 
     al_draw_rectangle(menu->opciones[0].rectangulo.pos_inicial.x, menu->opciones[0].rectangulo.pos_inicial.y, menu->opciones[0].rectangulo.pos_final.x,

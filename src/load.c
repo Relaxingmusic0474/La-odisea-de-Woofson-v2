@@ -584,8 +584,16 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
                     {
                         if (!recursos->enemigos[id_enemigo].inicializado)
                         {
-                            alto_enemigo = al_get_bitmap_height(recursos->frames[(TipoFrame) (1./6 * pow(mapa.mapa[i][j], 2) - 1.5 * mapa.mapa[i][j] + 16./3)][0]);  // Polinomio de interpolación de Lagrange
+                            if (mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO || mapa.mapa[i][j] == EXTRATERRESTRE_DINAMICO)
+                            {
+                                alto_enemigo = al_get_bitmap_height(recursos->frames[FRAME_EXTRATERRESTRE][0]);
+                            }
 
+                            else
+                            {
+                                alto_enemigo = al_get_bitmap_height(recursos->frames[FRAME_MONSTRUO][0]);
+                            }
+                            
                             recursos->enemigos[id_enemigo].posicion_inicial.x = x1;
                             recursos->enemigos[id_enemigo].posicion_inicial.y = y2 - alto_enemigo - 1;
 

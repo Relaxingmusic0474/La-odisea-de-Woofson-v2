@@ -460,24 +460,65 @@ Procedure detectar_si_personaje_en_zona_de_espina(Personaje* personaje, Espina e
 }
 
 
-Procedure detectar_si_personaje_en_zona_de_veneno(Personaje* personaje, Charco charcos[MAX_CHARCOS])
+Procedure detectar_si_personaje_en_zona_de_veneno(Personaje* personaje, Charco charcos[MAX_CHARCOS], Natural nivel)
 {
     Natural i;
+    Natural base_disparo = NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA;
+    float porcentajes_colision_min[NRO_FRAMES_DISPARO] = {10.7, 21.8, 17.3, 25.3, 17.5, 14.7};
+    float porcentajes_colision_max[NRO_FRAMES_DISPARO] = {56.0, 52.6, 65.3, 49.3, 73.0, 57.3};
 
     for (i=0; i<MAX_CHARCOS; i++)
     {
         if (charcos[i].activo)
         {
-            if (personaje->posicion.x + personaje->ancho > charcos[i].posicion.x && personaje->posicion.x < charcos[i].posicion.x + charcos[i].ancho)
+            if (nivel < 3)
             {
-                if (fabs(personaje->posicion.y + personaje->alto - charcos[i].posicion.y) < 2)
+                if (personaje->posicion.x + 0.9f*personaje->ancho > charcos[i].posicion.x && personaje->posicion.x + 0.1f*personaje->ancho < charcos[i].posicion.x + charcos[i].ancho)
                 {
-                    if (!personaje->danhado)
+                    if (fabs(personaje->posicion.y + personaje->alto - charcos[i].posicion.y) < 2)
                     {
-                        personaje->danhado = true;
-                        aplicar_danho(personaje, 100);
+                        if (!personaje->danhado)
+                        {
+                            personaje->danhado = true;
+                            aplicar_danho(personaje, 100);
+                        }
                     }
                 }
+            }
+
+            else
+            {    
+                if (personaje->direccion == 1)
+                {
+                    if (personaje->posicion.x + porcentajes_colision_max[personaje->id_nro_frame - base_disparo]/100 * personaje->ancho > charcos[i].posicion.x &&
+                        personaje->posicion.x + porcentajes_colision_min[personaje->id_nro_frame - base_disparo]/100 * personaje->ancho < charcos[i].posicion.x + charcos[i].ancho)
+                    {
+                        if (fabs(personaje->posicion.y + personaje->alto - charcos[i].posicion.y) < 2)
+                        {
+                            if (!personaje->danhado)
+                            {
+                                personaje->danhado = true;
+                                aplicar_danho(personaje, 100);
+                            }
+                        }
+                    }
+                }
+
+                else
+                {
+                    if (personaje->posicion.x + (1 - porcentajes_colision_max[personaje->id_nro_frame - base_disparo]/100) * personaje->ancho < charcos[i].posicion.x + charcos[i].ancho &&
+                        personaje->posicion.x + (1 - porcentajes_colision_min[personaje->id_nro_frame - base_disparo]/100) * personaje->ancho > charcos[i].posicion.x)
+                    {
+                        if (fabs(personaje->posicion.y + personaje->alto - charcos[i].posicion.y) < 2)
+                        {
+                            if (!personaje->danhado)
+                            {
+                                personaje->danhado = true;
+                                aplicar_danho(personaje, 100);
+                            }
+                        }
+                    }
+                }   
             }
         }
     }

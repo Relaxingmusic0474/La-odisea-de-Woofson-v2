@@ -141,9 +141,8 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             personaje->velocidad.y = 0;  // Inicialmente no está en salto
             personaje->direccion = pow(-1, rand() % 2);
             personaje->nro_vidas = 1;  // Tendrá una sola vida
-            personaje->subvida_actual = 100;
             personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
-            personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
+            personaje->en_plataforma = false;
             personaje->danhado = false;
             personaje->tiempo_danho = 0;
             inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
@@ -152,6 +151,13 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
         case MONSTRUO:
             personaje->velocidad.x = VELOCIDAD_MONSTRUO;
             personaje->velocidad.y = 0;  // Inicialmente no está en salto
+            personaje->nro_vidas = 1;
+            personaje->danhado = false;
+            personaje->tiempo_danho = 0;
+            personaje->en_plataforma = false;
+            personaje->direccion = 1;
+            personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
+            personaje->en_ataque = false;
             break;
         
         case LEPRECHAUN:
@@ -159,9 +165,8 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
             personaje->velocidad.y = 0;
             personaje->direccion = pow(-1, rand() % 2);
             personaje->nro_vidas = 1;  // Tendrá una sola vida
-            personaje->subvida_actual = 100;
             personaje->bandera_dibujo = 0;  // 0: normal, ALLEGRO_FLIP_HORIZONTAL: espejo
-            personaje->en_plataforma = false;  // Inicialmente no está en una plataforma (está en el suelo)
+            personaje->en_plataforma = false;
             personaje->danhado = false;
             personaje->tiempo_danho = 0;
             inicializar_salto(personaje);  // Inicializa la estructura del salto para el personaje
@@ -349,6 +354,12 @@ Procedure actualizar_frame(Personaje* personaje, ModoWoofson modo, Natural nivel
     else if (personaje->tipo == LEPRECHAUN)
     {
         cantidad = NRO_FRAMES_LEPRECHAUN;
+        personaje->id_nro_frame = (personaje->id_nro_frame + 1) % cantidad;
+    }
+
+    else  // MONSTRUO
+    {
+        cantidad = NRO_FRAMES_MONSTRUO;
         personaje->id_nro_frame = (personaje->id_nro_frame + 1) % cantidad;
     }
 
@@ -564,7 +575,7 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
         {
             if (!personaje->salto.en_salto && personaje->posicion.y + personaje->alto < ALTURA_PISO && !hay_bloque_debajo(personaje, mapa))
             {
-                activar_caida_libre(personaje);  /* Activa la caída libre si el personaje no está en el suelo */
+                activar_caida_libre(personaje);   /* Activa la caída libre si el personaje no está en el suelo */
             }
         }
     
@@ -585,9 +596,11 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 Procedure mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa mapa, Natural nivel)
 {
     Natural i, j, bloque_x1, bloque_x2, bloque_y1, bloque_y2;
+    Natural bloque_y_monstruo, bloque_y_woofson;
+    Vector pos_ojos_monstruo;
     float posicion_woofson, posicion_leprechaun;
     bool obviar_pelea = false;
-    float amplitud_dragon = 2;   
+    float amplitud_dragon = 2;
 
     if (enemigo->estatico || enemigo->muerto)  // No tiene sentido mover un enemigo estático o que ya murió
     {
@@ -698,9 +711,59 @@ Procedure mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa map
 
     else
     {
-        if (enemigo->fps_en_caminata % 8 == 0)
+        if (enemigo->tipo != MONSTRUO)
         {
-            actualizar_frame(enemigo, '\0', nivel);  // El modo es '\0' ya que da igual para los enemigos
+            if (enemigo->fps_en_caminata % 8 == 0)
+            {
+                actualizar_frame(enemigo, '\0', nivel);  // El modo es '\0' ya que da igual para los enemigos
+            }
+        }
+
+        else
+        {
+            if (woofson.posicion.x < enemigo->posicion.x)
+            {
+                enemigo->direccion = -1;
+                enemigo->bandera_dibujo = ALLEGRO_FLIP_HORIZONTAL;  // Dibuja el monstruo mirando a la izquierda
+            }
+
+            else
+            {
+                enemigo->direccion = 1;
+                enemigo->bandera_dibujo = 0;  // Dibuja el monstruo mirando a la derecha
+            }
+
+            if (enemigo->direccion == 1)
+            {
+                pos_ojos_monstruo.x = enemigo->posicion.x + 0.8 * enemigo->ancho;  // Aproximación de la posición de los ojos del monstruo
+            }
+
+            else
+            {
+                pos_ojos_monstruo.x = enemigo->posicion.x + 0.2 * enemigo->ancho;  // Aproximación de la posición de los ojos del monstruo
+            }
+            
+            pos_ojos_monstruo.y = enemigo->posicion.y + 0.2 * enemigo->alto;   // Aproximación de la posición de los ojos del monstruo
+
+            bloque_y_monstruo = pos_ojos_monstruo.y / mapa.alto_bloque;
+            bloque_y_woofson = woofson.posicion.y / mapa.alto_bloque;
+
+            if (fabs((float) (bloque_y_monstruo - bloque_y_woofson)) <= 5)
+            {
+                if (enemigo->fps_en_caminata % 8 == 0)
+                {
+                    actualizar_frame(enemigo, '\0', nivel);
+                }
+            }
+
+            else
+            {
+                enemigo->id_nro_frame = 0;  // Reinicia el frame del monstruo si no está mirando a Woofson
+                enemigo->imagen = enemigo->frames[enemigo->id_nro_frame];  // Reinicia la imagen del monstruo
+                enemigo->ancho = al_get_bitmap_width(enemigo->imagen);
+                enemigo->alto = al_get_bitmap_height(enemigo->imagen);
+            }
+
         }
     }
 
@@ -1400,7 +1463,6 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
                 enemigo->balas[i].velocidad.x = enemigo->balas[i].direccion * VELOCIDAD_BALA;
                 enemigo->balas[i].velocidad.y = 0;
                 enemigo->frames_para_prox_disparo = MAX_FRAMES_ESPERA_ENEMIGO;                
-                // AQUI LUEGO PODRIA IR EFECTO DE SONIDO
                 break;
             }
         }
@@ -1511,6 +1573,11 @@ Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Persona
             else if (enemigos[i].tipo == LEPRECHAUN)
             {
                 // NADA
+            }
+
+            else if (enemigos[i].tipo == MONSTRUO)
+            {
+
             }
 
             else
