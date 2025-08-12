@@ -945,6 +945,11 @@ void liberar_mapas(Mapa mapas[])
 }
 
 
+/**
+ * @brief Función que carga tanto los fondos como los mapas de los distintos niveles.
+ * @param R Es la estructura que contiene los recursos principales del juego.
+ * @return true si la carga es exitosa, false en caso contrario. 
+ */
 bool cargar_escenarios(Recursos* R)
 {
     Natural i;
