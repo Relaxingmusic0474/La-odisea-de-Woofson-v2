@@ -20,6 +20,6 @@ extern bool teclas[ALLEGRO_KEY_MAX];
 bool inicializar_allegro();
 bool crear_recursos_allegro(Recursos*);
 bool inicializar_todo(Recursos*);
-Procedure finalizar_allegro(Recursos*);
+void finalizar_allegro(Recursos*);
 
 #endif  // ALLEGRO_H

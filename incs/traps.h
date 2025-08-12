@@ -9,17 +9,17 @@
 #include "load.h"
 
 // Funciones para manejar trampas (rayos en este caso)
-Procedure inicializar_rayo(Rayo*, EfectoSonido*);
-Procedure inicializar_rayos(Rayo [NRO_NIVELES][MAX_RAYOS], EfectoSonido*);
+void inicializar_rayo(Rayo*, EfectoSonido*);
+void inicializar_rayos(Rayo [NRO_NIVELES][MAX_RAYOS], EfectoSonido*);
 Natural detectar_rayos(Mapa, Rayo [], Natural);
-Procedure dibujar_rayo(Rayo, ALLEGRO_COLOR);
+void dibujar_rayo(Rayo, ALLEGRO_COLOR);
 bool verificar_colision_rayo(Personaje* personaje, Rayo* rayo);
 bool linea_de_vision_libre(Rayo, Personaje, Mapa);
 bool personaje_activa_rayo(Rayo rayo, Personaje personaje, Mapa);
-Procedure actualizar_rayo(Rayo*, Natural, Personaje, Mapa);
-Procedure actualizar_rayos(Rayo [MAX_RAYOS], Natural, Personaje, Mapa);
-Procedure detectar_si_personaje_en_zona_de_espina(Personaje* personaje, Espina espinas[MAX_ESPINAS]);
-Procedure detectar_si_personaje_en_zona_de_veneno(Personaje* personaje, Charco charcos[MAX_CHARCOS], Natural);
+void actualizar_rayo(Rayo*, Natural, Personaje, Mapa);
+void actualizar_rayos(Rayo [MAX_RAYOS], Natural, Personaje, Mapa);
+void detectar_si_personaje_en_zona_de_espina(Personaje* personaje, Espina espinas[MAX_ESPINAS]);
+void detectar_si_personaje_en_zona_de_veneno(Personaje* personaje, Charco charcos[MAX_CHARCOS], Natural);
 //bool hay_hitbox_con_espina(Personaje*, Mapa, Espina*);
 
 #endif // TRAPS_H

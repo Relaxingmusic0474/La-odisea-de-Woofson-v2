@@ -517,7 +517,7 @@ bool inicializar_todo(Recursos* R)
  * Destruye la ventana, la cola de eventos y el temporizador.
  * @param R Puntero a la estructura Recursos donde se almacenan los recursos a liberar.
  */
-Procedure finalizar_allegro(Recursos* R)
+void finalizar_allegro(Recursos* R)
 {
     Natural i;
 

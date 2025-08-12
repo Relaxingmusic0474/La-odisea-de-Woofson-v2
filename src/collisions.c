@@ -286,7 +286,7 @@ bool hay_bloque_derecha(Personaje* personaje, Mapa mapa)
  * @param personaje El personaje que está colisionando.
  * @param mapa El mapa del juego, que contiene los bloques y obstáculos.
  */
-Procedure efectuar_colision(Personaje* personaje, Mapa mapa)
+void efectuar_colision(Personaje* personaje, Mapa mapa)
 {
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
 

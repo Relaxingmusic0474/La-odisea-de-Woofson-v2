@@ -45,7 +45,7 @@ Natural obtener_opcion_en_hover(Menu menu)
  * @brief Función que determina el color de la pantalla según la iteración del juego (se utiliza en el primer nivel).
  * @param iteracion Es el número de iteración del juego, que se incrementa cada frame.
  */
-Procedure determinar_color_pantalla(Natural iteracion)
+void determinar_color_pantalla(Natural iteracion)
 {
     ALLEGRO_COLOR lista_colores[NRO_COLORES] = {AZUL, ROSADO, MORADO, VERDE_OSCURO, ROJO};
     static Natural i = 0;  // Estática para que ignore el valor inicial de la segunda llamada en adelante
@@ -165,7 +165,7 @@ bool inicializar_menu(Menu* menu, TipoMenu tipo, Imagen fondo, ALLEGRO_FONT* fue
  * @param menu Es el menú que se desea mostrar (lo lógico es que se muestre el menú actual).
  * @param etapa_actual Es la etapa actual del juego (enum).
  */
-Procedure mostrar_menu(Menu menu, Etapa etapa_actual)
+void mostrar_menu(Menu menu, Etapa etapa_actual)
 {
     Rectangulo rect, rect_menu;
     Menu menu_vacio = {0};
@@ -270,7 +270,7 @@ Procedure mostrar_menu(Menu menu, Etapa etapa_actual)
  * @param menu Un puntero al menú que se quiere mostrar (un ranking también es un menú solo que es especial).
  * @param ranking Es la estructura de ranking, que además incluye los datos de los jugadores y sus puntuaciones.
  */
-Procedure mostrar_ranking(Menu* menu, Ranking* ranking)
+void mostrar_ranking(Menu* menu, Ranking* ranking)
 {
     Natural i;
     Rectangulo datos[3][MAX_DATOS];
@@ -317,7 +317,7 @@ Procedure mostrar_ranking(Menu* menu, Ranking* ranking)
 }
 
 
-Procedure mostrar_instrucciones(Recursos recursos, Menu* menu)
+void mostrar_instrucciones(Recursos recursos, Menu* menu)
 {
     Rectangulo rect_tabla;
     Imagen png_muestra_dragon = recursos.frames[FRAME_DRAGON][5];
@@ -375,7 +375,7 @@ Procedure mostrar_instrucciones(Recursos recursos, Menu* menu)
  * @param menu_actual Un puntero al menú actual (el que se estaba mostrando).
  * @param menu_nuevo El menú que se quiere mostrar ahora.
  */
-Procedure cambiar_menu(Menu* menu_actual, Menu menu_nuevo)
+void cambiar_menu(Menu* menu_actual, Menu menu_nuevo)
 {
     *menu_actual = menu_nuevo;
 }
@@ -388,7 +388,7 @@ Procedure cambiar_menu(Menu* menu_actual, Menu menu_nuevo)
  * @param municion_pro La imagen con la munición pro.
  * @param nivel_actual El nivel actual en el que se está.
  */
-Procedure cambiar_tipo_municion(Municion municiones[MAX_MUNICIONES], Imagen municion_normal, Imagen municion_pro, Natural nivel_actual)
+void cambiar_tipo_municion(Municion municiones[MAX_MUNICIONES], Imagen municion_normal, Imagen municion_pro, Natural nivel_actual)
 {
     Natural i;
 
@@ -414,7 +414,7 @@ Procedure cambiar_tipo_municion(Municion municiones[MAX_MUNICIONES], Imagen muni
  * @param etapa_actual Un puntero a la etapa actual del juego (a veces al resetear el estado del juego la etapa actual debe cambiar).
  * @param etapa_deseada La etapa a la que se desea cambiar.
  */
-Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actual, Etapa etapa_deseada, float* tiempo_en_nivel)
+void resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actual, Etapa etapa_deseada, float* tiempo_en_nivel)
 {
     Natural i;
 
@@ -464,7 +464,7 @@ Procedure resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actu
  * @brief Función que detiene los efectos de sonido utilizados en el juego.
  * @param recursos Un puntero a la estructura recursos, que contiene los recursos esenciales para el juego (incluye los efectos de sonido).
  */
-Procedure detener_efectos_de_sonido(Recursos* recursos)
+void detener_efectos_de_sonido(Recursos* recursos)
 {
     Natural i, j;
 
@@ -496,7 +496,7 @@ Procedure detener_efectos_de_sonido(Recursos* recursos)
  * @param ranking_a_mostrar Es el puntero al identificador del ranking que se debe mostrar (si no se debe mostrar ninguno, entonces es -1).
  * @param tiempo_en_nivel Un puntero al tiempo que se lleva en el nivel actual.
  */
-Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual, Natural* ranking_a_mostrar, float* tiempo_en_nivel)//, Natural* ranking_a_mostrar)
+void redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_actual, Natural* nivel_actual, Natural* ranking_a_mostrar, float* tiempo_en_nivel)//, Natural* ranking_a_mostrar)
 {
     Menu menu_vacio = {0};
     Natural nivel_anterior = 0;
@@ -704,7 +704,7 @@ Procedure redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* et
  * @brief Función que finaliza un menú, liberando sus recursos y reseteando algunos valores.
  * @param menu El puntero al menú que se desea finalizar.
  */
-Procedure finalizar_menu(Menu* menu)
+void finalizar_menu(Menu* menu)
 {   
     Natural i;
 
@@ -736,7 +736,7 @@ Procedure finalizar_menu(Menu* menu)
  * @param rectangulo La estructura del rectángulo que se quiere dibujar (contiene posición inicial y final).
  * @param color Color del cual se desea dibujar el rectángulo.
  */
-Procedure dibujar_rectangulo(Rectangulo rectangulo, ALLEGRO_COLOR color)
+void dibujar_rectangulo(Rectangulo rectangulo, ALLEGRO_COLOR color)
 {
     al_draw_filled_rectangle(rectangulo.pos_inicial.x, rectangulo.pos_inicial.y, rectangulo.pos_final.x, rectangulo.pos_final.y, color);
 }
@@ -749,7 +749,7 @@ Procedure dibujar_rectangulo(Rectangulo rectangulo, ALLEGRO_COLOR color)
  * @param porcentaje_x El porcentaje en x relativo al rectángulo, en el cual se desea colocar la imagen.
  * @param porcentaje_y El porcentaje en y relativo al rectángulo, en el cual se desea colocar la imagen.
  */
-Procedure dibujar_imagen_en_rectangulo(Imagen imagen, Rectangulo rectangulo, float porcentaje_x, float porcentaje_y)
+void dibujar_imagen_en_rectangulo(Imagen imagen, Rectangulo rectangulo, float porcentaje_x, float porcentaje_y)
 {
     Vector posicion_dibujo;
     int alto_imagen = al_get_bitmap_height(imagen);
@@ -759,7 +759,7 @@ Procedure dibujar_imagen_en_rectangulo(Imagen imagen, Rectangulo rectangulo, flo
 }
 
 
-Procedure dibujar_texto_en_rectangulo(char* texto, Rectangulo rectangulo, float porcentaje_x, float porcentaje_y, ALLEGRO_FONT* fuente, ALLEGRO_COLOR color)
+void dibujar_texto_en_rectangulo(char* texto, Rectangulo rectangulo, float porcentaje_x, float porcentaje_y, ALLEGRO_FONT* fuente, ALLEGRO_COLOR color)
 {
     Vector posicion_texto;
     int alto_texto = al_get_font_line_height(fuente);
@@ -821,7 +821,7 @@ Rectangulo dibujar_rectangulo_en_rectangulo(Rectangulo rect_destino, float alto,
 }
 
 
-Procedure mostrar_pantalla_datos(Personaje personaje, Municion municion, Imagen vida, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, Natural nivel_actual, float tiempo_en_nivel)
+void mostrar_pantalla_datos(Personaje personaje, Municion municion, Imagen vida, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, Natural nivel_actual, float tiempo_en_nivel)
 {
     Natural i, min, seg;
     Natural alto_linea, alto_barras, ancho_barras;
@@ -933,7 +933,7 @@ Procedure mostrar_pantalla_datos(Personaje personaje, Municion municion, Imagen 
 }
 
 
-Procedure mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, Natural iteracion)
+void mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, Natural iteracion)
 {
     al_clear_to_color(NEGRO);
 
@@ -965,7 +965,7 @@ Procedure mostrar_fondo_nivel(Imagen fondos[NRO_NIVELES], Natural nivel_actual, 
  * @param ranking_a_mostrar Puntero al ranking que se está mostrando actualmente.
  * @param tiempo_en_nivel Tiempo actual en el nivel (puntero -> puede cambiar).
  */
-Procedure manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_actual, Natural* nivel_actual, Natural iteracion, bool* cambio_estado_procesado, Tecla* ultima_tecla_lateral, Natural* ranking_a_mostrar, float* tiempo_en_nivel)
+void manejar_menu(Recursos* recursos, ALLEGRO_EVENT* evento, Etapa* etapa_actual, Natural* nivel_actual, Natural iteracion, bool* cambio_estado_procesado, Tecla* ultima_tecla_lateral, Natural* ranking_a_mostrar, float* tiempo_en_nivel)
 {
     Menu menu_vacio = {0};
 

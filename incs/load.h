@@ -16,14 +16,14 @@ FILE* cargar_mapa(Natural);
 Natural obtener_nro_filas(Natural);
 Natural obtener_nro_columnas(Natural);
 Mapa leer_mapa(Natural/*, Natural*/);
-Procedure dibujar_mapa(Mapa, Recursos*, bool*, Natural, Natural);
-Procedure liberar_mapa(Mapa*);
-Procedure liberar_mapas(Mapa[]);
+void dibujar_mapa(Mapa, Recursos*, bool*, Natural, Natural);
+void liberar_mapa(Mapa*);
+void liberar_mapas(Mapa[]);
 bool cargar_escenarios(Recursos*);  // Carga el fondo y el mapa asociado a cada nivel
-Procedure liberar_escenarios(Recursos*);
+void liberar_escenarios(Recursos*);
 Imagen* cargar_frames(TipoPersonaje);
 bool cargar_todos_los_frames(Imagen* [TIPOS_PERSONAJES]);
-Procedure destruir_frames(Imagen*, Natural);
-Procedure destruir_todos_los_frames(Imagen* [TIPOS_PERSONAJES]);
+void destruir_frames(Imagen*, Natural);
+void destruir_todos_los_frames(Imagen* [TIPOS_PERSONAJES]);
 
 #endif  // LOAD_H

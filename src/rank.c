@@ -100,7 +100,7 @@ bool modificar_ranking(Ranking* ranking, Natural nro_nivel)
 }
 
 
-Procedure intercambiar_datos(Datos* data_1, Datos* data_2)
+void intercambiar_datos(Datos* data_1, Datos* data_2)
 {
     Datos aux;
     aux = *data_1;
@@ -109,7 +109,7 @@ Procedure intercambiar_datos(Datos* data_1, Datos* data_2)
 }
 
 
-Procedure insertar_en_ranking(Ranking* ranking, char* nombre, Natural nivel)
+void insertar_en_ranking(Ranking* ranking, char* nombre, Natural nivel)
 {
     Natural i;
     Datos data = {0};
@@ -141,7 +141,7 @@ Procedure insertar_en_ranking(Ranking* ranking, char* nombre, Natural nivel)
 }
 
 
-Procedure ingresar_nombre(char* nombre, size_t largo_max, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, ALLEGRO_EVENT_QUEUE* cola_eventos)
+void ingresar_nombre(char* nombre, size_t largo_max, ALLEGRO_FONT* fuente, ALLEGRO_FONT* fuente_sec, ALLEGRO_EVENT_QUEUE* cola_eventos)
 {
     ALLEGRO_EVENT evento;
     Tecla tecla;

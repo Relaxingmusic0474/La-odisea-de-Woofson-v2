@@ -6,14 +6,14 @@
 #include "time.h"
 #include "enums.h"
 
-Procedure mostrar_mapa(Mapa);
-Procedure mostrar_datos_personaje(Personaje);
-Procedure mostrar_bloque_actual_personaje(Personaje, Mapa);
-Procedure caida_libre_activada(Personaje);
-Procedure debug_rayo_personaje(Rayo*, Personaje*);
-Procedure imprimir_datos_rayos(Rayo [MAX_RAYOS], Natural);
-Procedure imprimir_posicion_balas(Bala [MAX_BALAS]);
-Procedure mostrar_estados_actuales(Etapa, Natural);
-Procedure imprimir_posicion_charcos(Charco [MAX_CHARCOS]);
+void mostrar_mapa(Mapa);
+void mostrar_datos_personaje(Personaje);
+void mostrar_bloque_actual_personaje(Personaje, Mapa);
+void caida_libre_activada(Personaje);
+void debug_rayo_personaje(Rayo*, Personaje*);
+void imprimir_datos_rayos(Rayo [MAX_RAYOS], Natural);
+void imprimir_posicion_balas(Bala [MAX_BALAS]);
+void mostrar_estados_actuales(Etapa, Natural);
+void imprimir_posicion_charcos(Charco [MAX_CHARCOS]);
 
 #endif  // DEBUG_H

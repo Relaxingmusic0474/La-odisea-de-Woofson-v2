@@ -1,7 +1,7 @@
 #include "allegro.h"
 #include "debug.h"
 
-Procedure mostrar_mapa(Mapa mapa)
+void mostrar_mapa(Mapa mapa)
 {
     Natural i, j;
 
@@ -22,7 +22,7 @@ Procedure mostrar_mapa(Mapa mapa)
 }
 
 
-Procedure mostrar_datos_personaje(Personaje personaje)
+void mostrar_datos_personaje(Personaje personaje)
 {
     printf("Posición: (%.2f, %.2f)\n", personaje.posicion.x, personaje.posicion.y);
     printf("Velocidad: (%.2f, %.2f)\n", personaje.velocidad.x, personaje.velocidad.y);
@@ -43,7 +43,7 @@ Procedure mostrar_datos_personaje(Personaje personaje)
 }
 
 
-Procedure mostrar_bloque_actual_personaje(Personaje personaje, Mapa mapa)
+void mostrar_bloque_actual_personaje(Personaje personaje, Mapa mapa)
 {
     // Para colisión inferior
     float x_central = personaje.posicion.x + personaje.ancho / 2;
@@ -54,12 +54,12 @@ Procedure mostrar_bloque_actual_personaje(Personaje personaje, Mapa mapa)
 }
 
 
-Procedure caida_libre_activada(Personaje p)
+void caida_libre_activada(Personaje p)
 {
     p.velocidad.y > 0 ? printf("Estoy en caida libre\n") : printf("No estoy en caida libre\n");
 }
 
-Procedure debug_rayo_personaje(Rayo* rayo, Personaje* personaje)
+void debug_rayo_personaje(Rayo* rayo, Personaje* personaje)
 {
     printf("Rayo activo: %d\n", rayo->activo);
     printf("Rayo origen: (%.2f, %.2f)\n", rayo->origen.x, rayo->origen.y);
@@ -67,7 +67,7 @@ Procedure debug_rayo_personaje(Rayo* rayo, Personaje* personaje)
     printf("Personaje rect: (%.2f, %.2f) a (%.2f, %.2f)\n", personaje->posicion.x, personaje->posicion.y, personaje->posicion.x + personaje->ancho, personaje->posicion.y + personaje->alto);
 }
 
-Procedure imprimir_datos_rayos(Rayo rayos[MAX_RAYOS], Natural cantidad)
+void imprimir_datos_rayos(Rayo rayos[MAX_RAYOS], Natural cantidad)
 {
     Natural i;
 
@@ -83,7 +83,7 @@ Procedure imprimir_datos_rayos(Rayo rayos[MAX_RAYOS], Natural cantidad)
     }
 }
 
-Procedure imprimir_posicion_balas(Bala balas[MAX_BALAS])
+void imprimir_posicion_balas(Bala balas[MAX_BALAS])
 {
     Natural i;
 
@@ -95,7 +95,7 @@ Procedure imprimir_posicion_balas(Bala balas[MAX_BALAS])
     printf("\n");
 }
 
-Procedure mostrar_estados_actuales(Etapa etapa_actual, Natural nivel_actual)
+void mostrar_estados_actuales(Etapa etapa_actual, Natural nivel_actual)
 {
     char* etapas[] = {"MENU PRINCIPAL", "MENU NIVELES", "INSTRUCCIONES", "RANKING", "NIVEL 1", "NIVEL 2", "NIVEL 3", "NIVEL 4", "NIVEL 5", "DERROTA", "VICTORIA", "MENU RANKING"};
 
@@ -103,7 +103,7 @@ Procedure mostrar_estados_actuales(Etapa etapa_actual, Natural nivel_actual)
     printf("Nivel actual: %hu\n\n", nivel_actual);
 }
 
-Procedure imprimir_posicion_charcos(Charco charcos[MAX_CHARCOS])
+void imprimir_posicion_charcos(Charco charcos[MAX_CHARCOS])
 {
     Natural i;
 

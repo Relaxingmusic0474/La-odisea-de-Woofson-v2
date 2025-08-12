@@ -5,7 +5,7 @@
  * @param rayo Puntero al rayo a inicializar.
  * @param efecto Puntero al efecto de sonido del rayo.
  */
-Procedure inicializar_rayo(Rayo* rayo, EfectoSonido* efecto)
+void inicializar_rayo(Rayo* rayo, EfectoSonido* efecto)
 {
     rayo->origen.x = 0;
     rayo->origen.y = 0;
@@ -30,7 +30,7 @@ Procedure inicializar_rayo(Rayo* rayo, EfectoSonido* efecto)
  * @param rayos La matriz con los rayos de los niveles.
  * @param efecto El efecto de sonido del rayo.
  */
-Procedure inicializar_rayos(Rayo rayos[NRO_NIVELES][MAX_RAYOS], EfectoSonido* efecto)
+void inicializar_rayos(Rayo rayos[NRO_NIVELES][MAX_RAYOS], EfectoSonido* efecto)
 {
     Natural i, j;
 
@@ -138,7 +138,7 @@ Natural detectar_rayos(Mapa mapa, Rayo rayos[], Natural max_rayos)
  * @param rayo El rayo que se quiere dibujar.
  * @param color Color del cual se desea pintar el rayo.
  */
-Procedure dibujar_rayo(Rayo rayo, ALLEGRO_COLOR color)
+void dibujar_rayo(Rayo rayo, ALLEGRO_COLOR color)
 {
     al_draw_line(rayo.origen.x, rayo.origen.y, rayo.posicion.x, rayo.posicion.y, color, rayo.grosor);  // Se dibuja la línea
 }
@@ -231,7 +231,7 @@ bool personaje_activa_rayo(Rayo rayo, Personaje personaje, Mapa mapa)
 }
 
 
-Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa mapa)
+void actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa mapa)
 {
     ALLEGRO_COLOR color_rayo;
     float tiempo_total = 0, parametro;
@@ -358,7 +358,7 @@ Procedure actualizar_rayo(Rayo* rayo, Natural index, Personaje personaje, Mapa m
 }
 
 
-Procedure actualizar_rayos(Rayo rayos[MAX_RAYOS], Natural cantidad, Personaje personaje, Mapa mapa)
+void actualizar_rayos(Rayo rayos[MAX_RAYOS], Natural cantidad, Personaje personaje, Mapa mapa)
 {
     Natural i;
 
@@ -373,7 +373,7 @@ Procedure actualizar_rayos(Rayo rayos[MAX_RAYOS], Natural cantidad, Personaje pe
     }
 }
 
-Procedure detectar_si_personaje_en_zona_de_espina(Personaje* personaje, Espina espinas[MAX_ESPINAS])
+void detectar_si_personaje_en_zona_de_espina(Personaje* personaje, Espina espinas[MAX_ESPINAS])
 {
     Natural i, index_regresion;
 
@@ -460,7 +460,7 @@ Procedure detectar_si_personaje_en_zona_de_espina(Personaje* personaje, Espina e
 }
 
 
-Procedure detectar_si_personaje_en_zona_de_veneno(Personaje* personaje, Charco charcos[MAX_CHARCOS], Natural nivel)
+void detectar_si_personaje_en_zona_de_veneno(Personaje* personaje, Charco charcos[MAX_CHARCOS], Natural nivel)
 {
     Natural i;
     Natural base_disparo = NRO_FRAMES_MOVIMIENTO + NRO_FRAMES_PELEA;

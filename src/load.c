@@ -386,7 +386,7 @@ Mapa leer_mapa(Natural nro_nivel/*, Natural* nro_filas, Natural* nro_columnas*/)
  * @param cambio_estado_procesado Es un puntero que detecta un cambio de estado en la puerta o la palanca.
  * @param iteracion Es la iteración actual del juego.
  */
-Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, Natural iteracion, Natural nivel)
+void dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, Natural iteracion, Natural nivel)
 {
     Natural i=0, j=0, k=0;
     Natural id_enemigo = 0, id_espina = 0, id_charco = 0, id_pocion = 0, id_municion = 0, id_pocion_rango_bala = 0;
@@ -904,7 +904,7 @@ Procedure dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_proces
  * Función que libera la memoria de un mapa.
  * @param mapa Es el mapa a liberar.
  */
-Procedure liberar_mapa(Mapa* mapa)
+void liberar_mapa(Mapa* mapa)
 {
     Natural i=0;
 
@@ -929,7 +929,7 @@ Procedure liberar_mapa(Mapa* mapa)
  * Función que libera todos los mapas del juego (todos los mapas de los niveles).
  * @param mapas Es el arreglo de mapas a liberar.
  */
-Procedure liberar_mapas(Mapa mapas[])
+void liberar_mapas(Mapa mapas[])
 {
     Natural i=0;
 
@@ -985,7 +985,7 @@ bool cargar_escenarios(Recursos* R)
 }
 
 
-Procedure liberar_fondos(Imagen fondos[NRO_NIVELES])
+void liberar_fondos(Imagen fondos[NRO_NIVELES])
 {
     Natural i;
 
@@ -1001,7 +1001,7 @@ Procedure liberar_fondos(Imagen fondos[NRO_NIVELES])
     return;
 }
 
-Procedure liberar_escenarios(Recursos* R)
+void liberar_escenarios(Recursos* R)
 {
     liberar_mapas(R->mapas);
     liberar_fondos(R->fondos);
@@ -1103,7 +1103,7 @@ bool cargar_todos_los_frames(Imagen* frames[TIPOS_PERSONAJES])
 }
 
 
-Procedure destruir_frames(Imagen* frames, Natural cantidad_frames)
+void destruir_frames(Imagen* frames, Natural cantidad_frames)
 {
     Natural i;
 
@@ -1121,7 +1121,7 @@ Procedure destruir_frames(Imagen* frames, Natural cantidad_frames)
 }
 
 
-Procedure destruir_todos_los_frames(Imagen* frames[TIPOS_PERSONAJES])
+void destruir_todos_los_frames(Imagen* frames[TIPOS_PERSONAJES])
 {
     Natural i;
     Natural nro_frames[TIPOS_PERSONAJES] = {NRO_FRAMES_WOOFSON, NRO_FRAMES_DRAGON, NRO_FRAMES_EXTRATERRESTRE, NRO_FRAMES_MONSTRUO, NRO_FRAMES_LEPRECHAUN};

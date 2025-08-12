@@ -68,7 +68,7 @@ TipoPersonaje tipo_personaje(TipoFrame tipo)
  * @param posicion_deseada Posición en la que se desea inicializar al personaje.
  * @param estatico Un booleano que determina si el personaje estará en una posición fija o no.
  */
-Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen* frames[TIPOS_PERSONAJES], Vector posicion_deseada, bool estatico)
+void inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen* frames[TIPOS_PERSONAJES], Vector posicion_deseada, bool estatico)
 {
     Natural i;
 
@@ -202,7 +202,7 @@ Procedure inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen
  * @brief Función que inicializa la estructura de salto del personaje.
  * @param personaje Puntero al personaje cuya estructura de salto se va a inicializar.
  */
-Procedure inicializar_salto(Personaje* personaje)
+void inicializar_salto(Personaje* personaje)
 {
     personaje->salto.en_salto = false;
     personaje->salto.es_interrumpido = false;  // Indica si el salto es interrumpido por una colisión con algún techo o no
@@ -219,7 +219,7 @@ Procedure inicializar_salto(Personaje* personaje)
  * @param personaje El personaje a dibujar.
  * @param teclas Un arreglo de booleanos que indica qué teclas están presionadas.
  */
-Procedure determinar_como_dibujar_personaje(Personaje* personaje, Natural ultima_tecla_lateral)
+void determinar_como_dibujar_personaje(Personaje* personaje, Natural ultima_tecla_lateral)
 {
     extern bool teclas[ALLEGRO_KEY_MAX];  // Arreglo global de teclas presionadas
 
@@ -243,7 +243,7 @@ Procedure determinar_como_dibujar_personaje(Personaje* personaje, Natural ultima
  * @param ultima_tecla_lateral La última tecla lateral presionada (para determinar la dirección de dibujo).
  * @param iteracion La iteración actual del loop general del juego.
  */
-Procedure dibujar_personaje(Personaje* personaje, Natural ultima_tecla_lateral, Natural iteracion)
+void dibujar_personaje(Personaje* personaje, Natural ultima_tecla_lateral, Natural iteracion)
 {
     Natural var;
 
@@ -281,7 +281,7 @@ Procedure dibujar_personaje(Personaje* personaje, Natural ultima_tecla_lateral, 
  * @param personaje Puntero al personaje cuyo frame se va a actualizar.
  * @param modo Modo de actualización del frame (este parámetro tiene importancia solo si los frames que se actualizan son de Woofson)
  */
-Procedure actualizar_frame(Personaje* personaje, ModoWoofson modo, Natural nivel)
+void actualizar_frame(Personaje* personaje, ModoWoofson modo, Natural nivel)
 {
     int base = 0;
     int cantidad = 0;
@@ -411,7 +411,7 @@ bool es_posible_mover_personaje_lateralmente(Personaje *personaje, Mapa mapa)
  * @param teclas Un arreglo de booleanos que indica qué teclas están presionadas.
  * @param mapa El mapa del juego, que contiene los bloques y obstáculos.
  */
-Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
+void mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 {
     ModoWoofson modo_ataque;
     bool flag = false;
@@ -595,7 +595,7 @@ Procedure mover_personaje(Personaje* personaje, Mapa mapa, Natural nivel)
 }
 
 
-Procedure mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa mapa, Natural nivel)
+void mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa mapa, Natural nivel)
 {
     Natural i, j, bloque_x1, bloque_x2, bloque_y1, bloque_y2;
     Natural bloque_y_monstruo, bloque_y_woofson;
@@ -795,7 +795,7 @@ Procedure mover_enemigo_dinamico(Personaje* enemigo, Personaje woofson, Mapa map
  * @param t El tiempo transcurrido desde el inicio del salto.
  * @param mapa El mapa del juego, que contiene los bloques y obstáculos.
  */
-Procedure continuar_salto(Personaje* personaje, float t, Mapa mapa)
+void continuar_salto(Personaje* personaje, float t, Mapa mapa)
 {
     personaje->posicion.y = personaje->salto.altura_inicial - personaje->salto.impulso * t + g * t * t / 2;
     personaje->velocidad.y = velocidad_instantanea(*personaje, t);  /* Actualiza la velocidad en el eje y */
@@ -819,7 +819,7 @@ Procedure continuar_salto(Personaje* personaje, float t, Mapa mapa)
  * Función que activa la caída libre del personaje, actualizando su posición y velocidad en el eje y.
  * @param personaje El personaje que está cayendo.
  */
-Procedure activar_caida_libre(Personaje* personaje)
+void activar_caida_libre(Personaje* personaje)
 {
     personaje->salto.en_salto = true;  /* Marca que el personaje está en caída libre */
     personaje->salto.altura_inicial = personaje->posicion.y;  /* Guarda la altura inicial de la caída */
@@ -835,7 +835,7 @@ Procedure activar_caida_libre(Personaje* personaje)
  * @param t El tiempo actual.
  * @return La velocidad vertical del personaje.
  */
-Entero velocidad_instantanea(Personaje personaje, float t)
+float velocidad_instantanea(Personaje personaje, float t)
 {
     return -personaje.salto.impulso + g*t;
 }
@@ -857,7 +857,7 @@ bool es_tecla_lateral(Tecla tecla)  // El tipo Tecla es un int, pero se usa Tecl
  * @param personaje El personaje que va a patalear.
  * @param direccion La dirección en la que se va a patalear (1 para derecha, -1 para izquierda).
  */
-Procedure patalear(Personaje* personaje, int direccion)
+void patalear(Personaje* personaje, int direccion)
 {
     if (personaje->caminata)
     {
@@ -888,7 +888,7 @@ Procedure patalear(Personaje* personaje, int direccion)
 }
 
 
-Procedure morir(Personaje* personaje, Tecla* ultima_lateral, Etapa* etapa_actual)
+void morir(Personaje* personaje, Tecla* ultima_lateral, Etapa* etapa_actual)
 {
     Imagen bitmap = personaje->imagen_modo_muerte;
     float ancho = al_get_bitmap_width(personaje->imagen_modo_muerte);
@@ -956,7 +956,7 @@ Procedure morir(Personaje* personaje, Tecla* ultima_lateral, Etapa* etapa_actual
  * @param puerta Es la puerta de paso de nivel.
  * @param etapa_actual Es un puntero a la etapa actual del juego.
  */
-Procedure determinar_victoria_woofson(Personaje* personaje, Personaje enemigos[MAX_ENEMIGOS], Puerta puerta, Etapa* etapa_actual)
+void determinar_victoria_woofson(Personaje* personaje, Personaje enemigos[MAX_ENEMIGOS], Puerta puerta, Etapa* etapa_actual)
 {
     Natural i;
     Natural nro_enemigos = nro_enemigos_activos(enemigos);
@@ -979,7 +979,7 @@ Procedure determinar_victoria_woofson(Personaje* personaje, Personaje enemigos[M
 }
 
 
-Procedure aplicar_danho(Personaje* personaje, Natural cantidad_danho)
+void aplicar_danho(Personaje* personaje, Natural cantidad_danho)
 {
     if (personaje->subvida_actual <= cantidad_danho)
     {
@@ -994,7 +994,7 @@ Procedure aplicar_danho(Personaje* personaje, Natural cantidad_danho)
 }
 
 
-Procedure aumentar_subvida(Personaje* personaje, Natural cantidad_aumento)
+void aumentar_subvida(Personaje* personaje, Natural cantidad_aumento)
 {
     if (cantidad_aumento >= 100 - personaje->subvida_actual)
     {
@@ -1008,7 +1008,7 @@ Procedure aumentar_subvida(Personaje* personaje, Natural cantidad_aumento)
 }
 
 
-Procedure actualizar_estado_danho(Personaje* personaje)
+void actualizar_estado_danho(Personaje* personaje)
 {
     if (personaje->danhado) 
     {
@@ -1058,7 +1058,7 @@ Procedure actualizar_estado_danho(Personaje* personaje)
 }
 
 
-Procedure actualizar_estado_danho_enemigos(Personaje enemigos[MAX_ENEMIGOS])
+void actualizar_estado_danho_enemigos(Personaje enemigos[MAX_ENEMIGOS])
 {
     Natural i, cantidad_enemigos;
 
@@ -1071,7 +1071,7 @@ Procedure actualizar_estado_danho_enemigos(Personaje enemigos[MAX_ENEMIGOS])
 }
 
 
-Procedure detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[MAX_RAYOS])
+void detectar_si_personaje_en_zona_de_rayo(Personaje* personaje, Rayo rayo[MAX_RAYOS])
 {
     Natural i;
 
@@ -1158,7 +1158,7 @@ Natural nro_balas_disponibles(Bala balas[MAX_BALAS])
 }
 
 
-Procedure mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa, Natural nivel, ALLEGRO_COLOR color)
+void mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa, Natural nivel, ALLEGRO_COLOR color)
 {
     Natural i;
     int fil, col;
@@ -1429,7 +1429,7 @@ bool puede_disparar_horizontalmente(Personaje enemigo, Personaje woofson, Mapa m
 }
 
 
-Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Mapa mapa, Natural nivel)
+void efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Mapa mapa, Natural nivel)
 {
     Natural i;
     float dx;
@@ -1473,7 +1473,7 @@ Procedure efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Ma
     }
 }
 
-Procedure lanzar_fuego(Personaje* dragon, Personaje* woofson, Imagen imagen_fuego)
+void lanzar_fuego(Personaje* dragon, Personaje* woofson, Imagen imagen_fuego)
 {      
     float porcentajes_boca[] = {18.0, 6.7, 20.0, 39.5, 44.4, 57.0, 45.0, 40.0, 20.8, 18.8};
 
@@ -1562,7 +1562,7 @@ Procedure lanzar_fuego(Personaje* dragon, Personaje* woofson, Imagen imagen_fueg
 }
 
 
-Procedure lanzar_proyectil_fuego(Personaje* monstruo, Personaje* woofson)
+void lanzar_proyectil_fuego(Personaje* monstruo, Personaje* woofson)
 {
     float dx, dy;
     float porcentajes_mano[] = {1};
@@ -1575,7 +1575,7 @@ Procedure lanzar_proyectil_fuego(Personaje* monstruo, Personaje* woofson)
 }
 
 
-Procedure efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Personaje* woofson, Mapa mapa, Natural nivel, Imagen fuego)
+void efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Personaje* woofson, Mapa mapa, Natural nivel, Imagen fuego)
 {
     Natural i;
 
@@ -1648,7 +1648,7 @@ bool woofson_puede_disparar(Personaje* woofson)
 }
 
 
-Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX_ENEMIGOS], Mapa mapa, Natural nivel)
+void efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX_ENEMIGOS], Mapa mapa, Natural nivel)
 {
     Natural i, nro_enemigos;
     
@@ -1754,7 +1754,7 @@ Procedure efectuar_disparo_de_woofson(Personaje* woofson, Personaje enemigos[MAX
  * @brief Función que desactiva los enemigos para que se puedan inicializar de nuevo para otro nivel.
  * @param enemigos El arreglo con los enemigos.
  */
-Procedure desactivar_enemigos(Personaje enemigos[MAX_ENEMIGOS])
+void desactivar_enemigos(Personaje enemigos[MAX_ENEMIGOS])
 {
     Natural i;
 

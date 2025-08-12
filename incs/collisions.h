@@ -14,6 +14,6 @@ bool hay_colision_izquierda(Personaje*, Mapa);
 bool hay_bloque_izquierda(Personaje*, Mapa);
 bool hay_colision_derecha(Personaje*, Mapa);
 bool hay_bloque_derecha(Personaje*, Mapa);
-Procedure efectuar_colision(Personaje*, Mapa);
+void efectuar_colision(Personaje*, Mapa);
 
 #endif // COLLISIONS_H

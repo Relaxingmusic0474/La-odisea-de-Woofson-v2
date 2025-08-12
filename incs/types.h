@@ -3,8 +3,6 @@
 
 #include "allegro_libraries.h"
 
-typedef void Procedure;
-typedef void* ElemType;
 typedef unsigned short Natural;
 typedef short Entero;
 typedef struct dirent DirEntry;
