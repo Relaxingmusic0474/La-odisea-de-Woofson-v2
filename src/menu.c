@@ -322,6 +322,7 @@ void mostrar_instrucciones(Recursos recursos, Menu* menu)
     Rectangulo rect_tabla;
     Imagen png_muestra_dragon = recursos.frames[FRAME_DRAGON][5];
     Imagen png_muestra_alien = recursos.frames[FRAME_EXTRATERRESTRE][0];
+    Imagen png_muestra_monstruo = recursos.frames[FRAME_MONSTRUO][0];
     float xm, ym, alto_fuente;
 
     menu->opcion_en_hover = obtener_opcion_en_hover(*menu);  // Se obtiene la opcion por la que pasa el cursor (sin seleccionarla aun)
@@ -335,20 +336,29 @@ void mostrar_instrucciones(Recursos recursos, Menu* menu)
     al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.28*ALTO_VENTANA, 0, "4. Se puede conseguir puntaje matando enemigos (o haciéndoles daño) de acuerdo a lo siguiente:");
 
     rect_tabla = dibujar_rectangulo_en_rectangulo(RECTANGULO_VENTANA, 0.21*ALTO_VENTANA, 0.88*ANCHO_VENTANA, 50.0, 44.0, false, BLANCO);
-    dibujar_rectangulo_en_rectangulo(rect_tabla, 0.20*ALTO_VENTANA, 0, 50.0, 50.0, false, BLANCO);
+    dibujar_rectangulo_en_rectangulo(rect_tabla, 0.21*ALTO_VENTANA, 0, 33.3, 50.0, false, BLANCO);
     dibujar_rectangulo_en_rectangulo(rect_tabla, 0, 0.88*ANCHO_VENTANA, 50.0, 60.0, false, BLANCO);
 
-    dibujar_imagen_en_rectangulo(png_muestra_alien, rect_tabla, 25.0, 30.0);
+    dibujar_imagen_en_rectangulo(png_muestra_alien, rect_tabla, 16.5, 30.0);
 
-    dibujar_texto_en_rectangulo("Por daño: 2 ptos", rect_tabla, 25.0, 70.0, menu->fuente_sec, BLANCO);
-    dibujar_texto_en_rectangulo("Por matar: 10 ptos", rect_tabla, 25.0, 90.0, menu->fuente_sec, BLANCO);
+    dibujar_texto_en_rectangulo("Por daño: 2 ptos", rect_tabla, 16.7, 70.0, menu->fuente_sec, BLANCO);
+    dibujar_texto_en_rectangulo("Por matar: 10 ptos", rect_tabla, 16.7, 90.0, menu->fuente_sec, BLANCO);
 
     al_draw_scaled_bitmap(png_muestra_dragon, 0, 0, al_get_bitmap_width(png_muestra_dragon), al_get_bitmap_height(png_muestra_dragon), 
-                          0.75*ANCHO_VENTANA-al_get_bitmap_width(png_muestra_dragon)/2, 0.44*ALTO_VENTANA-al_get_bitmap_height(png_muestra_dragon)/2, 
+                          0.55*ANCHO_VENTANA-al_get_bitmap_width(png_muestra_dragon)/2, 0.44*ALTO_VENTANA-al_get_bitmap_height(png_muestra_dragon)/2, 
                           0.50*al_get_bitmap_width(png_muestra_dragon), 0.50*al_get_bitmap_height(png_muestra_dragon), 0);
 
-    dibujar_texto_en_rectangulo("Por daño: 7 ptos", rect_tabla, 75.0, 70.0, menu->fuente_sec, BLANCO);
-    dibujar_texto_en_rectangulo("Por matar: 25 ptos", rect_tabla, 75.0, 90.0, menu->fuente_sec, BLANCO);
+    dibujar_texto_en_rectangulo("Por daño: 7 ptos", rect_tabla, 50.0, 70.0, menu->fuente_sec, BLANCO);
+    dibujar_texto_en_rectangulo("Por matar: 25 ptos", rect_tabla, 50.0, 90.0, menu->fuente_sec, BLANCO);
+
+    dibujar_rectangulo_en_rectangulo(rect_tabla, 0.21*ALTO_VENTANA, 0, 66.7, 50.0, false, BLANCO);
+
+    al_draw_scaled_bitmap(png_muestra_monstruo, 0, 0, al_get_bitmap_width(png_muestra_monstruo), al_get_bitmap_height(png_muestra_monstruo), 
+                          0.83*ANCHO_VENTANA-al_get_bitmap_width(png_muestra_monstruo)/2, 0.46*ALTO_VENTANA-al_get_bitmap_height(png_muestra_monstruo)/2, 
+                          0.45*al_get_bitmap_width(png_muestra_monstruo), 0.45*al_get_bitmap_height(png_muestra_monstruo), ALLEGRO_FLIP_HORIZONTAL);
+
+    dibujar_texto_en_rectangulo("Por daño: 15 ptos", rect_tabla, 83.3, 70.0, menu->fuente_sec, BLANCO);
+    dibujar_texto_en_rectangulo("Por matar: 100 ptos (obligatorio)", rect_tabla, 83.3, 90.0, menu->fuente_sec, BLANCO);
 
     al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.57*ALTO_VENTANA, 0, "5. También podrá recoger puntaje adicional en algunos niveles por llegar a una estrella.");
     al_draw_text(menu->fuente_sec, BLANCO, 0.04*ANCHO_VENTANA, 0.62*ALTO_VENTANA, 0, "6. Su puntaje además dependerá del tiempo que se demore.  A más tiempo, menos puntaje.");
@@ -419,7 +429,7 @@ void resetear_estado_juego(Recursos* recursos, Menu menu, Etapa* etapa_actual, E
     Natural i;
 
     cambiar_menu(&recursos->menu_actual, menu);
-    inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, (Vector){ANCHO_VENTANA * 0.1, ALTURA_PISO - al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
+    inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, recursos->bola_fuego, (Vector){ANCHO_VENTANA * 0.1, ALTURA_PISO - al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
     teclas[ALLEGRO_KEY_RIGHT] = true;
     memset((bool *) teclas, false, sizeof(teclas));
     recursos->puerta.estado = CERRADA;
@@ -538,7 +548,7 @@ void redirigir_menu(Recursos* recursos, Natural opcion_clickeada, Etapa* etapa_a
         else
         {
             cambiar_menu(&recursos->menu_actual, menu_vacio);
-            inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
+            inicializar_personaje(&recursos->pje_principal, WOOFSON, recursos->frames, recursos->bola_fuego, (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(recursos->frames[FRAME_WOOFSON][0])}, false);
             memset((bool *) teclas, false, sizeof(teclas));
 
             *nivel_actual = opcion_clickeada+1;

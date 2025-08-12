@@ -65,10 +65,11 @@ TipoPersonaje tipo_personaje(TipoFrame tipo)
  * @param personaje Puntero al personaje a inicializar.
  * @param tipo Tipo de personaje a inicializar.
  * @param frames Es el arreglo con los frames de todos los personajes.
+ * @param bola_fuego Imagen de la bola de fuego (aplica solo para el monstruo).
  * @param posicion_deseada Posición en la que se desea inicializar al personaje.
  * @param estatico Un booleano que determina si el personaje estará en una posición fija o no.
  */
-void inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen* frames[TIPOS_PERSONAJES], Vector posicion_deseada, bool estatico)
+void inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen* frames[TIPOS_PERSONAJES], Imagen bola_fuego, Vector posicion_deseada, bool estatico)
 {
     Natural i;
 
@@ -104,7 +105,6 @@ void inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen* fra
     personaje->fps_subiendo = 0;
     personaje->subvida_actual = 100;  // Todos tendrán subvida de 100 inicialmente
     personaje->fuego = (Fuego) {0};
-    personaje->bola_fuego = (BolaFuego) {0};
 
     switch (tipo)
     {
@@ -181,6 +181,7 @@ void inicializar_personaje(Personaje* personaje, TipoPersonaje tipo, Imagen* fra
         personaje->balas[i].disponible = true;
         personaje->bala_recargable = personaje->tipo == WOOFSON ? false : true;
         personaje->bala_maximo_alcance = personaje->tipo == WOOFSON ? false : true;
+        personaje->balas[i].imagen = personaje->tipo == MONSTRUO ? bola_fuego : NULL;  // El monstruo disparará bolas de fuego
         personaje->balas[i].frames_para_disponibilidad = 0;
     }
 
@@ -1167,7 +1168,19 @@ void mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa, Nat
     {
         if (atacante->balas[i].activa)
         {
+            if (atacante->tipo == MONSTRUO)
+            {
+                atacante->balas[i].velocidad.y = (float) g/FPS*(victima->posicion.y + victima->alto - atacante->balas[i].posicion.y)*tan(15*ALLEGRO_PI/180)/ sqrt(2*(float)g/FPS*((victima->posicion.x - atacante->balas[i].posicion.x)*tan(15*ALLEGRO_PI/180)+victima->posicion.y+victima->alto));  // Calcula la velocidad vertical de la bala del monstruo
+            }
+
+            else
+            {
+                atacante->balas[i].velocidad.y = 0;  // Las balas de Woofson no tienen velocidad vertical
+            }
+            
+
             atacante->balas[i].posicion.x += atacante->balas[i].velocidad.x;  // Si Woofson gana, las balas se detienen (a modo como de congelar el juego)
+            atacante->balas[i].posicion.y += atacante->balas[i].velocidad.y;  // Actualiza la posición de la bala en el eje y
 
             if (atacante->bala_maximo_alcance == true)
             {
@@ -1289,7 +1302,18 @@ void mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa, Nat
 
                     else
                     {
-                        aplicar_danho(victima, DANHO_BALA_EXTRATERRESTRE);
+                        if (atacante->tipo == EXTRATERRESTRE)
+                        {
+                            aplicar_danho(victima, DANHO_BALA_EXTRATERRESTRE);
+                        }
+
+                        else
+                        {
+                            if (atacante->tipo == MONSTRUO)
+                            {
+                                aplicar_danho(victima, DANHO_BALA_MONSTRUO);
+                            }
+                        }
                     }
 
                     if (atacante->tipo == WOOFSON)
@@ -1357,14 +1381,23 @@ void mover_balas_activas(Personaje* atacante, Personaje* victima, Mapa mapa, Nat
                 atacante->balas[i].activa = false;
             }
 
-            if (atacante->tipo != WOOFSON || nivel < 4)
+            if ((atacante->tipo != WOOFSON && atacante->tipo != MONSTRUO) || nivel < 4)
             {
                 al_draw_filled_ellipse(atacante->balas[i].posicion.x, atacante->balas[i].posicion.y, RADIO_AXIAL_X_BALA, RADIO_AXIAL_Y_BALA, color);
             }
 
             else
             {
-                al_draw_filled_ellipse(atacante->balas[i].posicion.x, atacante->balas[i].posicion.y, RADIO_AXIAL_X_BALA_PRO, RADIO_AXIAL_Y_BALA_PRO, color);
+                if (atacante->tipo == MONSTRUO)
+                {
+                    al_draw_bitmap(atacante->balas[i].imagen, atacante->balas[i].posicion.x - al_get_bitmap_width(atacante->balas[i].imagen)/2, 
+                                   atacante->balas[i].posicion.y - al_get_bitmap_height(atacante->balas[i].imagen)/2, 0);
+                }                    
+                
+                else
+                {
+                    al_draw_filled_ellipse(atacante->balas[i].posicion.x, atacante->balas[i].posicion.y, RADIO_AXIAL_X_BALA_PRO, RADIO_AXIAL_Y_BALA_PRO, color);
+                }
             }
         }
     }
@@ -1459,7 +1492,7 @@ void efectuar_disparo_de_enemigo(Personaje* enemigo, Personaje* woofson, Mapa ma
 
                 // Inicializar posición y dirección de la bala
                 enemigo->balas[i].posicion = (Vector) {enemigo->bandera_dibujo == 0 ? enemigo->posicion.x + enemigo->ancho : enemigo->posicion.x, 
-                                                       enemigo->posicion.y + 0.45f * enemigo->alto};
+                                                       enemigo->posicion.y + (enemigo->tipo == MONSTRUO ? 0.20f : 0.43f) * enemigo->alto};
 
                 dx = woofson->posicion.x - enemigo->posicion.x;
 
@@ -1562,19 +1595,6 @@ void lanzar_fuego(Personaje* dragon, Personaje* woofson, Imagen imagen_fuego)
 }
 
 
-void lanzar_proyectil_fuego(Personaje* monstruo, Personaje* woofson)
-{
-    float dx, dy;
-    float porcentajes_mano[] = {1};
-
-    dx = woofson->posicion.x - monstruo->posicion.x;
-    dy = woofson->posicion.y - monstruo->posicion.y;
-
-
-
-}
-
-
 void efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Personaje* woofson, Mapa mapa, Natural nivel, Imagen fuego)
 {
     Natural i;
@@ -1591,11 +1611,6 @@ void efectuar_disparo_de_enemigos(Personaje enemigos[MAX_ENEMIGOS], Personaje* w
             else if (enemigos[i].tipo == LEPRECHAUN)
             {
                 // NADA
-            }
-
-            else if (enemigos[i].tipo == MONSTRUO)
-            {
-
             }
 
             else

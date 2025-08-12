@@ -4,7 +4,6 @@
 #include "allegro_libraries.h"
 
 typedef unsigned short Natural;
-typedef short Entero;
 typedef struct dirent DirEntry;
 typedef ALLEGRO_BITMAP* Imagen;
 typedef ALLEGRO_SAMPLE* Audio;

@@ -58,7 +58,7 @@ struct salto  // ANALIZAR SI SERÁ NECESARIO AGREGAR LA POSICIÓN FINAL DEL SALT
     float altura_inicial;  // Altura inicial del salto (útil sobre todo si salta desde una plataforma)
     bool en_salto;  // Si el personaje está en salto o no
     bool es_interrumpido;  // Si el salto es interrumpido por la colisión con algún techo o no
-    Entero altura_choque;  // Este atributo cobra sentido si el salto es interrumpido por un techo
+    float altura_choque;  // Este atributo cobra sentido si el salto es interrumpido por un techo
 };
 
 struct mapa
@@ -75,7 +75,8 @@ struct bala
     Vector posicion_inicial;
     Vector posicion;
     Vector velocidad;
-    Entero direccion;  // 1 si es hacia la derecha y -1 si es hacia la izquierda
+    Imagen imagen;
+    int direccion;  // 1 si es hacia la derecha y -1 si es hacia la izquierda
     bool activa;
     bool disponible;
     float frames_para_disponibilidad;  // Este campo solo cobra sentido si es que las balas son recargables con el tiempo (personaje->bala_recargable == true)
@@ -141,9 +142,9 @@ struct personaje
     bool agachado;
     Natural fps_bajando;
     Natural fps_subiendo;
-    BolaFuego bola_fuego;  // Aplica solo para el monstruo
+    // BolaFuego bola_fuego;  // Aplica solo para el monstruo
 
-    
+
 
     // bool hay_obj_izq;
     // bool hay_obj_der;

@@ -391,7 +391,7 @@ void dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, 
     Natural i=0, j=0, k=0;
     Natural id_enemigo = 0, id_espina = 0, id_charco = 0, id_pocion = 0, id_municion = 0, id_pocion_rango_bala = 0;
     Natural cantidad_enemigos_activos = 0;
-    Entero flag = 0;
+    int flag = 0;
     Personaje* woofson = &recursos->pje_principal;
     Imagen bloque_cafe = recursos->bloques[0];
     Imagen bloque_plateado = recursos->bloques[1];
@@ -621,7 +621,7 @@ void dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, 
                             recursos->enemigos[id_enemigo].posicion_inicial.y = y2 - alto_enemigo - 1;
 
                             inicializar_personaje(&recursos->enemigos[id_enemigo], mapa.mapa[i][j] <= EXTRATERRESTRE_DINAMICO ? EXTRATERRESTRE : MONSTRUO, recursos->frames, 
-                                                  recursos->enemigos[id_enemigo].posicion_inicial, mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO ? true : false);
+                                                  recursos->bola_fuego, recursos->enemigos[id_enemigo].posicion_inicial, mapa.mapa[i][j] == EXTRATERRESTRE_ESTATICO ? true : false);
                         }                        
 
                         else  // Si ya estaba inicializado
@@ -681,7 +681,7 @@ void dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, 
                         recursos->enemigos[id_enemigo].posicion_inicial.x = mapa.ancho_bloque*j;
                         recursos->enemigos[id_enemigo].posicion_inicial.y = mapa.alto_bloque*(i+1) - alto_enemigo - 1;
 
-                        inicializar_personaje(&recursos->enemigos[id_enemigo], DRAGON, recursos->frames, 
+                        inicializar_personaje(&recursos->enemigos[id_enemigo], DRAGON, recursos->frames, recursos->bola_fuego, 
                                               recursos->enemigos[id_enemigo].posicion_inicial, false);
                     }
 
@@ -836,7 +836,7 @@ void dibujar_mapa(Mapa mapa, Recursos* recursos, bool* cambio_estado_procesado, 
                             recursos->enemigos[id_enemigo].posicion_inicial.x = x1;
                             recursos->enemigos[id_enemigo].posicion_inicial.y = y2 - alto_enemigo - 1;
 
-                            inicializar_personaje(&recursos->enemigos[id_enemigo], LEPRECHAUN, recursos->frames, 
+                            inicializar_personaje(&recursos->enemigos[id_enemigo], LEPRECHAUN, recursos->frames, recursos->bola_fuego,
                                                   recursos->enemigos[id_enemigo].posicion_inicial, false);
                         }                        
 
@@ -990,6 +990,10 @@ bool cargar_escenarios(Recursos* R)
 }
 
 
+/**
+ * @brief Función que libera los fondos del juego.
+ * @param fondos Es el array con los fondos de cada nivel.
+ */
 void liberar_fondos(Imagen fondos[NRO_NIVELES])
 {
     Natural i;
@@ -1006,6 +1010,11 @@ void liberar_fondos(Imagen fondos[NRO_NIVELES])
     return;
 }
 
+
+/**
+ * @brief Función que libera tanto los mapas como los fondos de los niveles.
+ * @param R Es la estructura de los recursos del juego.
+ */
 void liberar_escenarios(Recursos* R)
 {
     liberar_mapas(R->mapas);

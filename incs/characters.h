@@ -13,7 +13,7 @@
 
 TipoFrame tipo_frame(TipoPersonaje);
 TipoPersonaje tipo_personaje(TipoFrame);
-void inicializar_personaje(Personaje*, TipoPersonaje, Imagen* [TIPOS_PERSONAJES], Vector, bool);
+void inicializar_personaje(Personaje*, TipoPersonaje, Imagen* [TIPOS_PERSONAJES], Imagen, Vector, bool);
 void inicializar_salto(Personaje*);
 void determinar_como_dibujar_personaje(Personaje*, Natural);
 void dibujar_personaje(Personaje*, Natural, Natural);

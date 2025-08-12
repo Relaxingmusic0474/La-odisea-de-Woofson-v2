@@ -224,7 +224,7 @@ bool crear_recursos(Recursos* R)
     }
     
     // Se inicializa el personaje principal
-    inicializar_personaje(&R->pje_principal, WOOFSON, R->frames, (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(R->frames[FRAME_WOOFSON][0])}, false);  
+    inicializar_personaje(&R->pje_principal, WOOFSON, R->frames, R->bola_fuego, (Vector) {ANCHO_VENTANA*0.1, ALTURA_PISO-al_get_bitmap_height(R->frames[FRAME_WOOFSON][0])}, false);  
 
     R->vida = al_load_bitmap("assets/images/corazon.png");
 

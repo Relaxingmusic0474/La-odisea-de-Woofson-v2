@@ -53,6 +53,7 @@
 #define RANGO_BALA_WOOFSON (ANCHO_VENTANA * 0.25)
 #define RANGO_BALA_PRO_WOOFSON (ANCHO_VENTANA * 0.40)
 #define DANHO_BALA_EXTRATERRESTRE 15
+#define DANHO_BALA_MONSTRUO 31
 #define DANHO_BALA_WOOFSON 34
 #define DANHO_FUEGO 57
 #define NRO_FRAMES_MOVIMIENTO 10
@@ -120,7 +121,7 @@
 #define FACTOR_ESPINA 0.5
 #define DANHO_ESPINA 63
 
-#define PUNTAJE_ESTRELLA 15
+#define PUNTAJE_ESTRELLA 35
 
 // Macro que define la cantidad de vidas que tendrá el personaje inicialmente
 #define VIDAS_INICIALES 3
